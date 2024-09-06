@@ -1,0 +1,6 @@
+*.md
+example.html
+filters/*
+Makefile
+svg/*
+template/*

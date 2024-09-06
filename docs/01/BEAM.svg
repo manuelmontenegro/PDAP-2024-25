@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="175.15376mm"
+   height="131.69341mm"
+   viewBox="0 0 175.15376 131.69341"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   sodipodi:docname="BEAM.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.0230034"
+     inkscape:cx="434.01617"
+     inkscape:cy="358.7476"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="marker38"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path38" />
+    </marker>
+    <rect
+       x="70.476463"
+       y="417.99792"
+       width="210.03566"
+       height="55.271538"
+       id="rect31" />
+    <marker
+       style="overflow:visible"
+       id="Triangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="3"
+       markerHeight="3"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <rect
+       x="427.96017"
+       y="283.41794"
+       width="238.12392"
+       height="79.361908"
+       id="rect29" />
+    <marker
+       style="overflow:visible"
+       id="Triangle-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="3"
+       markerHeight="3"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-8" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-12.419611,-17.251824)">
+    <g
+       id="g9">
+      <rect
+         style="fill:#ffe680;stroke:#000000;stroke-width:0.3556"
+         id="rect1"
+         width="74.10141"
+         height="46.12907"
+         x="12.597411"
+         y="22.195129" />
+      <text
+         xml:space="preserve"
+         style="font-size:4.23333px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata, Normal';fill:#ffe680;fill-opacity:1;stroke:none;stroke-width:0.3556"
+         x="17.622374"
+         y="29.949749"
+         id="text2"><tspan
+           sodipodi:role="line"
+           id="tspan2"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="29.949749">-module(mi_mod).</tspan><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="35.241409"
+           id="tspan11">-export([suma_cuadrados/2]).</tspan><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="40.533073"
+           id="tspan3" /><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="45.824738"
+           id="tspan4">cuadrado(X) -&gt; X * X.</tspan><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="51.116398"
+           id="tspan5" /><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="56.408058"
+           id="tspan6">suma_cuadrados(X, Y) -&gt;</tspan><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="61.699722"
+           id="tspan8">   cuadrado(X) * cuadrado(Y).</tspan><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="66.991386"
+           id="tspan7" /></text>
+      <text
+         xml:space="preserve"
+         style="font-size:4.23333px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata, Normal';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.3556"
+         x="13.803288"
+         y="20.066988"
+         id="text9"><tspan
+           sodipodi:role="line"
+           id="tspan9"
+           style="fill:#3366cc;stroke-width:0.3556"
+           x="13.803288"
+           y="20.066988">mi_mod.erl</tspan></text>
+    </g>
+    <g
+       id="g33"
+       class="fragment">
+      <path
+         style="fill:#0c4836;fill-opacity:1;stroke:#000000;stroke-width:0.356;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Triangle)"
+         d="m 46.898607,70.53532 0.03233,32.61717"
+         id="path30" />
+      <rect
+         style="fill:#5c4503;fill-opacity:1;stroke:#000000;stroke-width:0.3556;stroke-opacity:1"
+         id="rect30"
+         width="63.371361"
+         height="11.699142"
+         x="15.370962"
+         y="77.391579" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#5c4503;fill-opacity:1;stroke:none;stroke-width:0.3556"
+         x="18.528112"
+         y="85.305168"
+         id="text28"><tspan
+           sodipodi:role="line"
+           id="tspan28"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.35px;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#ffffff;fill-opacity:1;stroke-width:0.3556"
+           x="18.528112"
+           y="85.305168">Compilador Erlang</tspan></text>
+    </g>
+    <g
+       id="g35"
+       class="fragment">
+      <rect
+         style="fill:#b92d3a;fill-opacity:1;stroke:#000000;stroke-width:0.356;stroke-dasharray:none;stroke-opacity:1"
+         id="rect32"
+         width="22.683001"
+         height="15.845366"
+         x="37.079613"
+         y="114.94559" />
+      <text
+         xml:space="preserve"
+         style="font-size:4.23333px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata, Normal';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.3556"
+         x="36.866543"
+         y="112.31271"
+         id="text9-8"><tspan
+           sodipodi:role="line"
+           id="tspan9-9"
+           style="fill:#3366cc;stroke-width:0.3556"
+           x="36.866543"
+           y="112.31271">mi_mod.beam</tspan></text>
+    </g>
+    <g
+       id="g9-5"
+       transform="translate(100.69675,0.14865039)"
+       class="fragment">
+      <rect
+         style="fill:#8be3c9;stroke:#000000;stroke-width:0.3556"
+         id="rect1-0"
+         width="74.10141"
+         height="46.12907"
+         x="12.597411"
+         y="22.195129" />
+      <text
+         xml:space="preserve"
+         style="font-size:4.23333px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata, Normal';fill:#ffe680;fill-opacity:1;stroke:none;stroke-width:0.3556"
+         x="17.622374"
+         y="29.949749"
+         id="text2-3"><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="29.949749"
+           id="tspan7-6">defmodule FuncionesSimples do</tspan><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="35.241409"
+           id="tspan19">  defp cuadrado(x), do: x * x</tspan><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="40.533073"
+           id="tspan20" /><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="45.824738"
+           id="tspan24">  def suma_cuadrados(x, y) do</tspan><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="51.116398"
+           id="tspan27">    cuadrado(x) * cuadrado(y)</tspan><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="56.408058"
+           id="tspan25">  end</tspan><tspan
+           sodipodi:role="line"
+           style="fill:#000000;stroke-width:0.3556"
+           x="17.622374"
+           y="61.699722"
+           id="tspan26">end</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:4.23333px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata, Normal';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.3556"
+         x="13.803288"
+         y="20.066988"
+         id="text9-1"><tspan
+           sodipodi:role="line"
+           id="tspan9-5"
+           style="fill:#3366cc;stroke-width:0.3556"
+           x="13.803288"
+           y="20.066988">funciones.ex</tspan></text>
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,-100.69675,-0.14865034)"
+         id="text29"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:Raleway;-inkscape-font-specification:Raleway;white-space:pre;shape-inside:url(#rect29);display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.344" />
+    </g>
+    <g
+       id="g34"
+       class="fragment">
+      <path
+         style="fill:#0c4836;fill-opacity:1;stroke:#000000;stroke-width:0.356;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Triangle-6)"
+         d="m 149.84433,69.99577 0.0323,32.61717"
+         id="path30-4" />
+      <rect
+         style="fill:#0c4836;fill-opacity:1;stroke:#000000;stroke-width:0.3556;stroke-opacity:1"
+         id="rect30-4"
+         width="63.371361"
+         height="11.699142"
+         x="116.84837"
+         y="77.088249" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#5c4503;fill-opacity:1;stroke:none;stroke-width:0.3556"
+         x="122.65137"
+         y="85.001839"
+         id="text28-7"><tspan
+           sodipodi:role="line"
+           id="tspan28-4"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.35px;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#ffffff;fill-opacity:1;stroke-width:0.3556"
+           x="122.65137"
+           y="85.001839">Compilador Elixir</tspan></text>
+    </g>
+    <g
+       id="g36"
+       class="fragment">
+      <rect
+         style="fill:#b92d3a;fill-opacity:1;stroke:#000000;stroke-width:0.356;stroke-dasharray:none;stroke-opacity:1"
+         id="rect32-9"
+         width="22.683001"
+         height="15.845366"
+         x="138.14188"
+         y="113.21333" />
+      <text
+         xml:space="preserve"
+         style="font-size:4.23333px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata, Normal';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.3556"
+         x="121.753"
+         y="110.81489"
+         id="text9-8-4"><tspan
+           sodipodi:role="line"
+           id="tspan9-9-9"
+           style="fill:#3366cc;stroke-width:0.3556"
+           x="121.753"
+           y="110.81489">Elixir.FuncionesSimples.beam</tspan></text>
+    </g>
+    <g
+       id="g39"
+       class="fragment">
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#marker38)"
+         d="m 132.40183,134.90668 6.09791,-5.47993"
+         id="path39"
+         inkscape:connector-type="polyline"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker38)"
+         d="m 58.995801,130.24136 8.321749,5.70308"
+         id="path37"
+         inkscape:connector-type="polyline"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+      <g
+         id="g37"
+         transform="translate(-2.7570776,0.89208484)">
+        <rect
+           style="fill:#4f1319;fill-opacity:1;stroke:#000000;stroke-width:0.3556;stroke-opacity:1"
+           id="rect30-2"
+           width="63.371361"
+           height="11.699142"
+           x="70.852646"
+           y="136.17621" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.35px;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#b92d3a;fill-opacity:1;stroke:#000000;stroke-width:0.356;stroke-dasharray:none;stroke-opacity:1"
+           x="80.865517"
+           y="143.83479"
+           id="text36"><tspan
+             sodipodi:role="line"
+             id="tspan36"
+             style="font-weight:bold;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.356"
+             x="80.865517"
+             y="143.83479">Máquina BEAM</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>
