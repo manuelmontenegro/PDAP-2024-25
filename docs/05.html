@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Manuel Montenegro Montes">
+  <title>Ajuste de patrones</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="css/nnfx-light.min.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {  background-color: #f8f8f8; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ef2929; } /* Alert */
+    code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #204a87; } /* Attribute */
+    code span.bn { color: #0000cf; } /* BaseN */
+    code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4e9a06; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #8f5902; font-style: italic; } /* Comment */
+    code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+    code span.dt { color: #204a87; } /* DataType */
+    code span.dv { color: #0000cf; } /* DecVal */
+    code span.er { color: #a40000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #0000cf; } /* Float */
+    code span.fu { color: #204a87; font-weight: bold; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+    code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+    code span.ot { color: #8f5902; } /* Other */
+    code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+    code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+    code span.ss { color: #4e9a06; } /* SpecialString */
+    code span.st { color: #4e9a06; } /* String */
+    code span.va { color: #000000; } /* Variable */
+    code span.vs { color: #4e9a06; } /* VerbatimString */
+    code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="css/pdap.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="img/RedBackground.jpg">
+  <h1 class="title">Ajuste de patrones</h1>
+<div id="author-container">
+<div class="author">
+Manuel Montenegro Montes
+<br>
+<span id="email"><a href="montenegro@fdi.ucm.es">montenegro@fdi.ucm.es</a></span>
+</div>
+<div class="subject">
+<strong>Programación Declarativa Aplicada</strong>
+<br>Máster en Ingeniería Informática<br>Facultad de
+Informática<br>Universidad Complutense de Madrid
+</div>
+</div>
+</section>
+
+<section id="section" class="slide level2 outline"
+data-background-image="img/RedBackground.jpg">
+<h2 class="outline" data-background-image="img/RedBackground.jpg"></h2>
+<ol type="1">
+<li>Tipos de patrones</li>
+<li>Mecanismos de ajuste de patrones</li>
+</ol>
+</section>
+<section>
+<section id="operador-de-ajuste-y-tipos-de-patrones"
+class="title-slide slide level1">
+<h1>Operador de ajuste (<code>=</code>) y tipos de patrones</h1>
+
+</section>
+<section id="operador-de-ajuste" class="slide level2">
+<h2>Operador de ajuste (<code>=</code>)</h2>
+<ul>
+<li><p>Hasta ahora hemos utilizado el operador para asignar un valor a
+una variable.</p>
+<p>Por ejemplo, <code>x = 5</code></p></li>
+<li><p>Sin embargo, el lado izquierdo del operador <code>=</code> puede
+ser más complejo que una variable.</p></li>
+<li><p>La forma general del operador <code>=</code> es la siguiente:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="meta">patron</span> <span class="op">=</span> <span class="meta">expresion</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section id="tipos-de-patrones" class="slide level2">
+<h2>Tipos de patrones</h2>
+<ul>
+<li>Constantes</li>
+<li>Variables</li>
+<li>Patrones tupla</li>
+<li>Patrones lista</li>
+<li>Patrones <em>string</em></li>
+<li>Variables anónimas (<code>_</code>)</li>
+<li>Variable con operador <em>pin</em></li>
+<li>…</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="patrón-constante">Patrón constante</h3>
+<ul>
+<li>Es posible colocar un <strong>número</strong> o un
+<strong>átomo</strong> en el lado izquierdo de un ajuste de
+patrones.</li>
+</ul>
+<pre><code><span class="meta">c</span> = <span class="meta">exp</span></code></pre>
+<dl>
+</dl>
+<div class="fragment">
+<ul>
+<li><p>Si la expresión <code>exp</code> se evalúa a un valor distinto de
+<code>c</code>, el ajuste falla.</p></li>
+<li><p>En caso contrario, el ajuste tiene éxito.</p></li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<p>Ejemplos:</p>
+<pre class="text"><code>&gt; y = 3
+3
+&gt; x = 2
+2
+&gt; 3 = y           <span class="arrow_box_left fragment"> OK </span>
+<span class="fragment">3</span>
+&gt; 2 = y           <span class="arrow_box_left fragment"> Fallo </span>
+<span class="fragment">** (MatchError) no match of right hand side value: 3 </span>
+&gt; 3 = x + 1       <span class="arrow_box_left fragment"> OK </span>
+<span class="fragment">3</span>
+&gt; 1 = x           <span class="arrow_box_left fragment"> Fallo </span>
+<span class="fragment">** (MatchError) no match of right hand side value: 2</span>
+&gt; 5 = :hola       <span class="arrow_box_left fragment"> Fallo </span>
+<span class="fragment">** (MatchError) no match of right hand side value: :hola</span>
+&gt; :hola = :hola   <span class="arrow_box_left fragment"> OK </span>
+<span class="fragment">:hola</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="patrón-variable">Patrón variable</h3>
+<ul>
+<li><p>Si en el lado izquierdo de un ajuste de patrones es una variable,
+el ajuste <strong>siempre tiene éxito</strong>.</p></li>
+<li><p>Además, la variable del lado izquierdo queda asignada al valor
+del lado derecho.</p></li>
+</ul>
+<pre class="text"><code>&gt; x = 4
+4
+&gt; x
+4
+&gt; y = 7
+7
+&gt; y = 3
+3
+&gt; y
+3</code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="patrón-tupla">Patrón tupla</h3>
+<div>
+<ul>
+<li class="fragment"><p>Los patrones tupla tienen la forma <span
+style="font-family: monospace;">{pat<sub>1</sub>, …,
+pat<sub>n</sub>}</span>.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="meta"><span class="">pat<sub>1</sub></span></span>, <span class="meta"><span class="">pat<sub>2</sub></span></span>, <span class="op">...</span>, <span class="meta"><span class="">pat<sub>n</sub></span></span><span class="fu">}</span> <span class="op">=</span> <span class="meta">exp</span></span></code></pre></div>
+</li>
+<li class="fragment"><p>El ajuste de patrones tiene éxito si y solo si
+la expresión <code>exp</code> se evalúa a una tupla de <code>n</code>
+componentes, y además:</p>
+<ul>
+<li class="fragment">La primera componente ajusta con <span
+style="font-family: monospace;">pat<sub>1</sub></span>,</li>
+<li class="fragment">La segunda componente ajusta con <span
+style="font-family: monospace;">pat<sub>2</sub></span>,</li>
+<li class="fragment">…</li>
+<li class="fragment">La <em>n</em>-ésima componente ajusta con <span
+style="font-family: monospace;">pat<sub>n</sub></span>.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<p>Ejemplo:</p>
+<pre class="text"><code>&gt; z = {3, 4}
+&gt; <span class="hl">{x, y} = z</span>      <span class="arrow_box_left fragment"> OK </span>
+&gt; x
+<span class="fragment">3</span>
+&gt; y
+<span class="fragment">4</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<p>Más ejemplos:</p>
+<pre class="text"><code>&gt; {x, y} = :hola         <span class="arrow_box_left fragment"> Fallo. El lado derecho no es una tupla </span>
+&gt; {x, y, z} = {1, 4}     <span class="arrow_box_left fragment"> Fallo. El lado derecho no tiene 3 componentes </span>
+&gt; {x, y} = {1, 4}        <span class="arrow_box_left fragment"> Correcto. La x queda ligada al valor 1; la y, al 4 </span>
+&gt; {1, 3} = {0, 3}        <span class="arrow_box_left fragment"> Fallo. El 0 no encaja con el 1 </span>
+&gt; {1, 3} = {x, 3}        <span class="arrow_box_left fragment"> Correcto, porque x tiene el valor 1 </span>
+&gt; {x, 4} = {2, y}        <span class="arrow_box_left fragment"> Correcto. La x ahora queda ligada al valor 2 </span>
+&gt; x
+<span class="fragment">2</span>
+&gt; y
+<span class="fragment">4</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="patrón-lista">Patrón lista</h3>
+<ul>
+<li><p>Los patrones de este tipo pueden ser la lista vacía <span
+style="font-family: monospace;">[]</span>, o bien tener la forma <span
+style="font-family: monospace;">[pat<sub>1</sub> |
+pat<sub>2</sub>]</span>.</p>
+<ol type="1">
+<li><pre class="text"><code>[] = <span class="meta">exp</span></code></pre>
+</li>
+</ol>
+<div class="fragment">
+<p>El ajuste tiene éxito si y solo si <code>exp</code> se evalúa a una
+lista vacía.</p>
+</div>
+<ol start="2" type="1">
+<li><pre class="text"><code>[<span class="meta"><span class="">pat<sub>1</sub></span></span> | <span class="meta"><span class="">pat<sub>2</sub></span></span>] = <span class="meta">exp</span></code></pre>
+</li>
+</ol>
+<div class="fragment">
+<p>El ajuste tiene éxito si y solo si <code>exp</code> se evalúa a una
+lista no vacía, y además:</p>
+<ul>
+<li><p>la cabeza de la lista ajusta con <span
+style="font-family: monospace;">pat<sub>1</sub></span>, y</p></li>
+<li><p>la cola de la lista ajusta con <span
+style="font-family: monospace;">pat<sub>2</sub></span>.</p></li>
+</ul>
+</div></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>Ejemplos:</p>
+<pre class="text"><code>&gt; z1 = []
+&gt; z2 = [5, 3, 1]
+&gt; [x | y] = z1      <span class="arrow_box_left fragment"> Fallo </span>
+&gt; [x | y] = z2      <span class="arrow_box_left fragment"> OK. x = 5, y = [3, 1] </span>
+&gt; [x | y] = [6]     <span class="arrow_box_left fragment"> OK. x = 6, y = [] </span>
+&gt; x
+<span class="fragment">6</span>
+&gt; y
+<span class="fragment">[]</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<p>Ejemplos:</p>
+<pre class="text"><code>&gt; [{x, y} | z] = [2, 5, 7]     <span class="arrow_box_left fragment"> Fallo. El 2 no encaja con {x, y} </span>
+&gt; [{x, y} | z] = [{1, 1}, 4]   <span class="arrow_box_left fragment"> OK. x = 1, y = 1, z = [4] </span>
+&gt; [[1 | v] | w] = [4, 5, 10]   <span class="arrow_box_left fragment"> Fallo. El 4 no encaja con [1 | v] </span>
+&gt; [[1 | v] | w] = [[4, 5], 10] <span class="arrow_box_left fragment"> Fallo, el 4 no encaja con 1 </span>
+&gt; [[1 | v] | w] = [[1, 5], 10] <span class="arrow_box_left fragment"> OK. v = [5], w = [10] </span>
+&gt; [x | [y | z]] = [1, 4, 5]    <span class="arrow_box_left fragment"> OK. x = 1, y = 4, z = [5] </span>
+&gt; [x | [y | z]] = [1]          <span class="arrow_box_left fragment"> Fallo. [] no encaja con [y | z] </span>
+&gt; [x | [y | z]] = [1, 3]       <span class="arrow_box_left fragment"> OK. x = 1, y = 3, z = [] </span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Los patrones lista admiten el mismo azucar sintáctico de las
+listas. En particular:</p>
+<ul>
+<li><p><span style="font-family: monospace;">[pat<sub>1</sub>,
+pat<sub>2</sub>, …, pat<sub>n</sub> | pat<sub>n+1</sub>]</span> equivale
+a <br/> <span style="font-family: monospace;">[pat<sub>1</sub> |
+[pat<sub>2</sub> | … [pat<sub>n</sub> | pat<sub>n+1</sub>] …
+]]</span></p></li>
+<li><p><span style="font-family: monospace;">[pat<sub>1</sub>,
+pat<sub>2</sub>, …, pat<sub>n</sub>]</span> equivale a <br/> <span
+style="font-family: monospace;">[pat<sub>1</sub> | [pat<sub>2</sub> | …
+[pat<sub>n</sub> | []] … ]]</span></p></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>Ejemplos:</p>
+<pre class="text"><code>&gt; [x | y] = [1, 2]          <span class="arrow_box_left fragment"> OK. x = 1, y = [2] </span>
+&gt; [x, y] = [1, 2]           <span class="arrow_box_left fragment"> OK. x = 1, y = 2 </span>
+&gt; [1, 2 | z] = [1, 2, 4, 6] <span class="arrow_box_left fragment"> OK. z = [4, 6] </span>
+&gt; [x, y] = [1, 2, 4, 6]     <span class="arrow_box_left fragment"> Fallo. [4, 6] no encaja con [] </span>
+&gt; [v] = [3]                 <span class="arrow_box_left fragment"> OK. v = 3 </span>
+&gt; [v] = [3, 4]              <span class="arrow_box_left fragment"> Fallo. [4] no encaja con [] </span></code></pre>
+
+</section>
+<section id="section-1" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
+<h3 id="patrón-string">Patrón <em>string</em></h3>
+<ul>
+<li><p>Hay dos tipos:</p>
+<ol type="1">
+<li><div class="sourceCode" id="cb13"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>   <span class="st">&quot;<span class="meta">cad</span>&quot;</span> <span class="op">=</span> <span class="meta">exp</span></span></code></pre></div>
+
+<p>Tiene éxito si y solo si <code>exp</code> se evalúa a la cadena
+<code>"cad"</code>.</p></li>
+<li><div class="sourceCode" id="cb14"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>   <span class="st">&quot;<span class="meta">cad</span>&quot;</span> <span class="op">&lt;&gt;</span> <span class="meta">pat</span> <span class="op">=</span> <span class="meta">exp</span></span></code></pre></div>
+
+<p>Tiene éxito si y solo si <code>exp</code> se evalúa a una cadena que
+comienza por <code>"cad"</code>. El resto de la cadena se ajusta al
+patrón <code>pat</code>.</p></li>
+</ol></li>
+</ul>
+</section>
+<section id="section-2" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
+<p>Ejemplos:</p>
+<pre class="text"><code>&gt; &quot;hola&quot; = &quot;hola&quot;         <span class="arrow_box_left"> OK </span>
+&gt; &quot;h&quot; &lt;&gt; x = &quot;hola&quot;       <span class="arrow_box_left"> OK. x = "ola" </span>
+&gt; &quot;hol&quot; &lt;&gt; x = &quot;hola&quot;     <span class="arrow_box_left"> OK. x = "a" </span>
+&gt; &quot;hola&quot; &lt;&gt; x = &quot;hola&quot;    <span class="arrow_box_left"> OK. x = "" </span>
+&gt; &quot;hola&quot; &lt;&gt; x = &quot;adios&quot;   <span class="arrow_box_left"> Fallo </span>
+&gt; &quot;hola&quot; &lt;&gt; x = &quot;hol&quot;     <span class="arrow_box_left"> Fallo </span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="inciso-variables-repetidas">Inciso: variables repetidas</h3>
+<ul>
+<li><p>Cuando utilizamos el operador <code>=</code>, una misma variable
+puede aparecer varias veces en el patrón.</p></li>
+<li><p>En ese caso, todas las apariciones de esa variable han de quedar
+ligadas al mismo valor. En caso contrario, el ajuste de patrones
+fallará.</p></li>
+</ul>
+<pre class="text"><code>{x, x} = {1, 3}                         <span class="arrow_box_left fragment"> Fallo. ¿x = 1 o x = 3? </span>
+{x, y, x} = {2, 5, 2}                   <span class="arrow_box_left fragment"> OK. x = 2, y = 3 </span>
+[[x | y], [x | z] | v] = [[2, 5], [2]]  <span class="arrow_box_left fragment"> OK. x = 2, y = [5], z = [], v = [] </span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="variables-anónimas">Variables anónimas</h3>
+<ul>
+<li><p>Se representan mediante el guión bajo (<code>_</code>).</p></li>
+<li><p>Ajustan con cualquier valor, al igual que un patrón variable,
+pero no se ligan a ningún valor.</p></li>
+</ul>
+<pre class="text"><code>{x, _, 5} = {3, 1, 5}     <span class="arrow_box_left"> OK. x = 3 </span>
+[x, y | _] = [1, 2, 3]    <span class="arrow_box_left"> OK. x = 1, y = 2 </span>
+{_, _, _} = {1, 8, 3}     <span class="arrow_box_left"> OK </span>
+{x, x, x} = {1, 8, 3}     <span class="arrow_box_left"> Fallo </span>
+</code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="patrones-con-operador-pin">Patrones con operador <em>pin</em>
+(<code>^</code>)</h3>
+<ul>
+<li>Tienen la forma <code>^x</code>, donde <code>x</code> es una
+variable.</li>
+<li>Encajan con aquellos valores que coincidan con el valor de la
+variable <code>x</code>.</li>
+<li>No hacen que la variable <code>x</code> cambie el valor al que está
+ligada.</li>
+</ul>
+<pre class="text"><code>&gt; {x, y} = {4, 5}         <span class="arrow_box_left fragment"> OK. x = 4, y = 5 </span>
+&gt; ^x = 3                  <span class="arrow_box_left fragment"> Fallo. El 3 no encaja con el valor de x (que es 4) </span>
+&gt; x = 3                   <span class="arrow_box_left fragment"> OK. x = 3 </span>
+&gt; {^x, ^y} = {3, 4}       <span class="arrow_box_left fragment"> Fallo. El 4 no encaja con el valor de y (que es 5) </span>
+&gt; {^x, ^z} = {3, 4}       <span class="arrow_box_left fragment"> Error de compilación. La z no tiene ningún valor </span>
+&gt; {^x, z} = {3, 4}        <span class="arrow_box_left fragment"> OK. z toma el valor 4 </span></code></pre>
+
+</section></section>
+<section>
+<section id="mecanismos-de-ajuste-de-patrones"
+class="title-slide slide level1">
+<h1>Mecanismos de ajuste de patrones</h1>
+
+</section>
+<section id="mecanismos-de-ajuste" class="slide level2">
+<h2>Mecanismos de ajuste</h2>
+<ul>
+<li>Operador de ajuste (<code>=</code>)</li>
+<li>Parámetros de las funciones</li>
+<li>Expresiones <code>case</code></li>
+</ul>
+</section>
+<section id="operador-de-ajuste-1" class="slide level2">
+<h2>Operador de ajuste (<code>=</code>)</h2>
+<div>
+<ul>
+<li class="fragment"><p>Como ya hemos visto, el operador <code>=</code>
+solamente tiene éxito si la expresión del lado derecho se evalúa a un
+valor que encaje con el patrón del lado izquierdo.</p></li>
+<li class="fragment"><p>El operador <code>=</code> se utiliza
+habitualmente cuando se tiene la certeza de que el ajuste de patrones va
+a tener éxito y, en caso de no ser así, queremos que el programa
+falle.</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> suma<span class="fu">(</span>t<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span>x, y<span class="fu">}</span> <span class="op">=</span> t</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  x <span class="op">+</span> y</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<p>Suponemos que <code>suma</code> siempre va a ser invocada con una
+tupla de dos componentes como argumento.</p></li>
+</ul>
+</div>
+</section>
+<section id="ajuste-mediante-parámetros" class="slide level2">
+<h2>Ajuste mediante parámetros</h2>
+<ul>
+<li><p>Es posible introducir patrones en los <strong>parámetros de las
+funciones</strong>.</p></li>
+<li><p>Por ejemplo, en lugar de</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> suma<span class="fu">(</span>t<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span>x, y<span class="fu">}</span> <span class="op">=</span> t</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  x <span class="op">+</span> y</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<p>puede escribirse</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> suma<span class="fu">({</span>x, y<span class="fu">})</span> <span class="kw">do</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">+</span> y</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Cuando llamamos a una función que consta de varias cláusulas, se
+ejecutará la primera cláusula en la que los patrones encajen con los
+argumentos de la llamada y se cumpla la guarda de la cláusula.</li>
+</ul>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span>x, y<span class="fu">})</span> <span class="kw">when</span> x <span class="op">&gt;</span> <span class="dv">0</span> <span class="kw">and</span> y <span class="op">&gt;</span> <span class="dv">0</span>, <span class="va">do:</span> <span class="va">:primero</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span>x, y<span class="fu">})</span> <span class="kw">when</span> x <span class="op">&lt;</span> <span class="dv">0</span> <span class="kw">and</span> y <span class="op">&gt;</span> <span class="dv">0</span>, <span class="va">do:</span> <span class="va">:segundo</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span>x, y<span class="fu">})</span> <span class="kw">when</span> x <span class="op">&lt;</span> <span class="dv">0</span> <span class="kw">and</span> y <span class="op">&lt;</span> <span class="dv">0</span>, <span class="va">do:</span> <span class="va">:tercero</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span>x, y<span class="fu">})</span> <span class="kw">when</span> x <span class="op">&gt;</span> <span class="dv">0</span> <span class="kw">and</span> y <span class="op">&lt;</span> <span class="dv">0</span>, <span class="va">do:</span> <span class="va">:cuarto</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span><span class="dv">0</span>, <span class="dv">0</span><span class="fu">})</span>, <span class="va">do:</span> <span class="va">:origen</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span>x, y<span class="fu">})</span>, <span class="va">do:</span> <span class="va">:eje</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">(</span>_<span class="fu">)</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:error</span>, <span class="va">:invalid_argument</span><span class="fu">}</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; cuadrante({1, 3})
+<span class="fragment">:primero</span>
+&gt; cuadrante({0, -5})
+<span class="fragment">:eje</span>
+&gt; cuadrante({1, 4, 6})
+<span class="fragment">{:error, :invalid_argument}</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>En la siguiente cláusula del ejemplo anterior</p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span>x, y<span class="fu">})</span>, <span class="va">do:</span> <span class="va">:eje</span></span></code></pre></div>
+
+<p>no estamos utilizando los valores de <code>x</code> e <code>y</code>
+en el cuerpo de la función.</p></li>
+<li><p>El compilador muestra un aviso indicando que es preferible
+utilizar variables anónimas en esos casos:</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span>_, _<span class="fu">})</span>, <span class="va">do:</span> <span class="va">:eje</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>La última cláusula del ejemplo anterior es una cláusula
+<em>catch-all</em> que devuelve una tupla que indica que el argumento es
+inválido.</p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">(</span>_<span class="fu">)</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:error</span>, <span class="va">:invalid_argument</span><span class="fu">}</span></span></code></pre></div>
+</li>
+<li><p>En general, si solamente tenemos pensado llamar a
+<code>cuadrante</code> con tuplas de dos componentes, es preferible
+evitar este tipo de cláusulas.</p>
+<ul>
+<li>De este modo, si por error llamamos a <code>cuadrante</code> con
+otra cosa distinta, el programa fallará, haciendo el error
+explícito.</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span>x, y<span class="fu">})</span> <span class="kw">when</span> x <span class="op">&gt;</span> <span class="dv">0</span> <span class="kw">and</span> y <span class="op">&gt;</span> <span class="dv">0</span>, <span class="va">do:</span> <span class="va">:primero</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span>x, y<span class="fu">})</span> <span class="kw">when</span> x <span class="op">&lt;</span> <span class="dv">0</span> <span class="kw">and</span> y <span class="op">&gt;</span> <span class="dv">0</span>, <span class="va">do:</span> <span class="va">:segundo</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span>x, y<span class="fu">})</span> <span class="kw">when</span> x <span class="op">&lt;</span> <span class="dv">0</span> <span class="kw">and</span> y <span class="op">&lt;</span> <span class="dv">0</span>, <span class="va">do:</span> <span class="va">:tercero</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span>x, y<span class="fu">})</span> <span class="kw">when</span> x <span class="op">&gt;</span> <span class="dv">0</span> <span class="kw">and</span> y <span class="op">&lt;</span> <span class="dv">0</span>, <span class="va">do:</span> <span class="va">:cuarto</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span><span class="dv">0</span>, <span class="dv">0</span><span class="fu">})</span>, <span class="va">do:</span> <span class="va">:origen</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cuadrante<span class="fu">({</span>x, y<span class="fu">})</span>, <span class="va">do:</span> <span class="va">:eje</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; cuadrante({1, 4, 6})
+** (FunctionClauseError) no function clause matching in Cuadrante.cuadrante/1 </code></pre>
+
+</section>
+<section id="expresiones-case" class="slide level2">
+<h2>Expresiones <code>case</code></h2>
+<ul>
+<li><p>La expresión <code>case</code> permite comparar un valor con una
+serie de patrones hasta encontrar uno que ajuste con el valor
+proporcionado:</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> suma<span class="fu">(</span>t<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> t <span class="kw">do</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span>x, y<span class="fu">}</span> <span class="op">-&gt;</span> x <span class="op">+</span> y</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span>x, y, z<span class="fu">}</span> <span class="op">-&gt;</span> x <span class="op">+</span> y <span class="op">+</span> z  </span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; suma({1, 4})
+5
+&gt; suma({3, 5, 1})
+9</code></pre>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>En general, una expresión <code>case</code> tiene la siguiente
+forma:</p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">case</span> <span class="meta">exp</span> <span class="kw">do</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="meta"><span class="">pat<sub>1</sub></span></span> <span class="kw">when</span> <span class="meta"><span class="">guarda<sub>1</sub></span></span> <span class="op">-&gt;</span> <span class="meta"><span class="">exp<sub>1</sub></span></span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="meta"><span class="">pat<sub>2</sub></span></span> <span class="kw">when</span> <span class="meta"><span class="">guarda<sub>2</sub></span></span> <span class="op">-&gt;</span> <span class="meta"><span class="">exp<sub>2</sub></span></span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="meta"><span class="">pat<sub>n</sub></span></span> <span class="kw">when</span> <span class="meta"><span class="">guarda<sub>2</sub></span></span> <span class="op">-&gt;</span> <span class="meta"><span class="">exp<sub>n</sub></span></span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+<li><p>Se evalúa la expresión <code>exp</code> y se ejecuta la primera
+cláusula <code>i</code> tal que <code>exp</code> encaje con <span
+style="font-family: monospace;">pat<sub>i</sub></span> y se cumpla <span
+style="font-family: monospace;">guarda<sub>i</sub></span>.</p></li>
+<li><p>Las guardas son opcionales.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Si la expresión <code>exp</code> no ajusta con ninguno de los
+patrones de las cláusulas, se produce un error.</p></li>
+<li><p>Es posible introducir una variable anónima como patrón
+<em>catch-all</em>:</p>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> segundo_elemento<span class="fu">(</span>l<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> l <span class="kw">do</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="ot">[</span>_, y <span class="op">|</span> _<span class="ot">]</span> <span class="op">-&gt;</span> y</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">-&gt;</span> <span class="cn">nil</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; segundo_elemento([:a, :b, :c])
+:b
+&gt; segundo_elemento([:a])
+nil</code></pre>
+</li>
+</ul>
+</section>
+<section id="diferencia-entre-case-y-funciones-con-múltiples-cláusulas"
+class="slide level2">
+<h2>Diferencia entre <code>case</code> y funciones con múltiples
+cláusulas</h2>
+<ul>
+<li><p>Si el cuerpo de una función consiste simplemente en un
+<code>case</code>, puede escribirse como una función con múltiples
+cláusulas:</p></li>
+<li><p>Por ejemplo, la función <code>segundo_elemento</code> mostrada
+anteriormente se puede implementar del siguiente modo:</p>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> segundo_elemento<span class="fu">(</span><span class="ot">[</span>_, y <span class="op">|</span> _<span class="ot">]</span><span class="fu">)</span>, <span class="va">do:</span> y</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> segundo_elemento<span class="fu">(</span>_<span class="fu">)</span>, <span class="va">do:</span> <span class="cn">nil</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Las expresiones <code>case</code> sí son útiles cuando el cuerpo de
+la función realiza otras operaciones, además del <code>case</code>.</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> comprueba_punto<span class="fu">(</span>x<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  c <span class="op">=</span> cuadrante<span class="fu">(</span>x<span class="fu">)</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> c <span class="kw">do</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">:primero</span> <span class="op">-&gt;</span> <span class="cn">true</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">-&gt;</span> <span class="cn">false</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column fragment">
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> comprueba_punto<span class="fu">(</span>x<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> cuadrante<span class="fu">(</span>x<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">:primero</span> <span class="op">-&gt;</span> <span class="cn">true</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">-&gt;</span> <span class="cn">false</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div>
+</div>
+</section></section>
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/search/search.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Prints all fragments in their visible states on the same slide 
+        pdfSeparateFragments: false,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom,
+          // RevealHighlight          
+        ]
+      });
+    </script>
+    </body>
+</html>

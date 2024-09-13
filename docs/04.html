@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Manuel Montenegro Montes">
+  <title>Tuplas y listas</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="css/nnfx-light.min.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="css/pdap.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="img/RedBackground.jpg">
+  <h1 class="title">Tuplas y listas</h1>
+<div id="author-container">
+<div class="author">
+Manuel Montenegro Montes
+<br>
+<span id="email"><a href="montenegro@fdi.ucm.es">montenegro@fdi.ucm.es</a></span>
+</div>
+<div class="subject">
+<strong>Programación Declarativa Aplicada</strong>
+<br>Máster en Ingeniería Informática<br>Facultad de
+Informática<br>Universidad Complutense de Madrid
+</div>
+</div>
+</section>
+
+<section id="section" class="slide level2 outline"
+data-background-image="img/RedBackground.jpg">
+<h2 class="outline" data-background-image="img/RedBackground.jpg"></h2>
+<ol type="1">
+<li>Tuplas</li>
+<li>Listas</li>
+</ol>
+</section>
+<section>
+<section id="tuplas" class="title-slide slide level1">
+<h1>Tuplas</h1>
+
+</section>
+<section id="tuplas-1" class="slide level2">
+<h2>Tuplas</h2>
+<div>
+<ul>
+<li class="fragment"><p>Las <strong>tuplas</strong> son colecciones que
+agrupan varios valores.</p></li>
+<li class="fragment"><p>Tienen un tamaño fijo.</p></li>
+<li class="fragment"><p>Las tuplas se representan mediante llaves
+(<code>{</code> y <code>}</code>) y sus elementos están separados por
+comas.</p></li>
+<li class="fragment"><p>Ejemplos:</p></li>
+</ul>
+</div>
+<div class="columns fragment">
+<div class="column" style="width:30%;">
+<p><code>{3, 4}</code></p>
+<p><code>{:ok, 2}</code></p>
+<p><code>{3.2, 1.4, 4}</code></p>
+</div><div class="column" style="width:70%;">
+<p><code>{:error, :not_found}</code></p>
+<p><code>{:ok, "Juan Luis", 32}</code></p>
+<p><code>{:rectangle, {23, 1}, :red}</code></p>
+</div>
+</div>
+</section>
+<section id="acceso-a-elementos" class="slide level2">
+<h2>Acceso a elementos</h2>
+<ul>
+<li><p>La función <code>elem/2</code> permite acceder a los elementos a
+partir de su índice.</p></li>
+<li><p>Los índices se numeran desde el <code>0</code>.</p>
+<pre class="text"><code>&gt; t = {:ok, 3, &quot;J&quot;}
+&gt; <span class="hl">elem(t, 0)</span>
+:ok
+&gt; <span class="hl">elem(t, 1)</span>
+3</code></pre>
+</li>
+</ul>
+<div class="fragment">
+<div class="info_box" style="font-weight:normal">
+<p>No obstante, lo habitual es utilizar <strong>ajuste de
+patrones</strong> para acceder a las componentes.</p>
+</div>
+</div>
+</section>
+<section id="modificar-elementos" class="slide level2">
+<h2>Modificar elementos</h2>
+<ul>
+<li><p>Las tuplas son <strong>inmutables</strong>.</p>
+<ul>
+<li>Una vez creadas, no pueden modificarse.</li>
+</ul></li>
+<li><p>No obstante, es posible crear una tupla a partir de otra mediante
+<code>put_elem/3</code>.</p>
+<ul>
+<li><code>put_elem(t, idx, v)</code> crea una copia de la tupla
+<code>t</code>, pero colocando el valor <code>v</code> en la posición
+<code>idx</code>.</li>
+</ul>
+<pre class="text"><code>&gt; t1 = {1, :hola, 6, 10}
+&gt; t2 = <span class="hl">put_elem(t1, 2, :adios)</span>
+&gt; t2
+{1, :hola, :adios, 10}   <span class="arrow_box_left fragment"> Tupla modificada </span>
+&gt; t1
+{1, :hola, 6, 10}        <span class="arrow_box_left fragment"> La tupla original se conserva </span></code></pre>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>  &gt; t1 = {1, :hola, 6, 10}
+  &gt; t2 = <span class="hl">put_elem(t1, 2, :adios)</span></code></pre>
+
+<p><svg
+   width="193.79538mm"
+   height="75.029579mm"
+   viewBox="0 0 193.79538 75.029579"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="CopiaTupla.svg"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.1429644"
+     inkscape:cx="287.84799"
+     inkscape:cy="282.59849"
+     inkscape:window-width="2019"
+     inkscape:window-height="1140"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="Dot"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         sodipodi:nodetypes="sssss"
+         id="path17" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-9"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         sodipodi:nodetypes="sssss"
+         id="path17-2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-0"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-2"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         sodipodi:nodetypes="sssss"
+         id="path17-28" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-9"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-7" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-2-9"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         sodipodi:nodetypes="sssss"
+         id="path17-28-3" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-9-1"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-7-9" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-5"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         sodipodi:nodetypes="sssss"
+         id="path17-4" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-7"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-6" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-2-5"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         sodipodi:nodetypes="sssss"
+         id="path17-28-6" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-9-9"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-7-3" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-2-9-7"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         sodipodi:nodetypes="sssss"
+         id="path17-28-3-4" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-9-1-5"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-7-9-2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-9-5"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         sodipodi:nodetypes="sssss"
+         id="path17-2-4" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-0-7"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="2"
+       markerHeight="2"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-2-4" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-15.026938,-12.176501)">
+    <g
+       id="g2"
+       transform="translate(-16.02155,-7.9067859)">
+      <rect
+         style="fill:#d5ffd5;fill-opacity:1;stroke:#006d00;stroke-width:0.564999;stroke-opacity:1"
+         id="rect1"
+         width="13.262674"
+         height="15.160702"
+         x="40.19223"
+         y="79.079613" />
+      <text
+         xml:space="preserve"
+         style="font-size:9.87778px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;text-anchor:middle;fill:#d5ffd5;fill-opacity:1;stroke:#006d00;stroke-width:0.564999;stroke-opacity:1"
+         x="46.667393"
+         y="89.522476"
+         id="text2"><tspan
+           sodipodi:role="line"
+           id="tspan2"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.87778px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.565"
+           x="46.667393"
+           y="89.522476">1</tspan></text>
+    </g>
+    <g
+       id="g2-5"
+       transform="translate(14.856858,-8.0581141)">
+      <rect
+         style="fill:#d5d5f5;fill-opacity:1;stroke:#02006d;stroke-width:0.564999;stroke-dasharray:none;stroke-opacity:1"
+         id="rect3"
+         width="73.903671"
+         height="18.42415"
+         x="20.298679"
+         y="20.72579" />
+      <g
+         id="g3">
+        <rect
+           style="fill:#d5ffd5;fill-opacity:1;stroke:#006d00;stroke-width:0.565;stroke-dasharray:none;stroke-opacity:1"
+           id="rect1-3"
+           width="32.270172"
+           height="14.853361"
+           x="40.345901"
+           y="79.233284" />
+        <text
+           xml:space="preserve"
+           style="font-size:9.87778px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;text-anchor:middle;fill:#d5ffd5;fill-opacity:1;stroke:#006d00;stroke-width:0.564999;stroke-opacity:1"
+           x="55.175507"
+           y="89.623749"
+           id="text2-5"><tspan
+             sodipodi:role="line"
+             id="tspan2-6"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.87778px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.565"
+             x="55.175507"
+             y="89.623749">:hola</tspan></text>
+      </g>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.87777px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.564999;stroke-dasharray:none;stroke-opacity:1"
+         x="44.057014"
+         y="32.797565"
+         id="text3"><tspan
+           sodipodi:role="line"
+           id="tspan3"
+           style="stroke-width:0.565"
+           x="44.057014"
+           y="32.797565">t1 = {  ,  ,  ,  }</tspan></text>
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.267;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot);marker-end:url(#Triangle)"
+         d="M 34.864629,29.679494 17.875936,76.513869"
+         id="path3"
+         inkscape:connector-type="polyline"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.267;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-9);marker-end:url(#Triangle-0)"
+         d="M 78.615649,29.675457 113.58531,77.771265"
+         id="path3-7"
+         inkscape:connector-type="polyline"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.267;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-2);marker-end:url(#Triangle-9)"
+         d="M 49.21012,29.679144 54.043761,77.43405"
+         id="path3-6"
+         inkscape:connector-type="polyline"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.267;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-2-9);marker-end:url(#Triangle-9-1)"
+         d="M 64.482314,29.679144 90.894138,78.148407"
+         id="path3-6-7"
+         inkscape:connector-type="polyline"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+      <g
+         id="g4"
+         class="fragment">
+        <rect
+           style="fill:#f5f5d5;fill-opacity:1;stroke:#666d00;stroke-width:0.564999;stroke-dasharray:none;stroke-opacity:1"
+           id="rect3-0"
+           width="73.903671"
+           height="18.42415"
+           x="119.7793"
+           y="20.517115" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.87777px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.564999;stroke-dasharray:none;stroke-opacity:1"
+           x="143.53763"
+           y="32.588879"
+           id="text3-3"><tspan
+             sodipodi:role="line"
+             id="tspan3-6"
+             style="stroke-width:0.565"
+             x="143.53763"
+             y="32.588879">t2 = {  ,  ,  ,  }</tspan></text>
+        <g
+           id="g3-3"
+           transform="translate(107.64906,0.89875982)">
+          <rect
+             style="fill:#d5ffd5;fill-opacity:1;stroke:#006d00;stroke-width:0.592886;stroke-dasharray:none;stroke-opacity:1"
+             id="rect1-3-2"
+             width="36.434402"
+             height="14.486381"
+             x="40.359844"
+             y="79.247231" />
+          <text
+             xml:space="preserve"
+             style="font-size:9.87778px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;text-anchor:middle;fill:#d5ffd5;fill-opacity:1;stroke:#006d00;stroke-width:0.564999;stroke-opacity:1"
+             x="57.807785"
+             y="89.55864"
+             id="text2-5-0"><tspan
+               sodipodi:role="line"
+               id="tspan2-6-6"
+               style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.87778px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.565"
+               x="57.807785"
+               y="89.55864">:adios</tspan></text>
+        </g>
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:#9f7527;stroke-width:0.267;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-5);marker-end:url(#Triangle-7)"
+           d="M 133.94509,30.44527 21.687045,77.306768"
+           id="path3-3"
+           inkscape:connector-type="polyline"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:#9f7527;stroke-width:0.267;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-9-5);marker-end:url(#Triangle-0-7)"
+           d="M 177.69611,30.44123 120.01965,78.384221"
+           id="path3-7-0"
+           inkscape:connector-type="polyline"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:#9f7527;stroke-width:0.267;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-2-5);marker-end:url(#Triangle-9-9)"
+           d="M 148.29058,30.44492 58.319651,78.175405"
+           id="path3-6-78"
+           inkscape:connector-type="polyline"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:#9f7527;stroke-width:0.267;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-2-9-7);marker-end:url(#Triangle-9-1-5)"
+           d="m 163.56277,30.44492 3.20598,48.169953"
+           id="path3-6-7-6"
+           inkscape:connector-type="polyline"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+      </g>
+    </g>
+    <g
+       id="g2-2"
+       transform="translate(60.059046,-7.7565645)">
+      <rect
+         style="fill:#d5ffd5;fill-opacity:1;stroke:#006d00;stroke-width:0.564999;stroke-opacity:1"
+         id="rect1-7"
+         width="13.262674"
+         height="15.160702"
+         x="40.19223"
+         y="79.079613" />
+      <text
+         xml:space="preserve"
+         style="font-size:9.87778px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;text-anchor:middle;fill:#d5ffd5;fill-opacity:1;stroke:#006d00;stroke-width:0.564999;stroke-opacity:1"
+         x="46.667393"
+         y="89.522476"
+         id="text2-0"><tspan
+           sodipodi:role="line"
+           id="tspan2-9"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.87778px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.565"
+           x="46.667393"
+           y="89.522476">6</tspan></text>
+    </g>
+    <g
+       id="g2-6"
+       transform="translate(83.975087,-7.3167346)">
+      <rect
+         style="fill:#d5ffd5;fill-opacity:1;stroke:#006d00;stroke-width:0.564999;stroke-opacity:1"
+         id="rect1-2"
+         width="13.262674"
+         height="15.160702"
+         x="40.19223"
+         y="79.079613" />
+      <text
+         xml:space="preserve"
+         style="font-size:9.87778px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;text-anchor:middle;fill:#d5ffd5;fill-opacity:1;stroke:#006d00;stroke-width:0.564999;stroke-opacity:1"
+         x="46.667393"
+         y="89.522476"
+         id="text2-6"><tspan
+           sodipodi:role="line"
+           id="tspan2-1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.87778px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.565"
+           x="46.667393"
+           y="89.522476">10</tspan></text>
+    </g>
+  </g>
+</svg>
+</p>
+<div class="fragment">
+<ul>
+<li><p>El resultado de <code>put_elem</code> comparte los elementos no
+modificados en la tupla original.</p></li>
+<li><p>No hay peligro: todos los valores en Elixir son
+inmutables.</p></li>
+</ul>
+</div>
+</section>
+<section id="coste-de-las-operaciones" class="slide level2">
+<h2>Coste de las operaciones</h2>
+<ul>
+<li><p>Acceso: <span class="rojo"><em>O(1)</em></span></p></li>
+<li><p>Modificación: <span class="rojo"><em>O(n)</em></span>, donde
+<em>n</em> es el tamaño de la tupla.         </p></li>
+</ul>
+<div class="fragment">
+<div class="info_box">
+<p>Las tuplas suelen tener pocos elementos.</p>
+<p>Si se desea manejar una cantidad indefinida de elementos, lo habitual
+es utilizar una lista.</p>
+</div>
+</div>
+</section></section>
+<section>
+<section id="listas" class="title-slide slide level1">
+<h1>Listas</h1>
+
+</section>
+<section id="definición-de-una-lista" class="slide level2">
+<h2>Definición de una lista</h2>
+<ul>
+<li><p>Las listas son tipos de datos que permiten almacenar colecciones
+de elementos.</p></li>
+<li><p>En programación funcional, el tipo de datos de las listas se
+define de forma recursiva.</p></li>
+</ul>
+<div class="fragment">
+<div
+style="background-color:#E0FFE0; padding-left: 20px; border-left: 3px solid #409040">
+<ul>
+<li><p>Una lista puede ser:</p>
+<ul>
+<li><p><code>[]</code>, que denota la lista vacía, o bien,</p></li>
+<li><p><code>[x | xs]</code>, que denota una lista cuyo primer elemento
+es <code>x</code>, seguido de <code>xs</code>, que a su vez es otra
+lista.</p>
+<p>A <code>x</code> se denomina <strong>cabeza</strong> de la lista, y
+<code>xs</code> es la <strong>cola</strong> de la lista.</p></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="ejemplos" class="slide level2">
+<h2>Ejemplos</h2>
+<p><code>[3 | []]</code></p>
+<div class="fragment">
+<ul>
+<li><p>Representa la lista cuyo primer elemento es el <code>3</code>,
+seguido de la lista vacía.</p>
+<ul>
+<li>Es decir, es una lista de un solo elemento, que es el
+<code>3</code>.</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<p><code>[5 | [3 | []]]</code></p>
+</div>
+<div class="fragment">
+<ul>
+<li>Representa una lista con dos elementos: el primero es el
+<code>5</code>, y el segundo es el <code>3</code>.</li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>La siguiente lista contiene los números desde el 1 al 5, en orden
+ascendente:</p>
+<p><code>[1 | [2 | [3 | [4 | [5 | []]]]]]</code></p></li>
+</ul>
+<div class="fragment">
+<ul>
+<li><p>En cuanto a almacenamiento, las listas funcionales son similares
+a las <strong>listas enlazadas</strong> de los lenguajes
+imperativos:</p>
+<p><img data-src="04/ListaEnlazada.svg" /></p></li>
+</ul>
+</div>
+</section>
+<section id="azúcar-sintáctico" class="slide level2">
+<h2>«Azúcar» sintáctico</h2>
+<ul>
+<li><p>Elixir proporciona una sintaxis para expresar listas de una
+manera más cómoda.</p></li>
+<li><p>En lugar de:</p>
+<p><code>[1 | [2 | [3 | [4 | [5 | []]]]]]</code></p>
+<p>puede escribirse</p>
+<p><code>[1, 2, 3, 4, 5]</code></p></li>
+<li><p>Es decir, la lista se expresa mediante corchetes (<code>[</code>
+y <code>]</code>) y los elementos se separan mediante comas.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>En general, la notación:</p>
+<p><span style="color:#752ec7;font-family: monospace;">[x<sub>0</sub>,
+x<sub>1</sub>, …, x<sub>n</sub>]</span></p>
+<p>equivale a:</p>
+<p><span style="color:#752ec7;font-family: monospace;">[x<sub>0</sub> |
+[x<sub>1</sub> | [… | [x<sub>n</sub> | []] … ]]</span></p></li>
+</ul>
+<div class="fragment">
+<ul>
+<li><p>Por otro lado, la notación</p>
+<p><span style="color:#752ec7;font-family: monospace;">[x<sub>0</sub>,
+x<sub>1</sub>, … x<sub>n</sub> | v]</span></p>
+<p>equivale a:</p>
+<p><span style="color:#752ec7;font-family: monospace;">[x<sub>0</sub> |
+[x<sub>1</sub> | [… | [x<sub>n</sub> | v] … ]]</span></p></li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>En el intérprete <code>iex</code>, las listas se muestran con la
+sintaxis «azucarada»:</li>
+</ul>
+<pre class="text"><code>&gt; [1 | [2 | [4 | []]]]
+<span class="hl">[1, 2, 4]</span>
+
+<span class="fragment">> [1 | []] 
+<span class="hl">[1]</span> </span>
+
+<span class="fragment">> [1, 2 | []]
+<span class="hl">[1, 2]</span> </span>
+
+<span class="fragment">> [1, 5 | [7, 9]]
+<span class="hl">[1, 5, 7, 9]</span> </span></code></pre>
+
+</section>
+<section id="acceso-a-elementos-de-listas" class="slide level2">
+<h2>Acceso a elementos de listas</h2>
+<div>
+<ul>
+<li class="fragment"><p>La función <code>hd/1</code> devuelve la cabeza
+de una lista no vacía.</p>
+<pre class="text"><code>&gt; hd([1, 2, 5])
+1
+&gt; hd([])
+** (ArgumentError) not a nonempty list</code></pre>
+</li>
+<li class="fragment"><p>La función <code>tl/1</code> devuelve la cola de
+una lista no vacía</p>
+<pre class="text"><code>&gt; tl([1, 2, 5])
+[2, 5]
+&gt; tl([])
+** (ArgumentError) not a nonempty list</code></pre>
+</li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplos-1">Ejemplos</h3>
+<pre class="text"><code>&gt; xs = [:a, :b, :c, :d]
+
+&gt; hd(xs)          <span class="arrow_box_left fragment"> Primer elemento </span>
+<span class="fragment">:a </span>
+
+&gt; hd(tl(xs))      <span class="arrow_box_left fragment"> Segundo elemento </span>
+<span class="fragment">:b </span>
+
+&gt; hd(tl(tl(xs)))  <span class="arrow_box_left fragment"> Tercer elemento </span>
+<span class="fragment">:c </span></code></pre>
+
+<div class="info_box fragment" style="font-weight:normal">
+<p>No obstante, lo habitual es utilizar <strong>ajuste de
+patrones</strong> para acceder a la cabeza y cola de una lista.</p>
+</div>
+</section>
+<section id="otras-funciones-sobre-listas" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Otras
+funciones sobre listas</h2>
+<ul>
+<li><p><code>length/1</code>: devuelve la longitud de una lista.</p>
+<pre class="text"><code>&gt; length([1, 4, 6])
+3
+&gt; length([])
+0</code></pre>
+</li>
+<li><p><code>Enum.at/2</code>: obtiene un elemento a partir de su
+posición.</p>
+<pre class="text"><code>&gt; Enum.at([10, 9, 3, 6], 2)
+3</code></pre>
+</li>
+</ul>
+</section>
+<section id="section-1" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
+<ul>
+<li><p><code>Enum.take/2</code>: construye una lista con los <em>n</em>
+primeros elementos de otra.</p>
+<pre class="text"><code>&gt; Enum.take([0, 9, 3, 5], 2)
+[10, 9]</code></pre>
+</li>
+<li><p><code>Enum.drop/2</code>: construye una lista a partir de otra,
+descartando los <em>n</em> primeros elementos.</p>
+<pre class="text"><code>&gt; Enum.drop([0, 9, 3, 5], 2)
+[3, 5]</code></pre>
+</li>
+<li><p><code>++/2</code>: concatena dos listas.</p>
+<pre class="text"><code>&gt; [1, 4] ++ [4, 6, 8]
+[1, 4, 4, 6, 8]</code></pre>
+</li>
+</ul>
+</section>
+<section id="section-2" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
+<ul>
+<li><p><code>in/2</code>: determina si un elemento está contenido en una
+lista.</p>
+<pre class="text"><code>&gt; 5 in [1, 5, 6]
+true
+&gt; 3 in []
+false</code></pre>
+
+<p>Puede utilizarse en guardas.</p></li>
+<li><p>Más funciones:</p>
+<ul>
+<li>Módulo <code>List</code> <a
+href="https://hexdocs.pm/elixir/List.html">[+]</a></li>
+<li>Módulo <code>Enum</code> <a
+href="https://hexdocs.pm/elixir/Enum.html">[+]</a></li>
+</ul></li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/search/search.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Prints all fragments in their visible states on the same slide 
+        pdfSeparateFragments: false,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom,
+          // RevealHighlight          
+        ]
+      });
+    </script>
+    </body>
+</html>
