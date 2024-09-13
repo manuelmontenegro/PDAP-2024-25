@@ -153,7 +153,7 @@ section.level1 h1 {
   margin-left: 0.4em;
   padding-left: 1em;
   padding-right: 1em;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 .caja_codigo {
@@ -164,7 +164,7 @@ section.level1 h1 {
 }
 
 .arrow_box_left:after, .arrow_box_left:before {
-  right: 100%;
+  right: 99.8%;
   top: 55%;
   border: solid transparent;
   content: "";
