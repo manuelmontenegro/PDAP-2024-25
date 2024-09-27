@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Manuel Montenegro Montes">
+  <title>Estructuras de datos asociativas en Elixir</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="css/nnfx-light.min.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {  background-color: #f8f8f8; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ef2929; } /* Alert */
+    code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #204a87; } /* Attribute */
+    code span.bn { color: #0000cf; } /* BaseN */
+    code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4e9a06; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #8f5902; font-style: italic; } /* Comment */
+    code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+    code span.dt { color: #204a87; } /* DataType */
+    code span.dv { color: #0000cf; } /* DecVal */
+    code span.er { color: #a40000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #0000cf; } /* Float */
+    code span.fu { color: #204a87; font-weight: bold; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+    code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+    code span.ot { color: #8f5902; } /* Other */
+    code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+    code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+    code span.ss { color: #4e9a06; } /* SpecialString */
+    code span.st { color: #4e9a06; } /* String */
+    code span.va { color: #000000; } /* Variable */
+    code span.vs { color: #4e9a06; } /* VerbatimString */
+    code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="css/pdap.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="img/RedBackground.jpg">
+  <h1 class="title">Estructuras de datos asociativas en Elixir</h1>
+<div id="author-container">
+<div class="author">
+Manuel Montenegro Montes
+<br>
+<span id="email"><a href="montenegro@fdi.ucm.es">montenegro@fdi.ucm.es</a></span>
+</div>
+<div class="subject">
+<strong>Programación Declarativa Aplicada</strong>
+<br>Máster en Ingeniería Informática<br>Facultad de
+Informática<br>Universidad Complutense de Madrid
+</div>
+</div>
+</section>
+
+<section id="section" class="slide level2 outline"
+data-background-image="img/RedBackground.jpg">
+<h2 class="outline" data-background-image="img/RedBackground.jpg"></h2>
+<ol type="1">
+<li>Keyword lists</li>
+<li>Diccionarios (<em>maps</em>)</li>
+<li>Conjuntos</li>
+</ol>
+</section>
+<section>
+<section id="keyword-lists" class="title-slide slide level1">
+<h1>Keyword lists</h1>
+
+</section>
+<section id="qué-es-una-keyword-list" class="slide level2">
+<h2>¿Qué es una <em>keyword list</em>?</h2>
+<ul>
+<li><p>Es una lista de pares, donde la primera componente de cada par es
+un <strong>átomo</strong> (denominado <em>clave</em>).</p></li>
+<li><p>Ejemplo:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="fu">{</span><span class="va">:nombre</span>, <span class="st">&quot;Diana&quot;</span><span class="fu">}</span>, <span class="fu">{</span><span class="va">:edad</span>, <span class="dv">21</span><span class="fu">}</span>, <span class="fu">{</span><span class="va">:lang</span>, <span class="st">&quot;ES&quot;</span><span class="fu">}</span><span class="ot">]</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section id="para-qué-sirven-las-keyword-lists" class="slide level2">
+<h2>¿Para qué sirven las <em>keyword lists</em>?</h2>
+<ul>
+<li><p>Son un mecanismo sencillo para pasar una lista de opciones a una
+función.</p></li>
+<li><p>Ejemplo: función <code>split</code></p>
+<pre class="text"><code>&gt; String.split(&quot;1,3,4,5,,9&quot;, &quot;,&quot;)
+<span class="fragment">["1", "3", "4", "5", "", "9"]</span>
+
+&gt; String.split(&quot;1,3,4,5,,9&quot;, &quot;,&quot;, <span class="hl">[{:trim, true}]</span>)
+<span class="fragment">["1", "3", "4", "5", "9"]</span>
+
+&gt; String.split(&quot;1,3,4,5,,9&quot;, &quot;,&quot;, <span class="hl">[{:trim, true}, {:parts, 3}]</span>)
+<span class="fragment">["1", "3", "4,5,,9"]</span></code></pre>
+</li>
+</ul>
+</section>
+<section id="azúcar-sintáctico" class="slide level2">
+<h2>«Azúcar» sintáctico</h2>
+<ul>
+<li><p>Existe una sintaxis para las <em>keyword lists</em> que permite
+omitir las llaves (<code>{</code>, <code>}</code>), cambiando cada
+entrada <code>{:clave, valor}</code> por <code>clave: valor</code>.</p>
+<p>En lugar de:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="fu">{</span><span class="va">:nombre</span>, <span class="st">&quot;Diana&quot;</span><span class="fu">}</span>, <span class="fu">{</span><span class="va">:edad</span>, <span class="dv">21</span><span class="fu">}</span>, <span class="fu">{</span><span class="va">:lang</span>, <span class="st">&quot;ES&quot;</span><span class="fu">}</span><span class="ot">]</span></span></code></pre></div>
+
+<p>se puede escribir</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="va">nombre:</span> <span class="st">&quot;Diana&quot;</span>, <span class="va">edad:</span> <span class="dv">21</span>, <span class="va">lang:</span> <span class="st">&quot;ES&quot;</span><span class="ot">]</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>De hecho, si una función de Elixir recibe una keyword list como
+<em>último</em> parámetro, es posible omitir los corchetes:</p>
+<pre class="text"><code>&gt; String.split(&quot;1,3,4,5,,9&quot;, &quot;,&quot;)
+[&quot;1&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;&quot;, &quot;9&quot;]
+
+&gt; String.split(&quot;1,3,4,5,,9&quot;, &quot;,&quot;, <span class="hl">trim: true</span>)
+[&quot;1&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;9&quot;]
+
+&gt; String.split(&quot;1,3,4,5,,9&quot;, &quot;,&quot;, <span class="hl">trim: true</span>, <span class="hl">parts: 3</span>)
+[&quot;1&quot;, &quot;3&quot;, &quot;4,5,,9&quot;]</code></pre>
+</li>
+</ul>
+</section>
+<section id="funciones-sobre-keyword-lists" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Funciones
+sobre <em>keyword lists</em></h2>
+<p>Están definidas en el módulo <code>Keyword</code> <a
+href="https://hexdocs.pm/elixir/Keyword.html">[+]</a></p>
+<ul>
+<li><p><code>get(kwlist, key, default \\ nil)</code></p>
+<p>Busca el valor correspondiente a <code>key</code> en
+<code>kwlist</code>. Si no existe, devuelve
+<code>default</code>.</p></li>
+<li><p><code>put(kwlist, key, value)</code></p>
+<p>Inserta el par <code>{key, value}</code> en la <code>kwlist</code>.
+Si ya existe una entrada con la clave <code>key</code>, la
+sobreescribe.</p></li>
+</ul>
+</section>
+<section id="funciones-sobre-keyword-lists-1" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Funciones
+sobre <em>keyword lists</em></h2>
+<ul>
+<li><p><code>merge(kwlist1, kwlist2)</code></p>
+<p>Mezcla las entradas de las dos listas. Si hay claves duplicadas, las
+de <code>kwlist2</code> sobreescriben a las de
+<code>kwlist1</code>.</p></li>
+<li><p>Operador <code>[]</code> (por ejemplo,
+<code>kwlist[:clave]</code>)</p>
+<p>Funciona igual que <code>get</code>, pero devuelve <code>nil</code>
+en caso de que no exista la clave.</p></li>
+</ul>
+</section>
+<section id="ejemplos" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Ejemplos</h2>
+<pre class="text"><code>&gt; kw = [nombre: &quot;Diana&quot;, edad: 21, lang: &quot;ES&quot;]
+&gt; Keyword.get(kw, :nombre)
+<span class="fragment">"Diana"</span>
+
+&gt; kw[:nombre]
+<span class="fragment">"Diana"</span>
+
+&gt; kw[:campo_no_existente]
+<span class="fragment">nil</span>
+
+&gt; Keyword.merge([nombre: &quot;Diana&quot;, edad: 21], 
+                [edad: 25, poblacion: &quot;Madrid&quot;])
+<span class="fragment">[nombre: "Diana", edad: 25, poblacion: "Madrid"]</span></code></pre>
+
+</section></section>
+<section>
+<section id="diccionarios-maps" class="title-slide slide level1">
+<h1>Diccionarios (<em>maps</em>)</h1>
+
+</section>
+<section id="diccionarios-maps-1" class="slide level2">
+<h2>Diccionarios (<em>maps</em>)</h2>
+<div>
+<ul>
+<li class="fragment"><p>Son estructuras que asocian claves con
+valores.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>%<span class="fu">{</span><span class="dv">1</span> <span class="op">=&gt;</span> <span class="st">&quot;d&quot;</span>, <span class="dv">2</span> <span class="op">=&gt;</span> <span class="st">&quot;a&quot;</span>, <span class="dv">4</span> <span class="op">=&gt;</span> <span class="st">&quot;b&quot;</span><span class="fu">}</span></span></code></pre></div>
+</li>
+<li class="fragment"><p>Se representan del siguiente modo:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>%<span class="fu">{</span><span class="meta"><span class="">clave<sub>1</sub></span></span> <span class="op">=&gt;</span> <span class="meta"><span class="">valor<sub>1</sub></span></span>, <span class="meta"><span class="">clave<sub>2</sub></span></span> <span class="op">=&gt;</span> <span class="meta"><span class="">valor<sub>2</sub></span></span>, <span class="op">...</span>, <span class="meta"><span class="">clave<sub>n</sub></span></span> <span class="op">=&gt;</span> <span class="meta"><span class="">valor<sub>n</sub></span></span><span class="fu">}</span></span></code></pre></div>
+</li>
+<li class="fragment"><p>Si las claves son átomos, se permite una
+sintaxis abreviada similar a la de las <em>keyword lists</em>:</p></li>
+</ul>
+</div>
+<div class="fragment">
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>%<span class="fu">{</span><span class="va">nombre:</span> <span class="st">&quot;Bárbara&quot;</span>, <span class="va">edad:</span> <span class="dv">53</span><span class="fu">}</span></span></code></pre></div>
+
+</div><div class="column">
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>%<span class="fu">{</span><span class="va">:nombre</span> <span class="op">=&gt;</span> <span class="st">&quot;Bárbara&quot;</span> <span class="va">:edad</span> <span class="op">=&gt;</span> <span class="dv">53</span><span class="fu">}</span></span></code></pre></div>
+
+</div>
+</div>
+</div>
+</section>
+<section id="keyword-lists-vs-diccionarios" class="slide level2">
+<h2><em>Keyword lists</em> vs diccionarios</h2>
+<div>
+<ul>
+<li class="fragment"><p>Las claves de una keyword list son
+<strong>átomos</strong>. Las claves de un diccionario pueden ser un
+valor arbitrario.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>%<span class="fu">{</span><span class="dv">1</span> <span class="op">=&gt;</span> <span class="st">&quot;d&quot;</span>, <span class="dv">2</span> <span class="op">=&gt;</span> <span class="st">&quot;a&quot;</span>, <span class="dv">4</span> <span class="op">=&gt;</span> <span class="st">&quot;b&quot;</span><span class="fu">}</span>   <span class="arrow_box_left"> Las claves son números </span></span></code></pre></div>
+</li>
+<li class="fragment"><p>Los diccionarios se implementan mediante
+<em>hash array mapped tries (HAMT)</em> persistentes, donde las
+operaciones tienen coste logarítmico (en el caso peor) en el número de
+entradas.</p>
+<ul>
+<li class="fragment">En la mayoría de casos, el coste es <span
+class="rojo">O(1)</span>.</li>
+<li class="fragment">Los diccionarios con menos de 32 entradas se
+representan como listas ordenadas.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="keyword-lists-vs-diccionarios-1" class="slide level2">
+<h2><em>Keyword lists</em> vs diccionarios</h2>
+<ul>
+<li><p>Una <em>keyword list</em> permite claves duplicadas; un
+diccionario, no.</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="hl"><span class="va">a:</span> <span class="dv">2</span></span>, <span class="va">b:</span> <span class="dv">3</span>, <span class="hl"><span class="va">a:</span> <span class="dv">5</span></span>, <span class="va">d:</span> <span class="dv">3</span><span class="ot">]</span>    <span class="arrow_box_left"> Clave duplicada </span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section id="cuándo-utilizar-uno-u-otro" class="slide level2">
+<h2>¿Cuándo utilizar uno u otro?</h2>
+<div>
+<ul>
+<li class="fragment"><p>Las <strong>keyword lists</strong> suelen
+utilizarse en las funciones que reciben una lista de opciones
+adicionales como último parámetro.</p>
+<ul>
+<li class="fragment">Por ejemplo: <code>inspect</code>,
+<code>split</code>, etc.</li>
+</ul></li>
+<li class="fragment"><p>Los <strong>diccionarios</strong> se utilizan
+cuando se quiere disponer de una estructura para almacenar datos y
+recuperarlos a partir de una clave.</p></li>
+</ul>
+</div>
+</section>
+<section id="ajuste-de-patrones" class="slide level2">
+<h2>Ajuste de patrones</h2>
+<p>Se puede realizar ajuste de patrones sobre diccionarios:</p>
+<div>
+<ol type="1">
+<li class="fragment"><p>El patrón <code>%{}</code> ajusta con cualquier
+diccionario.</p>
+<pre class="text"><code>&gt; dicc = %{&quot;Rubén&quot; =&gt; 31, &quot;Jorge&quot; =&gt; 26, &quot;Miriam&quot; =&gt; 42}
+&gt; <span class="hl">%{}</span> = dicc  <span class="arrow_box_left fragment"> OK </span></code></pre>
+</li>
+<li class="fragment"><p>El patrón <code>%{k =&gt; pat}</code> ajusta con
+cualquier diccionario que contenga, <strong>al menos</strong>, la clave
+<code>k</code>. El valor asociado a la clave <code>k</code> se ajustará
+con el patrón <code>pat</code>.</p>
+<pre class="text"><code>&gt; dicc = %{&quot;Rubén&quot; =&gt; 31, &quot;Jorge&quot; =&gt; 26, &quot;Miriam&quot; =&gt; 42}
+&gt; <span class="hl">%{&quot;Rubén&quot; =&gt; x}</span> = dicc   <span class="arrow_box_left fragment"> OK. La variable x queda ligada al valor 31 </span>
+&gt; x
+31
+&gt; <span class="hl">%{&quot;Gloria&quot; =&gt; _}</span> = dicc  <span class="arrow_box_left fragment"> Error </span></code></pre>
+</li>
+</ol>
+</div>
+</section>
+<section class="slide level2">
+
+<div>
+<ol start="3" type="1">
+<li class="fragment"><p>El patrón
+<code>%{k1 =&gt; pat1, k2 =&gt; pat2}</code> ajusta con cualquier
+diccionario que contenga, <strong>al menos</strong>, las claves
+<code>k1</code> y <code>k2</code>. El valor asociado a la clave
+<code>k1</code> se ajustará con el patrón <code>pat1</code>, y el valor
+asociado a la clave <code>k2</code> se ajustará al patrón
+<code>k2</code>.</p>
+<pre class="text"><code>&gt; dicc = %{&quot;Rubén&quot; =&gt; 31, &quot;Jorge&quot; =&gt; 26, &quot;Miriam&quot; =&gt; 42}
+&gt; <span class="hl">%{&quot;Miriam&quot; =&gt; x, &quot;Rubén&quot; =&gt; y}</span> = dicc   <span class="arrow_box_left fragment"> OK. x = 42, y = 31 </span>
+&gt; {x, y}
+{42, 31}</code></pre>
+</li>
+<li class="fragment"><p>En general, se permiten patrones de la forma
+<code>%{k1 =&gt; pat1, k2 =&gt; pat2, k3 =&gt; pat3, ...}</code></p></li>
+</ol>
+</div>
+</section>
+<section class="slide level2">
+
+<div>
+<ol start="5" type="1">
+<li class="fragment"><p>En el lado izquierdo de la flecha
+(<code>=&gt;</code>) en un patrón diccionario solo se permiten literales
+(átomos, tuplas, strings, números, etc.). <strong>No se permiten
+variables</strong>.</p>
+<pre class="text"><code>&gt; dicc = %{&quot;Rubén&quot; =&gt; 31, &quot;Jorge&quot; =&gt; 26, &quot;Miriam&quot; =&gt; 42}
+&gt; <span class="hl">%{x =&gt; y}</span> = dicc     <span class="arrow_box_left fragment"> Error. Patrón no válido </span>
+&gt; <span class="hl">%{x =&gt; 31}</span> = dicc    <span class="arrow_box_left fragment"> Error. Patrón no válido </span></code></pre>
+</li>
+<li class="fragment"><p>No obstante, sí es posible utilizar utilizar
+variables si van precedidas por el operador <em>pin</em>
+(<code>^</code>).</p>
+<pre class="text"><code>&gt; dicc = %{&quot;Rubén&quot; =&gt; 31, &quot;Jorge&quot; =&gt; 26, &quot;Miriam&quot; =&gt; 42}
+&gt; x = &quot;Rubén&quot;
+&gt; <span class="hl">%{^x =&gt; y}</span> = dicc    <span class="arrow_box_left fragment"> OK. y = 31 </span></code></pre>
+</li>
+</ol>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo">Ejemplo</h3>
+<ul>
+<li><p>La función <code>fetch(dicc, k)</code> busca la clave
+<code>k</code> en el diccionario <code>dicc</code>. Si la encuentra,
+devuelve una tupla <code>{:ok, v}</code>, donde <code>v</code> es el
+valor asociado a la clave <code>k</code>. Si no la encuentra, devuelve
+<code>:error</code>.</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch<span class="fu">(</span>%<span class="fu">{}</span> <span class="op">=</span> dicc, x<span class="fu">)</span> <span class="kw">do</span>   <span class="arrow_box_left fragment"> Exigimos que dicc sea un diccionario </span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> dicc <span class="kw">do</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    %<span class="fu">{</span><span class="op">^</span>x <span class="op">=&gt;</span> v<span class="fu">}</span> <span class="op">-&gt;</span> <span class="fu">{</span><span class="va">:ok</span>, v<span class="fu">}</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">-&gt;</span> <span class="va">:error</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; fetch(%{a: 3, b: 4}, :a)
+{:ok, 3}
+&gt; fetch(%{a: 3, b: 4}, :c)
+:error</code></pre>
+</li>
+</ul>
+</section>
+<section id="modificar-un-diccionario" class="slide level2">
+<h2>Modificar un diccionario</h2>
+<ul>
+<li><p>La sintaxis <code>%{ dicc | k =&gt; v }</code> denota el
+diccionario que resulta tras modificar en <code>dicc</code> el valor
+asociado a la clave <code>k</code>, que pasa a ser
+<code>v</code>.</p></li>
+<li><p>Esta sintaxis solo sirve si <code>k</code> ya se encuentra en el
+diccionario <code>dicc</code>. De lo contrario, hay que utilizar
+<code>Map.put</code>.</p></li>
+</ul>
+<pre class="text"><code>&gt; m = %{1 =&gt; &quot;A&quot;, 2 =&gt; &quot;B&quot;, 3 =&gt; &quot;C&quot;}
+&gt; %{ m | 2 =&gt; &quot;D&quot; }
+%{1 =&gt; &quot;A&quot;, 2 =&gt; &quot;D&quot;, 3 =&gt; &quot;C&quot;}</code></pre>
+
+</section>
+<section id="funciones-sobre-diccionarios" class="slide level2">
+<h2>Funciones sobre diccionarios</h2>
+<ul>
+<li>Todas las funciones del módulo <code>Enum</code> son aplicables a
+los diccionarios.</li>
+<li>En este caso, los diccionarios se consideran enumerables cuyos
+elementos son pares <code>{clave, valor}</code>.</li>
+<li>Mediante <code>Enum.into(l, %{})</code> podemos convertir una lista
+<code>l</code> de pares en un diccionario.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-1">Ejemplo</h3>
+<ul>
+<li><p>La siguiente función elimina las entradas de un diccionario cuyas
+claves sean números pares:</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> eliminar_pares<span class="fu">(</span>dicc<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  dicc</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">|&gt;</span> <span class="cn">Enum</span><span class="op">.</span>filter<span class="fu">(</span><span class="kw">fn</span> <span class="fu">{</span>k, _<span class="fu">}</span> <span class="op">-&gt;</span> rem<span class="fu">(</span>k, <span class="dv">2</span><span class="fu">)</span> <span class="op">==</span> <span class="dv">1</span> <span class="kw">end</span><span class="fu">)</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">|&gt;</span> <span class="cn">Enum</span><span class="op">.</span>into<span class="fu">(</span>%<span class="fu">{})</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; eliminar_pares(%{1 =&gt; :a, 6 =&gt; :b, 8 =&gt; :c})
+%{1 =&gt; :a}</code></pre>
+</li>
+</ul>
+</section>
+<section id="otras-funciones-sobre-diccionarios"
+class="slide level2 ext" data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Otras
+funciones sobre diccionarios</h2>
+<p>Se encuentran en el módulo <code>Map</code> <a
+href="https://hexdocs.pm/elixir/Map.html">[+]</a></p>
+<ul>
+<li><p><code>get(dicc, key, default \\ nil)</code></p>
+<p>Obtiene el valor asociado a la clave <code>key</code> del
+<code>dicc</code>, o devuelve <code>default</code> si no la
+encuentra.</p></li>
+<li><p><code>fetch(dicc, key)</code></p>
+<p>Igual que <code>get</code>, pero devuelve tupla <code>{:ok, v}</code>
+o <code>:error</code> si no encuentra la clave.</p></li>
+<li><p><code>fetch!(dicc, key)</code></p>
+<p>Igual que <code>get</code>, pero devuelve valor o lanza excepción si
+no encuentra la clave.</p></li>
+</ul>
+</section>
+<section id="section-1" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
+<ul>
+<li><p><code>update(dicc, key, default, fun)</code></p>
+<p>Sustituye el valor <code>v</code> asociado a <code>key</code> en el
+diccionario <code>dicc</code> por el valor devuelto por
+<code>fun.(v)</code>. Si la clave <code>key</code> no se encontraba, la
+inserta en el diccionario asociada a <code>default</code>.</p></li>
+<li><p><code>has_key?(dicc, key)</code></p></li>
+<li><p><code>put(dicc, key, value)</code></p></li>
+<li><p><code>merge(dicc1, dicc2)</code></p></li>
+</ul>
+</section></section>
+<section>
+<section id="conjuntos-sets" class="title-slide slide level1">
+<h1>Conjuntos (<em>sets</em>)</h1>
+
+</section>
+<section id="módulo-mapset" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Módulo
+<code>MapSet</code></h2>
+<ul>
+<li>Contiene funciones para manejar conjuntos.
+<ul>
+<li>No admiten elementos duplicados.</li>
+<li>Comprobación de pertenencia eficiente (como en un diccionario).</li>
+</ul></li>
+<li>Funciones básicas:
+<ul>
+<li><code>MapSet.new()</code></li>
+<li><code>MapSet.put(set, value)</code></li>
+<li><code>MapSet.member?(set, value)</code></li>
+<li><code>MapSet.delete(set, value)</code></li>
+</ul></li>
+<li>Documentación de <code>MapSet</code>: <a
+href="https://hexdocs.pm/elixir/MapSet.html">[+]</a></li>
+</ul>
+</section>
+<section id="ejemplos-1" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Ejemplos</h2>
+<pre class="text"><code>&gt; s = MapSet.new() |&gt; MapSet.put(3) |&gt; MapSet.put(10)
+MapSet.new([3, 10])
+
+&gt; MapSet.member?(10)
+true
+
+&gt; s = MapSet.delete(s, 3)
+MapSet.new([10])
+
+&gt; MapSet.size(s)
+1</code></pre>
+
+</section>
+<section id="los-mapset-son-enumerables" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Los
+<code>MapSet</code> son enumerables</h2>
+<ul>
+<li><p>Toda función de <code>Enum</code> puede ser utilizada con
+conjuntos.</p></li>
+<li><p>Mediante <code>Enum.into(l, MapSet.new())</code> convertimos una
+lista <code>l</code> en un conjunto.</p>
+<pre class="text"><code>&gt; s = [6, 4, 3, 1, 10] |&gt; Enum.into(MapSet.new())
+MapSet.new([1, 3, 4, 6, 10])
+
+&gt; Enum.map(s, &amp;(&amp;1 * 2))
+[2, 6, 8, 12, 20]</code></pre>
+</li>
+</ul>
+</section>
+<section id="section-2" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
+<ul>
+<li><p>Cuando se recorre un conjunto mediante las funciones
+<code>Enum</code>, <strong>no hay ninguna garantía de que los elementos
+se recorran en un orden determinado</strong>.</p></li>
+<li><p>Si se quiere disponer de conjuntos ordenados, es posible utilizar
+el módulo <code>gb_sets</code> de Erlang.</p>
+<p>Referencia: <a
+href="https://www.erlang.org/doc/apps/stdlib/gb_sets">[+]</a></p></li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/search/search.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Prints all fragments in their visible states on the same slide 
+        pdfSeparateFragments: false,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom,
+          // RevealHighlight          
+        ]
+      });
+    </script>
+    </body>
+</html>
