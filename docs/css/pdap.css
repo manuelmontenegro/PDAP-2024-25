@@ -110,6 +110,13 @@ p > code {
   border: 1px dashed #f7f0ff;
 }
 
+span.code {
+  font-family: monospace;
+  color: #752ec7;
+  font-size: 30px;
+  border: 1px dashed #f7f0ff;
+}
+
 li > code {
   color: #752ec7;
   font-size: 30px;
