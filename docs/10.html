@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Manuel Montenegro Montes">
+  <title>Tipos de datos algebraicos</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="css/nnfx-light.min.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {  background-color: #f8f8f8; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ef2929; } /* Alert */
+    code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #204a87; } /* Attribute */
+    code span.bn { color: #0000cf; } /* BaseN */
+    code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4e9a06; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #8f5902; font-style: italic; } /* Comment */
+    code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+    code span.dt { color: #204a87; } /* DataType */
+    code span.dv { color: #0000cf; } /* DecVal */
+    code span.er { color: #a40000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #0000cf; } /* Float */
+    code span.fu { color: #204a87; font-weight: bold; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+    code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+    code span.ot { color: #8f5902; } /* Other */
+    code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+    code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+    code span.ss { color: #4e9a06; } /* SpecialString */
+    code span.st { color: #4e9a06; } /* String */
+    code span.va { color: #000000; } /* Variable */
+    code span.vs { color: #4e9a06; } /* VerbatimString */
+    code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="css/pdap.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="img/RedBackground.jpg">
+  <h1 class="title">Tipos de datos algebraicos</h1>
+<div id="author-container">
+<div class="author">
+Manuel Montenegro Montes
+<br>
+<span id="email"><a href="montenegro@fdi.ucm.es">montenegro@fdi.ucm.es</a></span>
+</div>
+<div class="subject">
+<strong>Programación Declarativa Aplicada</strong>
+<br>Máster en Ingeniería Informática<br>Facultad de
+Informática<br>Universidad Complutense de Madrid
+</div>
+</div>
+</section>
+
+<section id="tipos-de-datos-algebraicos-tda" class="slide level2">
+<h2>Tipos de datos algebraicos (TDA)</h2>
+<ul>
+<li><p>El concepto de <strong>tipo de datos algebraico</strong> (TDA) es
+fundamental en programación funcional.</p></li>
+<li><p>Un TDA es un tipo de datos formado mediante la combinación de
+otros tipos de datos, bien sean simples, o bien otros TDA.</p></li>
+<li><p>Hay dos clases fundamentales de TDA:</p>
+<ul>
+<li><span class="rojo"><strong>Tipos producto</strong></span></li>
+<li><span class="rojo"><strong>Tipos unión disjunta</strong></span></li>
+</ul></li>
+</ul>
+</section>
+<section id="section" class="slide level2 outline"
+data-background-image="img/RedBackground.jpg">
+<h2 class="outline" data-background-image="img/RedBackground.jpg"></h2>
+<ol type="1">
+<li>Tipos producto</li>
+<li>Tipos unión disjunta</li>
+<li>Extensibilidad horizontal y vertical</li>
+</ol>
+</section>
+<section>
+<section id="tipos-producto" class="title-slide slide level1">
+<h1>Tipos producto</h1>
+
+</section>
+<section id="tipos-producto-1" class="slide level2">
+<h2>Tipos producto</h2>
+<div>
+<ul>
+<li class="fragment"><p>Sirven para agrupar en una única entidad valores
+de igual o distinto tipo.</p></li>
+<li class="fragment"><p>Por ejemplo, en C++:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Fecha <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> dia<span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> mes<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> anyo<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">,</span> <span class="kw">typename</span> S<span class="op">&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Pair <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  T first<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  S second<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+</li>
+</ul>
+</div>
+</section>
+<section id="tipos-producto-2" class="slide level2">
+<h2>Tipos producto</h2>
+<ul>
+<li><p>Casi todos los lenguajes de programación disponen de tipos
+producto:</p>
+<ul>
+<li><strong>C</strong>: registros (<code>struct</code>)</li>
+<li><strong>Java</strong>: clases (<code>class</code>) o registros
+(<code>record</code>)</li>
+<li><strong>C++</strong>: registros (<code>struct</code>) o clases
+(<code>class</code>)</li>
+<li><strong>Javascript</strong>: objetos (<code>{...}</code>)</li>
+</ul></li>
+</ul>
+</section>
+<section id="y-en-elixir" class="slide level2">
+<h2>¿Y en Elixir?</h2>
+<ul>
+<li><p>Podemos representar los tipos producto de varias formas. Entre
+ellas:</p>
+<ol type="1">
+<li><p><span class="rojo"><strong>Tuplas</strong></span></p></li>
+<li><p><span class="rojo"><strong>Diccionarios</strong></span></p></li>
+<li><p><span class="rojo"><strong>Structs</strong></span></p></li>
+</ol></li>
+</ul>
+</section>
+<section id="tipos-producto-mediante-tuplas" class="slide level2">
+<h2>Tipos producto mediante tuplas</h2>
+<ul>
+<li><p>Las tuplas permiten agrupar distintos elementos, al igual que los
+tipos producto.</p></li>
+<li><p>Por ejemplo, dado un tipo producto con tres atributos,</p>
+<p><span class="rojo">(<em>dia</em>, <em>mes</em>,
+<em>año</em>)</span></p>
+<p>sus instancias pueden representarse mediante tuplas de tres
+elementos:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dv">3</span>, <span class="dv">10</span>, <span class="dv">2024</span><span class="fu">}</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dv">28</span>, <span class="dv">8</span>, <span class="dv">2001</span><span class="fu">}</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplos">Ejemplos</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> to_string<span class="fu">({</span>dia, mes, año<span class="fu">})</span> <span class="kw">do</span>   <span class="arrow_box_left fragment"> Ajuste de patrones para acceso a componentes </span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a> <span class="st">&quot;</span><span class="ot">#{</span>dia<span class="ot">}</span><span class="st">/</span><span class="ot">#{</span>mes<span class="ot">}</span><span class="st">/</span><span class="ot">#{</span>año<span class="ot">}</span><span class="st">&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> primer_dia_mes?<span class="fu">({</span>dia, _, _<span class="fu">})</span> <span class="kw">do</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  dia <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> siguiente_año<span class="fu">({</span><span class="dv">29</span>, <span class="dv">2</span>, año<span class="fu">})</span> <span class="kw">do</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span><span class="dv">1</span>, <span class="dv">3</span>, año <span class="op">+</span> <span class="dv">1</span><span class="fu">}</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> siguiente_año<span class="fu">({</span>dia, mes, año<span class="fu">})</span> <span class="kw">do</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span>dia, mes, año <span class="op">+</span> <span class="dv">1</span><span class="fu">}</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section id="inconvenientes-de-las-tuplas" class="slide level2">
+<h2>Inconvenientes de las tuplas</h2>
+<ul class="no_bolos">
+<li class="hands_down fragment">
+Requiere recordar la posición de cada componente dentro de las tuplas.
+</li>
+<li class="hands_down fragment">
+Si se añade un nuevo atributo al tipo producto, hay que reescribir las
+funciones existentes.
+</li>
+</ul>
+</section>
+<section id="tipos-producto-mediante-diccionarios" class="slide level2">
+<h2>Tipos producto mediante diccionarios</h2>
+<div>
+<ul>
+<li class="fragment"><p>Los diccionarios pueden agrupar varios atributos
+de igual o distinto tipo. Además, las <strong>claves</strong> nos
+permiten identificar los nombres de los atributos.</p></li>
+<li class="fragment"><p>Por ejemplo, dado un tipo producto con tres
+atributos,</p>
+<p><span class="rojo">(<em>dia</em>, <em>mes</em>,
+<em>año</em>)</span></p>
+<p>sus instancias pueden representarse mediante tuplas de tres
+elementos:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>%<span class="fu">{</span><span class="va">dia:</span> <span class="dv">3</span>, <span class="va">mes:</span> <span class="dv">10</span>, añ<span class="va">o:</span> <span class="dv">2024</span><span class="fu">}</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>%<span class="fu">{</span><span class="va">dia:</span> <span class="dv">28</span>, <span class="va">mes:</span> <span class="dv">8</span>, añ<span class="va">o:</span> <span class="dv">2001</span><span class="fu">}</span></span></code></pre></div>
+</li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplos-1">Ejemplos</h3>
+<p>Utilizando ajuste de patrones:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> to_string<span class="fu">(</span>%<span class="fu">{</span><span class="va">dia:</span> d, <span class="va">mes:</span> m, añ<span class="va">o:</span> a<span class="fu">})</span> <span class="kw">do</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a> <span class="st">&quot;</span><span class="ot">#{</span>d<span class="ot">}</span><span class="st">/</span><span class="ot">#{</span>m<span class="ot">}</span><span class="st">/</span><span class="ot">#{</span>a<span class="ot">}</span><span class="st">&quot;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> primer_dia_mes?<span class="fu">(</span>%<span class="fu">{</span><span class="va">dia:</span> d<span class="fu">})</span> <span class="kw">do</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  d <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> siguiente_año<span class="fu">(</span>%<span class="fu">{</span><span class="va">dia:</span> <span class="dv">29</span>, <span class="va">mes:</span> <span class="dv">2</span>, añ<span class="va">o:</span> a<span class="fu">})</span> <span class="kw">do</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  %<span class="fu">{</span><span class="va">dia:</span> <span class="dv">1</span>, <span class="va">mes:</span> <span class="dv">3</span>, añ<span class="va">o:</span> a <span class="op">+</span> <span class="dv">1</span><span class="fu">}</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> siguiente_año<span class="fu">(</span>%<span class="fu">{</span>añ<span class="va">o:</span> a<span class="fu">}</span> <span class="op">=</span> fecha<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  %<span class="fu">{</span> fecha <span class="op">|</span> añ<span class="va">o:</span> a <span class="op">+</span> <span class="dv">1</span> <span class="fu">}</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span>  </span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplos-2">Ejemplos</h3>
+<p>Sin ajuste de patrones:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> to_string<span class="fu">(</span>fecha<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a> <span class="st">&quot;</span><span class="ot">#{</span>fecha<span class="op">.</span>dia<span class="ot">}</span><span class="st">/</span><span class="ot">#{</span>fecha<span class="op">.</span>mes<span class="ot">}</span><span class="st">/</span><span class="ot">#{</span>fecha<span class="op">.</span>año<span class="ot">}</span><span class="st">&quot;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> primer_dia_mes?<span class="fu">(</span>fecha<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  fecha<span class="op">.</span>dia <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> siguiente_año<span class="fu">(</span>%<span class="fu">{</span><span class="va">dia:</span> <span class="dv">29</span>, <span class="va">mes:</span> <span class="dv">2</span><span class="fu">}</span> <span class="op">=</span> fecha<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  %<span class="fu">{</span><span class="va">dia:</span> <span class="dv">1</span>, <span class="va">mes:</span> <span class="dv">3</span>, añ<span class="va">o:</span> fecha<span class="op">.</span>año <span class="op">+</span> <span class="dv">1</span><span class="fu">}</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> siguiente_año<span class="fu">(</span>fecha<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  %<span class="fu">{</span> fecha <span class="op">|</span> añ<span class="va">o:</span> fecha<span class="op">.</span>año <span class="op">+</span> <span class="dv">1</span> <span class="fu">}</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span>  </span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Cuando las claves de un diccionario son átomos, es posible
+utilizar la notación <code>dicc.clave</code> para acceder a los
+elementos.</p></li>
+<li><p>Por ejemplo, <code>fecha.dia</code> equivale a
+<code>Map.fetch!(fecha, :dia)</code>.</p>
+<ul>
+<li>Si la clave no se encuentra en el diccionario, se produce una
+excepción.</li>
+</ul></li>
+</ul>
+</section>
+<section id="ventajas-e-inconvenientes" class="slide level2">
+<h2>Ventajas e inconvenientes</h2>
+<ul class="no_bolos">
+<li class="hands_up fragment">
+Podemos acceder a los atributos a partir del nombre, y no de la
+posición.
+</li>
+<li class="hands_up fragment">
+Si se añade un nuevo atributo al tipo producto, no hay que reescribir
+las funciones existentes.
+</li>
+</ul>
+<ul class="no_bolos">
+<li class="hands_down fragment">
+El compilador no comprueba que los atributos sean correctos.
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> siguiente_año<span class="fu">(</span>%<span class="fu">{</span><span class="va">dia:</span> <span class="dv">29</span>, <span class="va">mes:</span> <span class="dv">2</span><span class="fu">}</span> <span class="op">=</span> fecha<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  %<span class="fu">{</span><span class="va">dia:</span> <span class="dv">1</span>, <span class="va">mes:</span> <span class="dv">3</span>, añ<span class="va">o:</span> fecha<span class="op">.</span><span class="hl">añño</span> <span class="op">+</span> <span class="dv">1</span><span class="fu">}</span>  <span class="arrow_box_left fragment"> Errata </span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> siguiente_año<span class="fu">(</span>fecha<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  %<span class="fu">{</span> fecha <span class="op">|</span> añ<span class="va">o:</span> fecha<span class="op">.</span>año <span class="op">+</span> <span class="dv">1</span> <span class="fu">}</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span>  </span></code></pre></div>
+
+<div class="fragment">
+<pre class="text"><code>&gt; siguiente_año(%{dia: 29, mes: 2, año: 2322})
+** (KeyError) key :añño not found in: %{dia: 29, mes: 2, año: 2322}. 
+   Did you mean: año</code></pre>
+
+</div>
+</section>
+<section id="structs" class="slide level2">
+<h2><em>Structs</em></h2>
+<div>
+<ul>
+<li class="fragment"><p>Un <em>struct</em> es como un diccionario en
+Elixir, pero sirve para definir un conjunto de datos con una estructura
+fija, definida de antemano.</p></li>
+<li class="fragment"><p>Se definen usando <code>defstruct</code>,
+seguido de los nombres de los atributos.</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">Fecha</span> <span class="kw">do</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">defstruct</span> <span class="ot">[</span><span class="va">:dia</span>, <span class="va">:mes</span>, <span class="va">:a</span>ño<span class="ot">]</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<p>El nombre del <em>struct</em> es el nombre del <strong>módulo en el
+que se define</strong>.</p></li>
+</ul>
+</div>
+</section>
+<section id="creación-de-instancias-de-structs" class="slide level2">
+<h2>Creación de instancias de <em>structs</em></h2>
+<div>
+<ul>
+<li class="fragment"><p>Se utiliza una sintaxis similar a los
+diccionarios, pero con el nombre del <em>struct</em> después del símbolo
+<code>%</code></p>
+<pre class="text"><code>&gt; f = %<span class="hl">Fecha</span>{dia: 23, mes: 2, año: 23}
+&gt; f.dia
+23</code></pre>
+</li>
+<li class="fragment"><p>En esta ocasión, si introducimos un atributo que
+no existe, el compilador nos avisa:</p>
+<pre class="text"><code>&gt; f = %Fecha{dia: 23, mes: 2, <span class="hl">añño</span>: 23}   <span class="arrow_box_left"> Errata </span>
+** (KeyError) key :añño not found</code></pre>
+</li>
+</ul>
+</div>
+</section>
+<section id="valores-por-defecto" class="slide level2">
+<h2>Valores por defecto</h2>
+<div>
+<ul>
+<li class="fragment"><p>Es posible asignar valores por defecto a los
+atributos de un <em>struct</em>.</p></li>
+<li class="fragment"><p>Para ello, se utiliza una <em>keyword list</em>
+a la hora de definir el <em>struct</em>.</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">Fecha</span> <span class="kw">do</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">defstruct</span> <span class="ot">[</span><span class="va">dia:</span> <span class="hl"><span class="dv">1</span></span>, <span class="va">mes:</span> <span class="hl"><span class="dv">1</span></span>, añ<span class="va">o:</span> <span class="hl"><span class="dv">0</span></span><span class="ot">]</span>  <span class="arrow_box_left"> Valores por defecto </span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; %Fecha{año: 2000}
+%Fecha{dia: 1, mes: 1, año: 2000}</code></pre>
+</li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplos-3">Ejemplos</h3>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> to_string<span class="fu">(</span>%<span class="cn">Fecha</span><span class="fu">{}</span> <span class="op">=</span> f<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a> <span class="st">&quot;</span><span class="ot">#{</span>f<span class="op">.</span>dia<span class="ot">}</span><span class="st">/</span><span class="ot">#{</span>f<span class="op">.</span>mes<span class="ot">}</span><span class="st">/</span><span class="ot">#{</span>f<span class="op">.</span>año<span class="ot">}</span><span class="st">&quot;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> primer_dia_mes?<span class="fu">(</span>%<span class="cn">Fecha</span><span class="fu">{}</span> <span class="op">=</span> f<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  f<span class="op">.</span>dia <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> siguiente_año<span class="fu">(</span>%<span class="cn">Fecha</span><span class="fu">{</span><span class="va">dia:</span> <span class="dv">29</span>, <span class="va">mes:</span> <span class="dv">2</span>, añ<span class="va">o:</span> a<span class="fu">})</span> <span class="kw">do</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  %<span class="cn">Fecha</span><span class="fu">{</span><span class="va">dia:</span> <span class="dv">1</span>, <span class="va">mes:</span> <span class="dv">3</span>, añ<span class="va">o:</span> a <span class="op">+</span> <span class="dv">1</span><span class="fu">}</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> siguiente_año<span class="fu">(</span>%<span class="cn">Fecha</span><span class="fu">{</span>añ<span class="va">o:</span> a<span class="fu">}</span> <span class="op">=</span> f<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  %<span class="cn">Fecha</span><span class="fu">{</span> f <span class="op">|</span> añ<span class="va">o:</span> a <span class="op">+</span> <span class="dv">1</span> <span class="fu">}</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span>  </span></code></pre></div>
+
+</section>
+<section id="los-structs-son-diccionarios" class="slide level2">
+<h2>¡Los <em>structs</em> son diccionarios!</h2>
+<ul>
+<li><p>En realidad, un <em>struct</em> se implementa mediante un
+diccionario que tiene una clave especial, llamada
+<code>__struct__</code>.</p></li>
+<li><p>El valor de esta clave es el tipo de <em>struct</em>.</p></li>
+<li><p>El siguiente diccionario:</p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>%<span class="fu">{</span><span class="va">dia:</span> <span class="dv">23</span>, <span class="va">mes:</span> <span class="dv">3</span>, añ<span class="va">o:</span> <span class="dv">2012</span>, <span class="hl"><span class="va">__struct__:</span> <span class="cn">Fecha</span></span><span class="fu">}</span></span></code></pre></div>
+
+<p>es equivalente a:</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>%<span class="cn">Fecha</span><span class="fu">{</span><span class="va">dia:</span> <span class="dv">23</span>, <span class="va">mes:</span> <span class="dv">3</span>, añ<span class="va">o:</span> <span class="dv">2012</span><span class="fu">}</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="consecuencias">Consecuencias</h3>
+<div>
+<ul>
+<li class="fragment"><p>Podemos pasar un <code>struct</code> a cualquier
+función que admita diccionarios.</p>
+<pre class="text"><code>&gt; f = %Fecha{dia: 1, mes: 1, año: 2022}
+&gt; Map.update!(f, :año, &amp;(&amp;1 + 1))
+%Fecha{dia: 1, mes: 1, año: 2023}</code></pre>
+</li>
+<li class="fragment"><p>Sin embargo, los <code>struct</code> no son
+enumerables, aunque pueden convertirse en listas mediante
+<code>Map.to_list/1</code>:</p>
+<pre class="text"><code>&gt; %Fecha{dia: 1, mes: 1, año: 2022} |&gt; Map.to_list()
+[__struct__: Fecha, dia: 1, mes: 1, año: 2022]</code></pre>
+</li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="tipos-unión" class="title-slide slide level1">
+<h1>Tipos unión</h1>
+
+</section>
+<section id="tipos-unión-1" class="slide level2">
+<h2>Tipos unión</h2>
+<ul>
+<li><p>Un tipo unión puede tomar valores de <strong>uno</strong> de
+entre varios tipos prefijados <span class="rojo"
+style="font-style: italic;">T<sub>1</sub></span>, <span class="rojo"
+style="font-style: italic;">T<sub>2</sub></span>, …, <span class="rojo"
+style="font-style: italic;">T<sub>n</sub></span>, denominados
+<em>alternativas</em>.</p></li>
+<li><p>Dado un valor de un tipo unión, siempre es posible determinar a
+qué alternativa <span class="rojo"
+style="font-style: italic;">T<sub>i</sub></span> corresponde.</p></li>
+<li><p>También llamados: <em>sum types</em>, <em>variants</em>,
+<em>discriminated unions</em>, <em>disjoint unions</em>,
+<em>coproducts</em>.</p></li>
+</ul>
+</section>
+<section id="en-lenguajes-funcionales" class="slide level2">
+<h2>En lenguajes funcionales</h2>
+<div>
+<ul>
+<li class="fragment"><p>Los tipos unión son la base del modelo de datos
+de los lenguajes funcionales.</p>
+<ul>
+<li class="fragment"><p>Por ejemplo, en OCaml:</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> figura =</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  | Rectangulo</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  | Circulo</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  | Segmento</span></code></pre></div>
+</li>
+<li class="fragment"><p>En Haskell</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Figura</span> <span class="ot">=</span> <span class="dt">Rectangulo</span> <span class="op">|</span> <span class="dt">Circulo</span> <span class="op">|</span> <span class="dt">Segmento</span></span></code></pre></div>
+
+<p>Un valor de tipo <code>Figura</code> solamente puede ser
+<code>Rectangulo</code>, <code>Circulo</code> o
+<code>Segmento</code>.</p></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="suma-de-productos" class="slide level2">
+<h2>Suma de productos</h2>
+<ul>
+<li><p>Cada una de las alternativas de un tipo suma puede ser, a su vez,
+un tipo producto.</p>
+<ul>
+<li><p>Por ejemplo, en OCaml:</p>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> punto = ...</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> figura =</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  | Rectangulo <span class="kw">of</span> { centro: punto, alto: <span class="dt">float</span>, ancho: <span class="dt">float</span> }</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  | Circulo <span class="kw">of</span> { centro: punto, radio: <span class="dt">float</span> }</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  | Segmento <span class="kw">of</span> { desde: punto, hasta: punto }</span></code></pre></div>
+</li>
+<li><p>En Haskell:</p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">Punto</span> <span class="ot">=</span> <span class="op">...</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Figura</span> <span class="ot">=</span> <span class="dt">Rectangulo</span> <span class="dt">Punto</span> <span class="dt">Float</span> <span class="dt">Float</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>            <span class="op">|</span> <span class="dt">Circulo</span> <span class="dt">Punto</span> <span class="dt">Float</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>            <span class="op">|</span> <span class="dt">Segmento</span> <span class="dt">Punto</span> <span class="dt">Punto</span></span></code></pre></div>
+</li>
+</ul></li>
+</ul>
+</section>
+<section id="y-en-elixir-1" class="slide level2">
+<h2>¿Y en Elixir?</h2>
+<p>Hay dos alternativas:</p>
+<ol type="1">
+<li><p><span class="rojo"><strong>Tuplas con
+etiqueta</strong></span></p></li>
+<li><p><span class="rojo"><strong>Structs</strong></span></p></li>
+</ol>
+</section>
+<section id="tuplas-con-etiqueta-tag" class="slide level2">
+<h2>Tuplas con etiqueta (<em>tag</em>)</h2>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a> <span class="arrow_box_down"> Etiqueta </span>  <span class="arrow_box_down">Pos.</span> <span class="arrow_box_down">Alto</span> <span class="arrow_box_down">Ancho</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="hl"><span class="va">:rectangulo</span></span>, <span class="fu">{</span><span class="dv">1</span>, <span class="fl">3.5</span><span class="fu">}</span>, <span class="fl">10.3</span>, <span class="fl">20.3</span><span class="fu">}</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a> <span class="arrow_box_down"> Etiqueta </span> <span class="arrow_box_down">Pos.</span><span class="arrow_box_down">Radio</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="hl"><span class="va">:circulo</span></span>, <span class="fu">{</span><span class="fl">2.5</span>, <span class="dv">2</span><span class="fu">}</span>, <span class="fl">20.2</span><span class="fu">}</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a> <span class="arrow_box_down"> Etiqueta </span> <span class="arrow_box_down">Ini.</span>  <span class="arrow_box_down">Fin</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="hl"><span class="va">:segmento</span></span>, <span class="fu">{</span><span class="dv">1</span>, <span class="dv">1</span><span class="fu">}</span>, <span class="fu">{</span><span class="dv">3</span>, <span class="dv">1</span><span class="fu">}}</span></span></code></pre></div>
+
+<div>
+<ul>
+<li class="fragment">La primera componente es un átomo que indica la
+alternativa del tipo unión.</li>
+<li class="fragment">El resto de componentes contienen la información
+del tipo producto.</li>
+<li class="fragment">Si una alternativa no tiene información asociada,
+con un átomo es suficiente.</li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="definición-de-funciones">Definición de funciones</h3>
+<ul>
+<li>Para distinguir entre una alternativa u otra, se utiliza ajuste de
+patrones:</li>
+</ul>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> area<span class="fu">({</span><span class="va">:rectangulo</span>, _, alto, ancho<span class="fu">})</span>, <span class="va">do:</span> alto <span class="op">*</span> ancho</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> area<span class="fu">({</span><span class="va">:circulo</span>, _, radio<span class="fu">})</span>, <span class="va">do:</span> <span class="va">:math</span><span class="op">.</span>pi<span class="fu">()</span> <span class="op">*</span> radio <span class="op">*</span> radio</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> area<span class="fu">({</span><span class="va">:segmento</span>, _, _<span class="fu">})</span>, <span class="va">do:</span> <span class="dv">0</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; area({:rectangulo, {1, 2}, 2.0, 3})                                                                                  
+6.0
+&gt; area({:circulo, {0, 0}, 2.0})                                                                                        
+12.566370614359172</code></pre>
+
+</section>
+<section id="tipos-unión-mediante-structs" class="slide level2">
+<h2>Tipos unión mediante <em>structs</em></h2>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">Figuras</span> <span class="kw">do</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">defmodule</span> <span class="cn">Rectangulo</span> <span class="kw">do</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">defstruct</span> <span class="ot">[</span><span class="va">:centro</span>, <span class="va">:alto</span>, <span class="va">:ancho</span><span class="ot">]</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">defmodule</span> <span class="cn">Circulo</span> <span class="kw">do</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">defstruct</span> <span class="ot">[</span><span class="va">:centro</span>, <span class="va">:radio</span><span class="ot">]</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">defmodule</span> <span class="cn">Segmento</span> <span class="kw">do</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">defstruct</span> <span class="ot">[</span><span class="va">:desde</span>, <span class="va">:hasta</span><span class="ot">]</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<ul>
+<li>Definimos un <code>struct</code> para cada alternativa.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Ejemplos de instancias de figuras:</p>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>%<span class="cn">Rectangulo</span><span class="fu">{</span><span class="va">centro:</span> <span class="fu">{</span><span class="dv">1</span>, <span class="fl">3.5</span><span class="fu">}</span>, <span class="va">alto:</span> <span class="fl">10.3</span>, <span class="va">ancho:</span> <span class="fl">20.3</span><span class="fu">}</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>%<span class="cn">Circulo</span><span class="fu">{</span><span class="va">centro:</span> <span class="fu">{</span><span class="fl">2.5</span>, <span class="dv">2</span><span class="fu">}</span>, <span class="va">radio:</span> <span class="fl">20.2</span><span class="fu">}</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>%<span class="cn">Segmento</span><span class="fu">{</span><span class="va">desde:</span> <span class="fu">{</span><span class="dv">1</span>, <span class="dv">1</span><span class="fu">}</span>, <span class="va">hasta:</span> <span class="fu">{</span><span class="dv">3</span>, <span class="dv">1</span><span class="fu">}}</span></span></code></pre></div>
+</li>
+<li><p>En este caso no necesitamos etiquetas, porque el tipo de
+<em>struct</em> permite distinguir entre una alternativa u otra.</p>
+<ul>
+<li>Este tipo está reflejado en la clave oculta <code>__struct__</code>
+de los diccionarios.</li>
+</ul></li>
+</ul>
+</section>
+<section id="ejemplo" class="slide level2">
+<h2>Ejemplo</h2>
+<div class="sourceCode" id="cb37"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> area<span class="fu">(</span>%<span class="cn">Rectangulo</span><span class="fu">{}</span> <span class="op">=</span> r<span class="fu">)</span>, <span class="va">do:</span> r<span class="op">.</span>alto <span class="op">*</span> r<span class="op">.</span>ancho</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> area<span class="fu">(</span>%<span class="cn">Circulo</span><span class="fu">{}</span> <span class="op">=</span> c<span class="fu">)</span>, <span class="va">do:</span> <span class="va">:math</span><span class="op">.</span>pi<span class="fu">()</span> <span class="op">*</span> c<span class="op">.</span>radio <span class="op">*</span> c<span class="op">.</span>radio</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> area<span class="fu">(</span>%<span class="cn">Segmento</span><span class="fu">{})</span>, <span class="va">do:</span> <span class="dv">0</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; area(%Figuras.Rectangulo{centro: {1, 3.5}, alto: 2, ancho: 3})
+6.0</code></pre>
+
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Desde la shell (<em>iex</em>) hemos de utilizar el nombre del módulo
+completo (<code>Figuras.Rectangulo</code>)</li>
+<li>Si no queremos introducir todo el nombre, podemos utilizar
+<code>alias</code>:</li>
+</ul>
+<pre><code>&gt; alias Figuras.Circulo
+&gt; area({%Circulo{centro: {1, 3.5}, radio: 3})
+28.274333882308138</code></pre>
+<dl>
+</dl>
+</section></section>
+<section>
+<section id="extensibilidad-horizontal-y-vertical"
+class="title-slide slide level1">
+<h1>Extensibilidad horizontal y vertical</h1>
+
+</section>
+<section id="enfoque-orientado-a-objetos" class="slide level2">
+<h2>Enfoque orientado a objetos</h2>
+<ul>
+<li>En POO, podemos modelizar tipos unión mediante
+<strong>herencia</strong>.
+<ul>
+<li>Una interfaz abstracta con el tipo unión.</li>
+<li>Clases concretas para cada alternativa.</li>
+</ul></li>
+</ul>
+<p><img data-src="10/Figura.svg" /></p>
+</section>
+<section id="ejemplo-figuras-en-java" class="slide level2">
+<h2>Ejemplo: figuras en Java</h2>
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> Figura <span class="op">{</span> <span class="co">/* ... */</span> <span class="op">}</span> </span></code></pre></div>
+
+<div class="sourceCode" id="cb41"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Rectangulo <span class="kw">implements</span> Figura <span class="op">{</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> Punto posicion<span class="op">;</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> <span class="dt">double</span> alto<span class="op">;</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> <span class="dt">double</span> ancho<span class="op">;</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* ... */</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+
+<div class="sourceCode" id="cb42"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Circulo <span class="kw">implements</span> Figura <span class="op">{</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> Punto posicion<span class="op">;</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> <span class="dt">double</span> radio<span class="op">;</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* ... */</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+
+</section>
+<section id="implementación-de-operaciones" class="slide level2">
+<h2>Implementación de operaciones</h2>
+<ul>
+<li>Si queremos implementar una operación que dependa de la subclase
+utilizada, la manera clásica en POO es definirla mediante un método
+abstracto que se sobreescriba en cada alternativa.</li>
+</ul>
+<p><img data-src="10/FiguraMetodos.svg" /></p>
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb43"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> Figura <span class="op">{</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="dt">double</span> <span class="fu">area</span><span class="op">();</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> </span></code></pre></div>
+
+<div class="sourceCode" id="cb44"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Rectangulo <span class="kw">implements</span> Figura <span class="op">{</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* ... */</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">@Override</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="dt">double</span> <span class="fu">area</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ancho <span class="op">*</span> alto<span class="op">;</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> </span></code></pre></div>
+
+</section>
+<section id="comparativa" class="slide level2">
+<h2>Comparativa</h2>
+<p>Tenemos dos enfoques:</p>
+<ol type="1">
+<li><p>Distinción de casos explícita mediante ajuste de patrones <span
+class="rojo"><strong>(Lenguajes funcionales)</strong></span></p></li>
+<li><p>Distinción de casos implícita, distribuida en las distintas
+subclases <span class="rojo"><strong>(Lenguajes orientados a
+objetos)</strong></span></p></li>
+</ol>
+<div class="fragment">
+<div class="info_box">
+<p>¿Cuál es mejor?</p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<p><span class="rojo">¿En cuál de los dos enfoques es más fácil añadir
+una <strong>nueva función</strong> sobre el tipo de datos
+<code>Figura</code>?</span></p>
+<p>Por ejemplo, una función <code>perimetro()</code></p>
+<div>
+<ol type="1">
+<li class="fragment"><p>Ajuste de patrones</p>
+<ul>
+<li class="fragment">Se define la nueva función. No afecta a código
+existente.</li>
+</ul></li>
+<li class="fragment"><p>Herencia</p>
+<ul>
+<li class="fragment">Hay que modificar la clase <code>Figura</code> para
+añadir el nuevo método. También hay que modificar cada subclase para
+implementar el método abstracto. Afecta a código existente.</li>
+</ul></li>
+</ol>
+</div>
+</section>
+<section class="slide level2">
+
+<p><span class="rojo">¿En cuál de los dos enfoques es más fácil añadir
+una <strong>nueva alternativa</strong> al tipo de datos
+<code>Figura</code>?</span></p>
+<p>Por ejemplo, una nueva alternativa <code>Triangulo</code></p>
+<div>
+<ol type="1">
+<li class="fragment"><p>Ajuste de patrones</p>
+<ul>
+<li class="fragment">Hay que modificar todas las funciones existentes
+que actúen sobre <code>Figura</code> para incorporar el nuevo caso.
+Afecta a código existente.</li>
+</ul></li>
+<li class="fragment"><p>Herencia</p>
+<ul>
+<li class="fragment">Se define la nueva clase, junto con los casos
+correspondientes para cada una de las funciones definidas sobre
+<code>Figura</code>. No afecta a código existente.</li>
+</ul></li>
+</ol>
+</div>
+</section>
+<section id="extensión-horizontal-vs-vertical" class="slide level2">
+<h2>Extensión horizontal vs vertical</h2>
+<p><img data-src="10/Dimensiones.svg" /></p>
+<ul>
+<li><strong>Extensión horizontal</strong>: Añadir nuevas
+operaciones.</li>
+<li><strong>Extensión vertical</strong>: Añadir nuevas alternativas al
+tipo.</li>
+</ul>
+</section>
+<section id="extensibilidad-en-elixir" class="slide level2">
+<h2>Extensibilidad en Elixir</h2>
+<ul>
+<li><p>El modelo de datos de lenguajes funcionales (basado en tipos
+algebraicos y ajuste de patrones) es <strong>más adecuado</strong> para
+la <strong>extensibilidad horizontal</strong>.</p></li>
+<li><p>No obstante, algunos lenguajes (como Elixir y Haskell)
+proporcionan mecanismos que facilitan la extensión vertical en aquellos
+casos en los que sea necesario.</p>
+<p>En Elixir: <span
+class="rojo"><strong>protocolos</strong></span></p></li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/search/search.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Prints all fragments in their visible states on the same slide 
+        pdfSeparateFragments: false,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom,
+          // RevealHighlight          
+        ]
+      });
+    </script>
+    </body>
+</html>
