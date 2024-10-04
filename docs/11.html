@@ -502,13 +502,16 @@ class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb21-1"><a h
 </section></section>
 <section>
 <section id="composición-mediante-orden-superior"
-class="title-slide slide level1">
-<h1>Composición mediante orden superior</h1>
+class="title-slide slide level1 ext"
+data-background-image="img/Extension.jpg">
+<h1 class="ext" data-background-image="img/Extension.jpg">Composición
+mediante orden superior</h1>
 
 </section>
 <section id="composición-de-valores-option-y-either"
-class="slide level2">
-<h2>Composición de valores <em>option</em> y <em>either</em></h2>
+class="slide level2 ext" data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Composición de
+valores <em>option</em> y <em>either</em></h2>
 <ul>
 <li><p>Podemos definir algunas funciones de orden superior que nos
 ayuden a componer en secuencia varias operaciones que involucren el uso
@@ -520,8 +523,10 @@ de <em>option</em> o <em>either</em>.</p>
 </ul></li>
 </ul>
 </section>
-<section id="función-map_option2" class="slide level2">
-<h2>Función <code>map_option/2</code></h2>
+<section id="función-map_option2" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Función
+<code>map_option/2</code></h2>
 <ul>
 <li><p>Aplica una función <code>f</code> al valor contenido dentro del
 tipo <em>option</em> o <em>either</em>:</p>
@@ -539,8 +544,9 @@ class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb25-1"><a h
 </li>
 </ul>
 </section>
-<section class="slide level2">
-
+<section id="section-1" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
 <h3 id="uso-de-map_option2">Uso de <code>map_option/2</code></h3>
 <ul>
 <li><p>Se utiliza cuando se quiere transformar el resultado de una
@@ -563,8 +569,10 @@ class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb28-1"><a h
 </li>
 </ul>
 </section>
-<section id="función-flat_map_option2" class="slide level2">
-<h2>Función <code>flat_map_option/2</code></h2>
+<section id="función-flat_map_option2" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Función
+<code>flat_map_option/2</code></h2>
 <ul>
 <li><p>Igual que <code>map_option/2</code>, pero la función
 <code>f</code> que se aplica devuelve también un tipo <em>option</em> o
@@ -576,8 +584,9 @@ class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb29-1"><a h
 </li>
 </ul>
 </section>
-<section class="slide level2">
-
+<section id="section-2" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
 <h3 id="uso-de-flat_map_option2">Uso de
 <code>flat_map_option/2</code></h3>
 <ul>
@@ -594,8 +603,10 @@ class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb30-1"><a h
 <span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
 
 </section>
-<section id="función-flatten_option1" class="slide level2">
-<h2>Función <code>flatten_option/1</code></h2>
+<section id="función-flatten_option1" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Función
+<code>flatten_option/1</code></h2>
 <ul>
 <li><p>Recibe una lista de valores <em>option</em> o
 <em>either</em>.</p>
@@ -613,8 +624,9 @@ class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb31-1"><a h
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="va">:error</span>, <span class="va">:enoent</span><span class="fu">}</span></span></code></pre></div>
 
 </section>
-<section class="slide level2">
-
+<section id="section-3" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
 <h3 id="definición-de-flatten_option1">Definición de
 <code>flatten_option/1</code></h3>
 <div class="sourceCode" id="cb32"><pre
@@ -626,8 +638,9 @@ class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb32-1"><a h
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flatten_option<span class="fu">(</span><span class="ot">[</span><span class="va">:error</span> <span class="op">|</span> _<span class="ot">]</span><span class="fu">)</span>, <span class="va">do:</span> <span class="va">:error</span></span></code></pre></div>
 
 </section>
-<section class="slide level2">
-
+<section id="section-4" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
 <h3 id="ejemplo-de-uso">Ejemplo de uso</h3>
 <ul>
 <li>La función <code>parse_list/1</code> definida anteriormente puede
@@ -758,8 +771,10 @@ class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb39-1"><a h
 <span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
 
 </section>
-<section id="guardas-en-with" class="slide level2">
-<h2>Guardas en <code>with</code></h2>
+<section id="guardas-en-with" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Guardas en
+<code>with</code></h2>
 <ul>
 <li><p>Los ajustes de patrón dentro de un <code>with</code> pueden tener
 guardas asociadas:</p>
@@ -772,8 +787,10 @@ class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb40-1"><a h
 derecho del <code>&lt;-</code>.</p></li>
 </ul>
 </section>
-<section id="cláusula-else-dentro-de-with" class="slide level2">
-<h2>Cláusula <code>else</code> dentro de <code>with</code></h2>
+<section id="cláusula-else-dentro-de-with" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Cláusula
+<code>else</code> dentro de <code>with</code></h2>
 <ul>
 <li><p>Permite especificar qué debe devolver el <code>with</code> en el
 caso en el que alguno de los patrones falle.</p></li>
@@ -796,8 +813,9 @@ class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb41-1"><a h
 </li>
 </ul>
 </section>
-<section class="slide level2">
-
+<section id="section-5" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
 <pre class="text"><code>&gt; read_number(&quot;numeros.txt&quot;, 6)
 {:error, :bad_index}
 

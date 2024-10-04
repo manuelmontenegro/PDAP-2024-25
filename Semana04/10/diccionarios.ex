@@ -1,5 +1,6 @@
 #
 # Implementación de un tipo producto mediante diccionarios
+# (utilizando ajuste de patrones en las funciones)
 #
 
 defmodule Fecha do
