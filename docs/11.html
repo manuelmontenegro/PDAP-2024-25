@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Manuel Montenegro Montes">
+  <title>Gestión de errores sin excepciones</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="css/nnfx-light.min.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {  background-color: #f8f8f8; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ef2929; } /* Alert */
+    code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #204a87; } /* Attribute */
+    code span.bn { color: #0000cf; } /* BaseN */
+    code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4e9a06; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #8f5902; font-style: italic; } /* Comment */
+    code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+    code span.dt { color: #204a87; } /* DataType */
+    code span.dv { color: #0000cf; } /* DecVal */
+    code span.er { color: #a40000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #0000cf; } /* Float */
+    code span.fu { color: #204a87; font-weight: bold; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+    code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+    code span.ot { color: #8f5902; } /* Other */
+    code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+    code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+    code span.ss { color: #4e9a06; } /* SpecialString */
+    code span.st { color: #4e9a06; } /* String */
+    code span.va { color: #000000; } /* Variable */
+    code span.vs { color: #4e9a06; } /* VerbatimString */
+    code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="css/pdap.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="img/RedBackground.jpg">
+  <h1 class="title">Gestión de errores sin excepciones</h1>
+<div id="author-container">
+<div class="author">
+Manuel Montenegro Montes
+<br>
+<span id="email"><a href="montenegro@fdi.ucm.es">montenegro@fdi.ucm.es</a></span>
+</div>
+<div class="subject">
+<strong>Programación Declarativa Aplicada</strong>
+<br>Máster en Ingeniería Informática<br>Facultad de
+Informática<br>Universidad Complutense de Madrid
+</div>
+</div>
+</section>
+
+<section id="section" class="slide level2 outline"
+data-background-image="img/RedBackground.jpg">
+<h2 class="outline" data-background-image="img/RedBackground.jpg"></h2>
+<ol type="1">
+<li>Motivación</li>
+<li>Tipos <em>option</em> y <em>either</em></li>
+<li>Composición mediante orden superior</li>
+<li>Composición mediante <em>with</em></li>
+</ol>
+</section>
+<section>
+<section id="motivación" class="title-slide slide level1">
+<h1>Motivación</h1>
+
+</section>
+<section id="motivación-1" class="slide level2">
+<h2>Motivación</h2>
+<ul>
+<li><p>En muchos lenguajes imperativos se utilizan
+<strong>excepciones</strong> para controlar los errores ocasionados
+durante la ejecución del programa.</p></li>
+<li><p>Sin embargo, las excepciones no encajan muy bien con la
+programación funcional.</p>
+<ul>
+<li>Rompen la propiedad de la transparencia referencial.</li>
+</ul></li>
+</ul>
+</section>
+<section id="excepciones-y-transparencia-referencial"
+class="slide level2">
+<h2>Excepciones y transparencia referencial</h2>
+<ul>
+<li><p>Supongamos la siguiente definición de función:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ejemplo<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> g<span class="fu">()</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> <span class="kw">do</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    x <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">rescue</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cn">RuntimeError</span> <span class="op">-&gt;</span> <span class="dv">0</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+<li><p>La propiedad de <strong>transparencia referencial</strong> de los
+lenguajes funcionales nos permite reemplazar la <code>x</code> por su
+definición sin alterar la semántica del programa.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>En efecto, si <code>g</code> está definida del siguiente
+modo:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> g<span class="fu">()</span>, <span class="va">do:</span> <span class="dv">0</span></span></code></pre></div>
+</li>
+<li><p>La siguiente función es equivalente a la anterior:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ejemplo<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> <span class="kw">do</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    g<span class="fu">()</span> <span class="op">+</span> <span class="dv">1</span>       <span class="arrow_box_left"> Reemplazamos x por su definición </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">rescue</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cn">RuntimeError</span> <span class="op">-&gt;</span> <span class="dv">0</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; ejemplo()
+1</code></pre>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Pero si <code>g</code> está definida del siguiente modo:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> g<span class="fu">()</span>, <span class="va">do:</span> <span class="cf">raise</span> <span class="cn">RuntimeError</span>, <span class="va">message:</span> <span class="st">&quot;Se ha producido un error&quot;</span></span></code></pre></div>
+</li>
+<li><p>Al reemplazar <code>g</code> por su definición obtenemos
+resultados distintos:</p></li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ejemplo<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> g<span class="fu">()</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> <span class="kw">do</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    x <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">rescue</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cn">RuntimeError</span> <span class="op">-&gt;</span> <span class="dv">0</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; ejemplo()
+** (RuntimeError) Se ha producido un error</code></pre>
+
+</div><div class="column">
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ejemplo<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> <span class="kw">do</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    g<span class="fu">()</span> <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">rescue</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cn">RuntimeError</span> <span class="op">-&gt;</span> <span class="dv">0</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; ejemplo()
+0</code></pre>
+
+</div>
+</div>
+</section>
+<section id="alternativa-valores-centinela" class="slide level2">
+<h2>Alternativa: valores centinela</h2>
+<ul>
+<li><p>Consiste en codificar la presencia de errores en el resultado de
+una función.</p></li>
+<li><p>Ejemplos en Java:</p>
+<ul>
+<li><code>String.indexOf(char c)</code>. Devuelve <code>-1</code> si el
+carácter no se encuentra en la cadena.</li>
+<li><code>Map&lt;K, V&gt;.get(K key)</code>. Devuelve <code>null</code>
+si la clave no se encuentra en el diccionario.</li>
+</ul></li>
+<li><p><strong>Problema:</strong> si nos olvidamos comprobar la
+presencia del valor centinela, pueden producirse errores difíciles de
+detectar.</p></li>
+</ul>
+</section>
+<section id="sobre-el-uso-de-null" class="slide level2">
+<h2>Sobre el uso de <code>null</code></h2>
+<blockquote style="font-size:75%;background-color:#FFFFDD;padding:1em">
+I call it my billion-dollar mistake. It was the invention of the null
+reference in 1965. At that time, I was designing the first comprehensive
+type system for references in an object oriented language (ALGOL W). My
+goal was to ensure that all use of references should be absolutely safe,
+with checking performed automatically by the compiler. But I couldn’t
+resist the temptation to put in a null reference, simply because it was
+so easy to implement. This has led to innumerable errors,
+vulnerabilities, and system crashes, which have probably caused a
+billion dollars of pain and damage in the last forty years.
+</blockquote>
+<p>C. A. R. Hoare. Premio Turing en 1980. <a
+href="https://qconlondon.com/london-2009/qconlondon.com/london-2009/speaker/Tony+Hoare.html">QCon
+London, 2009</a></p>
+</section></section>
+<section>
+<section id="tipos-option-y-either" class="title-slide slide level1">
+<h1>Tipos <em>option</em> y <em>either</em></h1>
+
+</section>
+<section id="tipo-option" class="slide level2">
+<h2>Tipo <em>option</em></h2>
+<ul>
+<li><p>Es un tipo unión con dos alternativas:</p>
+<ul>
+<li><p><code>{:ok, v}</code></p>
+<p>La función ha terminado con éxito, y su resultado es el valor
+<code>v</code></p></li>
+<li><p><code>:error</code> (u otro valor: <code>nil</code>,
+<code>false</code>, etc.)</p>
+<p>La función no ha terminado con éxito</p></li>
+</ul></li>
+<li><p>Equivale al tipo <code>Maybe</code> de <em>Haskell</em>:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Maybe</span> a <span class="ot">=</span> <span class="dt">Just</span> a <span class="op">|</span> <span class="dt">Nothing</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section id="ejemplos" class="slide level2">
+<h2>Ejemplos</h2>
+<ul>
+<li><code>fetch(xs, i)</code> devuelve el elemento <code>i</code>-ésimo
+de la lista <code>xs</code>, o <code>:error</code> si el índice
+<code>i</code> está fuera de rango.</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch<span class="fu">(</span>_, n<span class="fu">)</span> <span class="kw">when</span> n <span class="op">&lt;</span> <span class="dv">0</span>, <span class="va">do:</span> <span class="va">:error</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch<span class="fu">(</span><span class="ot">[]</span>, _<span class="fu">)</span>, <span class="va">do:</span> <span class="va">:error</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch<span class="fu">(</span><span class="ot">[</span>x <span class="op">|</span> _<span class="ot">]</span>, <span class="dv">0</span><span class="fu">)</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:ok</span>, x<span class="fu">}</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch<span class="fu">(</span><span class="ot">[</span>_ <span class="op">|</span> xs<span class="ot">]</span>, n<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  fetch<span class="fu">(</span>xs, n <span class="op">-</span> <span class="dv">1</span><span class="fu">)</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; fetch([:a, :b, :c], 1)
+{:ok, :b}
+
+&gt; fetch([:a, :b, :c], 4)
+:error</code></pre>
+
+</section>
+<section class="slide level2">
+
+<ul>
+<li><code>parse_list/1</code> recibe una cadena de números separados por
+espacios y devuelve una lista con los números de la cadena.</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_list<span class="fu">(</span>str<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  str <span class="op">|&gt;</span> <span class="cn">String</span><span class="op">.</span>split<span class="fu">()</span> <span class="op">|&gt;</span> parse_numbers<span class="fu">()</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="kw">defp</span> parse_numbers<span class="fu">(</span><span class="ot">[]</span><span class="fu">)</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:ok</span>, <span class="ot">[]</span><span class="fu">}</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="kw">defp</span> parse_numbers<span class="fu">(</span><span class="ot">[</span>str <span class="op">|</span> strs<span class="ot">]</span><span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> <span class="cn">Integer</span><span class="op">.</span>parse<span class="fu">(</span>str<span class="fu">)</span> <span class="kw">do</span>   <span class="arrow_box_left"> Ver explicación en siguiente diapositiva </span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span>n, <span class="st">&quot;&quot;</span><span class="fu">}</span> <span class="op">-&gt;</span>          </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">case</span> parse_numbers<span class="fu">(</span>strs<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span><span class="va">:ok</span>, ns<span class="fu">}</span> <span class="op">-&gt;</span> <span class="fu">{</span><span class="va">:ok</span>, <span class="ot">[</span>n <span class="op">|</span> ns<span class="ot">]</span><span class="fu">}</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">:error</span> <span class="op">-&gt;</span> <span class="va">:error</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>      <span class="kw">end</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">-&gt;</span> <span class="va">:error</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>La función <code>Integer.parse/1</code> devuelve un par con el
+número contenido en la cadena, y el resto de esta.</p>
+<pre class="text"><code>&gt; Integer.parse(&quot;423&quot;)
+{423, &quot;&quot;}
+&gt; Integer.parse(&quot;23 bs&quot;)
+{23, &quot; bs&quot;}</code></pre>
+</li>
+<li><p>Funcionamiento de <code>parse_list/1</code>:</p>
+<pre class="text"><code>&gt; parse_list(&quot;12 4 53 22 32&quot;)
+{:ok, [12, 4, 53, 22, 32]}
+&gt; parse_list(&quot;20 4 nd 3&quot;)
+:error</code></pre>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="otras-funciones-de-la-biblioteca-estándar">Otras funciones de la
+biblioteca estándar</h3>
+<pre><code>&gt; Map.fetch(%{a: 1, b: 2}, :a)
+{:ok, 1}
+
+&gt; File.read(&quot;fichero.txt&quot;)
+{:ok, &quot;....&quot;}
+
+&gt; GenServer.start_link(TicketServer, 0)
+{:ok, #PID&lt;0.106.0&gt;}</code></pre>
+<dl>
+</dl>
+</section>
+<section class="slide level2">
+
+<h3 id="convenio-de-nombres">Convenio de nombres</h3>
+<ul>
+<li>En Elixir, a veces hay dos versiones de la misma función, una de
+ellas con el símbolo <code>!</code> al final de su nombre.</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:40%;">
+<p>La versión <strong>sin</strong> el símbolo <code>!</code> devuelve un
+tipo <em>option</em>.</p>
+<pre class="text"><code>&gt; Map.fetch(%{a: 2}, :a)
+{:ok, 2}
+&gt; Map.fetch(%{a: 2}, :b)
+:error</code></pre>
+
+</div><div class="column" style="width:60%;">
+<p>La versión <strong>con</strong> el símbolo <code>!</code> devuelve el
+resultado de la operación, sin la tupla <code>{:ok, _}</code>. En caso
+de error, lanza una excepción.</p>
+<pre class="text"><code>&gt; Map.fetch!(%{a: 2}, :a)
+2
+&gt; Map.fetch!(%{a: 2}, :b)
+** (KeyError) key :b not found in: %{a: 2}</code></pre>
+
+</div>
+</div>
+</section>
+<section id="tipo-either" class="slide level2">
+<h2>Tipo <em>either</em></h2>
+<ul>
+<li><p>Igual que el tipo <em>option</em>, pero permite asociar
+información al caso de error.</p>
+<ul>
+<li>Suele utilizarse cuando hay varias causas posibles de error.</li>
+</ul></li>
+<li><p>Es un tipo unión con dos alternativas:</p>
+<ul>
+<li><p><code>{:ok, v}</code></p>
+<p>La función ha terminado con éxito, y su resultado es el valor
+<code>v</code></p></li>
+<li><p><code>{:error, e}</code></p>
+<p>La función no ha terminado con éxito, y <code>e</code> es un valor
+que contiene información sobre el error producido.</p></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo">Ejemplo</h3>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch<span class="fu">(</span>_, n<span class="fu">)</span> <span class="kw">when</span> n <span class="op">&lt;</span> <span class="dv">0</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:error</span>, <span class="hl"><span class="va">:negative_index</span></span><span class="fu">}</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch<span class="fu">(</span><span class="ot">[]</span>, _<span class="fu">)</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:error</span>, <span class="hl"><span class="va">:out_of_bounds</span></span><span class="fu">}</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch<span class="fu">(</span><span class="ot">[</span>x <span class="op">|</span> _<span class="ot">]</span>, <span class="dv">0</span><span class="fu">)</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:ok</span>, x<span class="fu">}</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch<span class="fu">(</span><span class="ot">[</span>_ <span class="op">|</span> xs<span class="ot">]</span>, n<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  fetch<span class="fu">(</span>xs, n <span class="op">-</span> <span class="dv">1</span><span class="fu">)</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<h3 id="otro-ejemplo">Otro ejemplo</h3>
+<pre><code>&gt; File.read(&quot;noexiste.txt&quot;)
+{:error, <span class="hl">:enoent</span>}</code></pre>
+<dl>
+</dl>
+<ul>
+<li><code>:enoent</code> – fichero no existente</li>
+<li><code>:eacces</code> – sin permisos de acceso al fichero</li>
+<li><code>:eisdir</code> – es un directorio</li>
+<li><code>:enomem</code> – no hay memoria suficiente</li>
+</ul>
+<p>Ver: <code>File.read/1</code> <a
+href="https://hexdocs.pm/elixir/File.html#read/1">[+]</a></p>
+</section>
+<section id="inconvenientes-de-option-y-either" class="slide level2">
+<h2>Inconvenientes de <em>option</em> y <em>either</em></h2>
+<ul>
+<li><p>Es laborioso componer en secuencia llamadas a funciones que
+devuelven un tipo <em>option</em>/<em>either</em>.</p></li>
+<li><p>Por ejemplo, definimos una función
+<code>read_number(filename, i)</code> que, dado un fichero con nombre
+<code>filename</code> y un índice <code>i</code>:</p>
+<ol type="1">
+<li>Lee el contenido del fichero <code>filename</code>.</li>
+<li>Transforma el contenido en una lista de números.</li>
+<li>Devuelve el <code>i</code>-ésimo número de la lista.</li>
+</ol></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_number<span class="fu">(</span>filename, i<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a> <span class="hl"> <span class="kw">case</span> <span class="cn">File</span><span class="op">.</span>read<span class="fu">(</span>filename<span class="fu">)</span> <span class="kw">do</span> </span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:error</span>, e<span class="fu">}</span> <span class="op">-&gt;</span> <span class="fu">{</span><span class="va">:error</span>, e<span class="fu">}</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:ok</span>, contents<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>     <span class="hl"> <span class="kw">case</span> parse_list<span class="fu">(</span>contents<span class="fu">)</span> <span class="kw">do</span> </span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">:error</span> <span class="op">-&gt;</span> <span class="fu">{</span><span class="va">:error</span>, <span class="va">:bad_format</span><span class="fu">}</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span><span class="va">:ok</span>, list<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>         <span class="hl"> <span class="kw">case</span> fetch<span class="fu">(</span>list, i<span class="fu">)</span> <span class="kw">do</span> </span>    <span class="arrow_box_left"> Tres case anidados </span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span><span class="va">:error</span>, e<span class="fu">}</span> <span class="op">-&gt;</span> <span class="fu">{</span><span class="va">:error</span>, <span class="va">:bad_index</span><span class="fu">}</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span><span class="va">:ok</span>, n<span class="fu">}</span> <span class="op">-&gt;</span> <span class="fu">{</span><span class="va">:ok</span>, n<span class="fu">}</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>          <span class="kw">end</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>      <span class="kw">end</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column">
+<p>Fichero: <code>numeros.txt</code></p>
+<pre class="text"><code>23 54 76 22 23</code></pre>
+
+</div><div class="column">
+<p>Fichero: <code>no_numeros.txt</code></p>
+<pre class="text"><code>12 4 b 12 a</code></pre>
+
+</div>
+</div>
+<p>Ejemplos de ejecución:</p>
+<pre class="text"><code>&gt; read_number(&quot;numeros.txt&quot;, 3)
+{:ok, 22}
+
+&gt; read_number(&quot;numeros.txt&quot;, 6)
+{:error, :bad_index}
+
+&gt; read_number(&quot;num.txt&quot;, 1)
+{:error, :enoent}
+
+&gt; read_number(&quot;no_numeros.txt&quot;, 0) 
+{:error, :bad_format}</code></pre>
+
+</section></section>
+<section>
+<section id="composición-mediante-orden-superior"
+class="title-slide slide level1">
+<h1>Composición mediante orden superior</h1>
+
+</section>
+<section id="composición-de-valores-option-y-either"
+class="slide level2">
+<h2>Composición de valores <em>option</em> y <em>either</em></h2>
+<ul>
+<li><p>Podemos definir algunas funciones de orden superior que nos
+ayuden a componer en secuencia varias operaciones que involucren el uso
+de <em>option</em> o <em>either</em>.</p>
+<ul>
+<li><code>map_option/2</code></li>
+<li><code>flat_map_option/2</code></li>
+<li><code>flatten_option/1</code></li>
+</ul></li>
+</ul>
+</section>
+<section id="función-map_option2" class="slide level2">
+<h2>Función <code>map_option/2</code></h2>
+<ul>
+<li><p>Aplica una función <code>f</code> al valor contenido dentro del
+tipo <em>option</em> o <em>either</em>:</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> map_option<span class="fu">({</span><span class="va">:ok</span>, x<span class="fu">}</span>, f<span class="fu">)</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:ok</span>, f<span class="op">.</span><span class="fu">(</span>x<span class="fu">)}</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> map_option<span class="fu">(</span><span class="va">:error</span>, _<span class="fu">)</span>, <span class="va">do:</span> <span class="va">:error</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> map_option<span class="fu">({</span><span class="va">:error</span>, e<span class="fu">}</span>, _<span class="fu">)</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:error</span>, e<span class="fu">}</span></span></code></pre></div>
+</li>
+<li><p>Ejemplos:</p>
+<pre class="text"><code>&gt; map_option({:ok, 4}, &amp;(&amp;1 * 2))
+{:ok, 8}
+
+&gt; map_option({:error, :enoent}, &amp;(&amp;1 * 2))
+{:error, :enoent}</code></pre>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="uso-de-map_option2">Uso de <code>map_option/2</code></h3>
+<ul>
+<li><p>Se utiliza cuando se quiere transformar el resultado de una
+operación que devuelve <em>option</em> o <em>either</em>, y la
+transformación nunca produce error.</p></li>
+<li><p>Por ejemplo, en lugar de:</p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> elemento_lista_string<span class="fu">(</span>lista, i<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> fetch<span class="fu">(</span>lista, i<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:ok</span>, n<span class="fu">}</span> <span class="op">-&gt;</span> <span class="fu">{</span><span class="va">:ok</span>, to_string<span class="fu">(</span>n<span class="fu">)}</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    err <span class="op">-&gt;</span> err</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<p>puede escribirse:</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> elemento_lista_string<span class="fu">(</span>lista, i<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  fetch<span class="fu">(</span>lista, i<span class="fu">)</span> <span class="op">|&gt;</span> map_option<span class="fu">(</span><span class="op">&amp;</span>to_string<span class="op">/</span><span class="dv">1</span><span class="fu">)</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section id="función-flat_map_option2" class="slide level2">
+<h2>Función <code>flat_map_option/2</code></h2>
+<ul>
+<li><p>Igual que <code>map_option/2</code>, pero la función
+<code>f</code> que se aplica devuelve también un tipo <em>option</em> o
+<em>either</em>:</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flat_map_option<span class="fu">({</span><span class="va">:ok</span>, x<span class="fu">}</span>, f<span class="fu">)</span>, <span class="va">do:</span> f<span class="op">.</span><span class="fu">(</span>x<span class="fu">)</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flat_map_option<span class="fu">(</span><span class="va">:error</span>, _<span class="fu">)</span>, <span class="va">do:</span> <span class="va">:error</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flat_map_option<span class="fu">({</span><span class="va">:error</span>, e<span class="fu">}</span>, _<span class="fu">)</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:error</span>, e<span class="fu">}</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="uso-de-flat_map_option2">Uso de
+<code>flat_map_option/2</code></h3>
+<ul>
+<li><p>Se utiliza cuando quieren componerse operaciones, y cada una de
+ellas devuelve un tipo <em>option</em> o <em>either</em>:</p></li>
+<li><p>Por ejemplo, la función <code>read_number/1</code> vista
+anteriormente puede escribirse del siguiente modo:</p></li>
+</ul>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_number<span class="fu">(</span>filename, i<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="cn">File</span><span class="op">.</span>read<span class="fu">(</span>filename<span class="fu">)</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> flat_map_option<span class="fu">(</span><span class="op">&amp;</span>parse_list<span class="op">/</span><span class="dv">1</span><span class="fu">)</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> flat_map_option<span class="fu">(</span><span class="op">&amp;</span><span class="fu">(</span>fetch<span class="fu">(</span><span class="op">&amp;</span><span class="dv">1</span>, i<span class="fu">)))</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section id="función-flatten_option1" class="slide level2">
+<h2>Función <code>flatten_option/1</code></h2>
+<ul>
+<li><p>Recibe una lista de valores <em>option</em> o
+<em>either</em>.</p>
+<ul>
+<li>Si uno de los valores es un error, devuelve dicho error.</li>
+<li>Si todos los valores son de la forma <code>{:ok, v}</code>, devuelve
+una tupla <code>{:ok, xs}</code>, donde <code>xs</code> son los valores
+contenidos dentro de cada <em>option</em> o <em>either</em>.</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> flatten_option<span class="fu">(</span><span class="ot">[</span><span class="fu">{</span><span class="va">:ok</span>, <span class="dv">3</span><span class="fu">}</span>, <span class="fu">{</span><span class="va">:ok</span>, <span class="dv">4</span><span class="fu">}</span>, <span class="fu">{</span><span class="va">:ok</span>, <span class="dv">7</span><span class="fu">}</span><span class="ot">]</span><span class="fu">)</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="va">:ok</span>, <span class="ot">[</span><span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">7</span><span class="ot">]</span><span class="fu">}</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> flatten_option<span class="fu">(</span><span class="ot">[</span><span class="fu">{</span><span class="va">:ok</span>, <span class="dv">3</span><span class="fu">}</span>, <span class="fu">{</span><span class="va">:error</span>, <span class="va">:enoent</span><span class="fu">}</span>, <span class="fu">{</span><span class="va">:ok</span>, <span class="dv">7</span><span class="fu">}</span><span class="ot">]</span><span class="fu">)</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="va">:error</span>, <span class="va">:enoent</span><span class="fu">}</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<h3 id="definición-de-flatten_option1">Definición de
+<code>flatten_option/1</code></h3>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flatten_option<span class="fu">(</span><span class="ot">[]</span><span class="fu">)</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:ok</span>, <span class="ot">[]</span><span class="fu">}</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flatten_option<span class="fu">(</span><span class="ot">[</span><span class="fu">{</span><span class="va">:ok</span>, x<span class="fu">}</span> <span class="op">|</span> xs<span class="ot">]</span><span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  flatten_option<span class="fu">(</span>xs<span class="fu">)</span> <span class="op">|&gt;</span> map_option<span class="fu">(</span><span class="op">&amp;</span><span class="ot">[</span>x <span class="op">|</span> <span class="op">&amp;</span><span class="dv">1</span><span class="ot">]</span><span class="fu">)</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flatten_option<span class="fu">(</span><span class="ot">[</span><span class="fu">{</span><span class="va">:error</span>, e<span class="fu">}</span> <span class="op">|</span> _<span class="ot">]</span><span class="fu">)</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:error</span>, e<span class="fu">}</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flatten_option<span class="fu">(</span><span class="ot">[</span><span class="va">:error</span> <span class="op">|</span> _<span class="ot">]</span><span class="fu">)</span>, <span class="va">do:</span> <span class="va">:error</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-de-uso">Ejemplo de uso</h3>
+<ul>
+<li>La función <code>parse_list/1</code> definida anteriormente puede
+reescribirse del siguiente modo:</li>
+</ul>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_list<span class="fu">(</span>str<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  str </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">|&gt;</span> <span class="cn">String</span><span class="op">.</span>split<span class="fu">()</span> </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">|&gt;</span> <span class="cn">Enum</span><span class="op">.</span>map<span class="fu">(</span><span class="kw">fn</span> str <span class="op">-&gt;</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> <span class="cn">Integer</span><span class="op">.</span>parse<span class="fu">(</span>str<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span>n, <span class="st">&quot;&quot;</span><span class="fu">}</span> <span class="op">-&gt;</span> <span class="fu">{</span><span class="va">:ok</span>, n<span class="fu">}</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>          _ <span class="op">-&gt;</span> <span class="va">:error</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">end</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">end</span><span class="fu">)</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">|&gt;</span> flatten_option<span class="fu">()</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; parse_list(&quot;23 5 4 23&quot;)
+{:ok, [23, 5, 4, 23]}
+
+&gt; parse_list(&quot;23 5 4a 23&quot;)
+:error</code></pre>
+
+</section></section>
+<section>
+<section id="composición-mediante-with"
+class="title-slide slide level1">
+<h1>Composición mediante <code>with</code></h1>
+
+</section>
+<section id="la-macro-with" class="slide level2">
+<h2>La macro <code>with</code></h2>
+<ul>
+<li><p>La macro <code>with</code> permite combinar varias llamadas a
+funciones que devuelven <em>option</em> o <em>either</em>.</p></li>
+<li><p>Tiene la siguiente sintaxis:</p>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>with <span class="meta"> <span class="">pat<sub>1</sub></span> </span> <span class="op">&lt;-</span> <span class="meta"> <span class="">expr<sub>1</sub></span> </span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>     <span class="meta"> <span class="">pat<sub>2</sub></span> </span> <span class="op">&lt;-</span> <span class="meta"> <span class="">expr<sub>2</sub></span> </span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>     <span class="op">...</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>     <span class="meta"> <span class="">pat<sub>n</sub></span> </span> <span class="op">&lt;-</span> <span class="meta"> <span class="">expr<sub>n</sub></span> </span> <span class="kw">do</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="meta"> expr </span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>with <span class="meta"> <span class="">pat<sub>1</sub></span> </span> <span class="op">&lt;-</span> <span class="meta"> <span class="">expr<sub>1</sub></span> </span>,</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>     <span class="meta"> <span class="">pat<sub>2</sub></span> </span> <span class="op">&lt;-</span> <span class="meta"> <span class="">expr<sub>2</sub></span> </span>,</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>     <span class="op">...</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>     <span class="meta"> <span class="">pat<sub>n</sub></span> </span> <span class="op">&lt;-</span> <span class="meta"> <span class="">expr<sub>n</sub></span> </span> <span class="kw">do</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="meta"> expr </span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<ul>
+<li><p>Evalúa <span class="code">expr<sub>1</sub></span> e intenta
+ajustar con <span class="code">pat<sub>1</sub></span>. Si el ajuste
+falla, <code>with</code> devuelve el resultado de evaluar <span
+class="code">expr<sub>1</sub></span>.</p></li>
+<li><p>Evalúa <span class="code">expr<sub>2</sub></span> e intenta
+ajustar con <span class="code">pat<sub>2</sub></span>. Si el ajuste
+falla, <code>with</code> devuelve el resultado de evaluar <span
+class="code">expr<sub>2</sub></span>.</p>
+<p>[…]</p></li>
+<li><p>Si ningún ajuste ha fallado, devuelve el resultado de evaluar
+<code>expr</code>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-de-uso-1">Ejemplo de uso</h3>
+<pre class="text"><code>&gt; dicc = %{a: 2, b: 3, c: 1}
+
+&gt; with {:ok, x} &lt;- Map.fetch(dicc, :a),
+       {:ok, y} &lt;- Map.fetch(dicc, :b) do
+    x + y
+  end
+5
+
+&gt; with {:ok, x} &lt;- Map.fetch(dicc, :a),
+       <span class="hl">{:ok, y}</span> &lt;- Map.fetch(dicc, :d) do <span class="arrow_box_left"> Map.fetch(dicc, :d) devuelve :error </span>
+    x + y
+  end
+:error</code></pre>
+
+</section>
+<section id="aplicaciones-de-with" class="slide level2">
+<h2>Aplicaciones de <code>with</code></h2>
+<ul>
+<li><p>Se utiliza para hacer varias llamadas en secuencia a operaciones
+que pueden devolver un tipo <em>option</em> o <em>either</em>.</p>
+<ul>
+<li>Si una de ellas falla, devolvemos el error devuelto por la operación
+que ha fallado.</li>
+</ul></li>
+<li><p>La función <code>read_number</code> puede implementarse del
+siguiente modo:</p>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_number<span class="fu">(</span>filename, i<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  with <span class="fu">{</span><span class="va">:ok</span>, contents<span class="fu">}</span> <span class="op">&lt;-</span> <span class="cn">File</span><span class="op">.</span>read<span class="fu">(</span>filename<span class="fu">)</span>,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">{</span><span class="va">:ok</span>, list<span class="fu">}</span> <span class="op">&lt;-</span> parse_list<span class="fu">(</span>contents<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    fetch<span class="fu">(</span>list, i<span class="fu">)</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3
+id="ejemplo-implementación-de-flatten_option1-mediante-with">Ejemplo:
+implementación de <code>flatten_option/1</code> mediante
+<code>with</code></h3>
+<div class="sourceCode" id="cb39"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flatten_option<span class="fu">(</span><span class="ot">[]</span><span class="fu">)</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:ok</span>, <span class="ot">[]</span><span class="fu">}</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> flatten_option<span class="fu">(</span><span class="ot">[</span>x <span class="op">|</span> xs<span class="ot">]</span><span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  with <span class="fu">{</span><span class="va">:ok</span>, v<span class="fu">}</span> <span class="op">&lt;-</span> x,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>       <span class="fu">{</span><span class="va">:ok</span>, vs<span class="fu">}</span> <span class="op">&lt;-</span> flatten_option<span class="fu">(</span>xs<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:ok</span>, <span class="ot">[</span>v <span class="op">|</span> vs<span class="ot">]</span><span class="fu">}</span>       </span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section id="guardas-en-with" class="slide level2">
+<h2>Guardas en <code>with</code></h2>
+<ul>
+<li><p>Los ajustes de patrón dentro de un <code>with</code> pueden tener
+guardas asociadas:</p>
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>with <span class="fu">{</span><span class="va">:ok</span>, x<span class="fu">}</span> <span class="hl">when x <span class="op">&gt;=</span> <span class="dv">18</span></span> <span class="op">&lt;-</span> get_age<span class="fu">(</span>person<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<p>Si la guarda no se satisface, se devuelve la expresión del lado
+derecho del <code>&lt;-</code>.</p></li>
+</ul>
+</section>
+<section id="cláusula-else-dentro-de-with" class="slide level2">
+<h2>Cláusula <code>else</code> dentro de <code>with</code></h2>
+<ul>
+<li><p>Permite especificar qué debe devolver el <code>with</code> en el
+caso en el que alguno de los patrones falle.</p></li>
+<li><p>Intenta ajustar el valor que falla con cada una de las cláusulas
+del <code>else</code>, y devuelve el resultado de evaluar el lado
+derecho de la cláusula seleccionada:</p>
+<div class="sourceCode" id="cb41"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_number<span class="fu">(</span>filename, i<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  with <span class="fu">{</span><span class="va">:ok</span>, contents<span class="fu">}</span> <span class="op">&lt;-</span> <span class="cn">File</span><span class="op">.</span>read<span class="fu">(</span>filename<span class="fu">)</span>,</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">{</span><span class="va">:ok</span>, list<span class="fu">}</span> <span class="op">&lt;-</span> parse_list<span class="fu">(</span>contents<span class="fu">)</span>,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>       <span class="fu">{</span><span class="va">:ok</span>, n<span class="fu">}</span> <span class="op">&lt;-</span> fetch<span class="fu">(</span>list, i<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:ok</span>, n<span class="fu">}</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="hl"> <span class="cf">else</span> </span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    <span class="hl"><span class="fu">{</span><span class="va">:error</span>, <span class="va">:enoent</span><span class="fu">}</span></span> <span class="op">-&gt;</span> <span class="fu">{</span><span class="va">:error</span>, <span class="va">:file_not_found</span><span class="fu">}</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    <span class="hl"><span class="fu">{</span><span class="va">:error</span>, <span class="va">:negative_index</span><span class="fu">}</span></span> <span class="op">-&gt;</span> <span class="fu">{</span><span class="va">:error</span>, <span class="va">:bad_index</span><span class="fu">}</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>    <span class="hl"><span class="fu">{</span><span class="va">:error</span>, <span class="va">:out_of_bounds</span><span class="fu">}</span></span> <span class="op">-&gt;</span> <span class="fu">{</span><span class="va">:error</span>, <span class="va">:bad_index</span><span class="fu">}</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>    <span class="hl"><span class="va">:error</span></span> <span class="op">-&gt;</span> <span class="fu">{</span><span class="va">:error</span>, <span class="va">:bad_format</span><span class="fu">}</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>&gt; read_number(&quot;numeros.txt&quot;, 6)
+{:error, :bad_index}
+
+&gt; read_number(&quot;numeros.txt&quot;, -2)
+{:error, :bad_index}
+
+&gt; read_number(&quot;no_existe.txt&quot;, 0)
+{:error, :file_not_found}</code></pre>
+
+</section></section>
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/search/search.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Prints all fragments in their visible states on the same slide 
+        pdfSeparateFragments: false,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom,
+          // RevealHighlight          
+        ]
+      });
+    </script>
+    </body>
+</html>
