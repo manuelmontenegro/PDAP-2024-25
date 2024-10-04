@@ -5,3 +5,5 @@ Makefile
 svg/*
 template/*
 PDF/*
+*.sublime-workspace
+*.sublime-project
