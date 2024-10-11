@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="269.36261mm"
+   height="73.441978mm"
+   viewBox="0 0 269.36261 73.441978"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   sodipodi:docname="protocolos.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.5901901"
+     inkscape:cx="580.3215"
+     inkscape:cy="137.24392"
+     inkscape:window-width="1617"
+     inkscape:window-height="1216"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-10.859373,-42.883186)">
+    <g
+       id="g6"
+       transform="translate(4.6360856,-7.2290245)">
+      <rect
+         style="fill:#daeeff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.145819;stroke-opacity:1"
+         id="rect1-5"
+         width="54.034985"
+         height="9.9161844"
+         x="70.488853"
+         y="62.403542" />
+      <rect
+         style="fill:#aad8ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.162291;stroke-opacity:1"
+         id="rect1"
+         width="54.018513"
+         height="12.286788"
+         x="70.442245"
+         y="50.193356" />
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:5.64444px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';text-align:center;text-anchor:middle;fill:#aaffea;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.266999;stroke-opacity:1"
+         x="97.948708"
+         y="57.717117"
+         id="text4"><tspan
+           sodipodi:role="line"
+           id="tspan4"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267"
+           x="97.948708"
+           y="57.717117">String.Chars</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:4.23333px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+         x="86.388275"
+         y="68.10923"
+         id="text5"><tspan
+           sodipodi:role="line"
+           id="tspan5"
+           style="font-size:4.23333px;fill:#000000;fill-opacity:1;stroke-width:0.267"
+           x="86.388275"
+           y="68.10923">to_string(v)</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:8.46667px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';text-align:center;text-anchor:middle;fill:#005196;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+         x="170.0703"
+         y="60.978642"
+         id="text9"><tspan
+           sodipodi:role="line"
+           id="tspan9"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46667px;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#005196;fill-opacity:1;stroke:none;stroke-width:0.267"
+           x="170.0703"
+           y="60.978642">Protocolo</tspan></text>
+    </g>
+    <g
+       id="g9"
+       class="fragment">
+      <path
+         style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.191717;stroke-opacity:1"
+         d="m 97.345315,72.466641 -3.481148,6.029526 h 6.924753 z"
+         id="path7"
+         transform="translate(4.6360857,-7.2290243)" />
+      <path
+         style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.266999;stroke-opacity:1"
+         d="m 97.155958,78.706343 0.05758,22.709267"
+         id="path8"
+         sodipodi:nodetypes="cc"
+         transform="translate(4.6360857,-7.2290243)" />
+      <path
+         style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.266999;stroke-opacity:1"
+         d="M 29.753167,101.16666 V 85.075388 L 160.74735,84.734864 v 16.504916"
+         id="path9"
+         transform="translate(4.6360857,-7.2290243)" />
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:8.46667px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';text-align:center;text-anchor:middle;fill:#009679;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+         x="239.37395"
+         y="113.25202"
+         id="text9-9"
+         transform="translate(4.6360857,-7.2290243)"><tspan
+           sodipodi:role="line"
+           id="tspan9-2"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46667px;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#009679;fill-opacity:1;stroke:none;stroke-width:0.267"
+           x="239.37395"
+           y="113.25202">Implementaciones</tspan></text>
+      <g
+         id="g6-2"
+         transform="translate(-59.501727,43.932528)">
+        <rect
+           style="fill:#dafff6;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.145819;stroke-opacity:1"
+           id="rect1-5-9"
+           width="54.034985"
+           height="9.9161844"
+           x="70.488853"
+           y="62.403542" />
+        <rect
+           style="fill:#aaffea;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.162291;stroke-opacity:1"
+           id="rect1-1"
+           width="54.018513"
+           height="12.286788"
+           x="70.442245"
+           y="50.193356" />
+        <text
+           xml:space="preserve"
+           style="font-weight:bold;font-size:5.64444px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';text-align:center;text-anchor:middle;fill:#aaffea;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.266999;stroke-opacity:1"
+           x="97.948708"
+           y="57.717117"
+           id="text4-2"><tspan
+             sodipodi:role="line"
+             id="tspan4-7"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267"
+             x="97.948708"
+             y="57.717117">Integer</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-weight:bold;font-size:4.23333px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+           x="89.563278"
+           y="68.10923"
+           id="text5-0"><tspan
+             sodipodi:role="line"
+             id="tspan5-9"
+             style="font-size:4.23333px;fill:#000000;fill-opacity:1;stroke-width:0.267"
+             x="89.563278"
+             y="68.10923">to_string(int)</tspan></text>
+      </g>
+      <g
+         id="g6-2-6"
+         transform="translate(5.3357542,43.932528)">
+        <rect
+           style="fill:#dafff6;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.145819;stroke-opacity:1"
+           id="rect1-5-9-2"
+           width="54.034985"
+           height="9.9161844"
+           x="70.488853"
+           y="62.403542" />
+        <rect
+           style="fill:#aaffea;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.162291;stroke-opacity:1"
+           id="rect1-1-6"
+           width="54.018513"
+           height="12.286788"
+           x="70.442245"
+           y="50.193356" />
+        <text
+           xml:space="preserve"
+           style="font-weight:bold;font-size:5.64444px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';text-align:center;text-anchor:middle;fill:#aaffea;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.266999;stroke-opacity:1"
+           x="97.948708"
+           y="57.717117"
+           id="text4-2-1"><tspan
+             sodipodi:role="line"
+             id="tspan4-7-8"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267"
+             x="97.948708"
+             y="57.717117">Float</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-weight:bold;font-size:4.23333px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+           x="92.209114"
+           y="68.10923"
+           id="text5-0-7"><tspan
+             sodipodi:role="line"
+             id="tspan5-9-9"
+             style="font-size:4.23333px;fill:#000000;fill-opacity:1;stroke-width:0.267"
+             x="92.209114"
+             y="68.10923">to_string(float)</tspan></text>
+      </g>
+      <g
+         id="g7"
+         transform="translate(-5.7802478,-53.857347)">
+        <rect
+           style="fill:#dafff6;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.145819;stroke-opacity:1"
+           id="rect1-5-9-2-3"
+           width="54.034985"
+           height="9.9161844"
+           x="146.44234"
+           y="160.19341" />
+        <rect
+           style="fill:#aaffea;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.162291;stroke-opacity:1"
+           id="rect1-1-6-7"
+           width="54.018513"
+           height="12.286788"
+           x="146.39572"
+           y="147.98323" />
+        <text
+           xml:space="preserve"
+           style="font-weight:bold;font-size:5.64444px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';text-align:center;text-anchor:middle;fill:#aaffea;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.266999;stroke-opacity:1"
+           x="173.90219"
+           y="155.50699"
+           id="text4-2-1-5"><tspan
+             sodipodi:role="line"
+             id="tspan4-7-8-9"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267"
+             x="173.90219"
+             y="155.50699">Atom</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-weight:bold;font-size:4.23333px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+           x="168.1626"
+           y="165.89909"
+           id="text5-0-7-2"><tspan
+             sodipodi:role="line"
+             id="tspan5-9-9-2"
+             style="font-size:4.23333px;fill:#000000;fill-opacity:1;stroke-width:0.267"
+             x="168.1626"
+             y="165.89909">to_string(atom)</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>
