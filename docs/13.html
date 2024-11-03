@@ -1,0 +1,3366 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Manuel Montenegro Montes">
+  <title>Evaluación perezosa y streams</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="css/nnfx-light.min.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {  background-color: #f8f8f8; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ef2929; } /* Alert */
+    code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #204a87; } /* Attribute */
+    code span.bn { color: #0000cf; } /* BaseN */
+    code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4e9a06; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #8f5902; font-style: italic; } /* Comment */
+    code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+    code span.dt { color: #204a87; } /* DataType */
+    code span.dv { color: #0000cf; } /* DecVal */
+    code span.er { color: #a40000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #0000cf; } /* Float */
+    code span.fu { color: #204a87; font-weight: bold; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+    code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+    code span.ot { color: #8f5902; } /* Other */
+    code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+    code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+    code span.ss { color: #4e9a06; } /* SpecialString */
+    code span.st { color: #4e9a06; } /* String */
+    code span.va { color: #000000; } /* Variable */
+    code span.vs { color: #4e9a06; } /* VerbatimString */
+    code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="css/pdap.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="img/RedBackground.jpg">
+  <h1 class="title">Evaluación perezosa y <em>streams</em></h1>
+<div id="author-container">
+<div class="author">
+Manuel Montenegro Montes
+<br>
+<span id="email"><a href="montenegro@fdi.ucm.es">montenegro@fdi.ucm.es</a></span>
+</div>
+<div class="subject">
+<strong>Programación Declarativa Aplicada</strong>
+<br>Máster en Ingeniería Informática<br>Facultad de
+Informática<br>Universidad Complutense de Madrid
+</div>
+</div>
+</section>
+
+<section id="section" class="slide level2 outline"
+data-background-image="img/RedBackground.jpg">
+<h2 class="outline" data-background-image="img/RedBackground.jpg"></h2>
+<ol type="1">
+<li>Evaluación impaciente vs. perezosa</li>
+<li>Evaluación perezosa en Elixir</li>
+<li><em>Streams</em> perezosos</li>
+<li>Creación de <em>streams</em></li>
+</ol>
+</section>
+<section>
+<section id="evaluación-impaciente-vs.-perezosa"
+class="title-slide slide level1">
+<h1>Evaluación impaciente vs. perezosa</h1>
+
+</section>
+<section id="estrategias-de-evaluación" class="slide level2">
+<h2>Estrategias de evaluación</h2>
+<ul>
+<li><p>En un lenguaje de programación, una <strong>estrategia de
+evaluación</strong> es un conjunto de reglas que determina cómo debe
+evaluarse una expresión del lenguaje.</p></li>
+<li><p>Hay dos estrategias principales:</p>
+<ul>
+<li><strong>Evaluación impaciente</strong>, utilizada en la mayoría de
+lenguajes imperativos, y en muchos de los funcionales (como
+Elixir).</li>
+<li><strong>Evaluación perezosa</strong>, utilizada en algunos lenguajes
+funcionales, principalmente Haskell.</li>
+</ul></li>
+</ul>
+</section>
+<section id="evaluación-impaciente" class="slide level2">
+<h2>Evaluación impaciente</h2>
+<ul>
+<li>Una estrategia de evaluación <strong>impaciente</strong> evalúa
+completamente los argumentos de una función antes de aplicarla.</li>
+</ul>
+<div class="fragment">
+<ul>
+<li><p>Ejemplo:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f<span class="fu">(</span>x, y<span class="fu">)</span>, <span class="va">do:</span> <span class="dv">2</span> <span class="op">*</span> x <span class="op">+</span> y</span></code></pre></div>
+
+<div class="fragment">
+<p>Para evaluar la expresión <code>f(2 + 1, 6 * 6)</code>:</p>
+<ol type="1">
+<li>Se evalúa <code>2 + 1</code> → <code>3</code></li>
+<li>Se evalúa <code>6 * 6</code> → <code>36</code></li>
+<li>Se realiza la llamada a <code>f</code> pasando <code>3</code> y
+<code>36</code> como parámetros: <code>f(3, 36)</code> →
+<code>2 * 3 + 36</code> → <code>6 + 36</code> → <code>42</code>.</li>
+</ol>
+</div></li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>La estrategia impaciente convierte a todas las funciones en
+<strong>estrictas</strong>: si la evaluación de un argumento falla, la
+llamada a función falla, aunque no utilice el argumento.</li>
+</ul>
+<div class="fragment">
+<ul>
+<li><p>Por ejemplo, dada la siguiente función:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="cf">cond</span><span class="fu">(</span>b, x, y<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="cf">cond</span>, <span class="va">do:</span> x, <span class="cf">else</span>: y</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<p>la evaluación de la siguiente expresión fallará,</p>
+<pre class="text"><code>&gt; cond(true, 1, 1/0)
+** (ArithmeticError) bad argument in arithmetic expression: 1 / 0</code></pre>
+
+<p>porque se realizará la división <code>1/0</code>, aunque luego
+<code>cond</code> no utilice ese valor.</p></li>
+</ul>
+</div>
+</section>
+<section id="evaluación-perezosa" class="slide level2">
+<h2>Evaluación perezosa</h2>
+<div>
+<ul>
+<li class="fragment"><p>La estrategia de evaluación
+<strong>perezosa</strong> retrasa la evaluación de una expresión hasta
+que sea necesario.</p></li>
+<li class="fragment"><p>En las llamadas a funciones, se aplica la
+función sin evaluar los argumentos.</p></li>
+<li class="fragment"><p>En el mismo ejemplo de antes,</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f<span class="fu">(</span>x, y<span class="fu">)</span>, <span class="va">do:</span> <span class="dv">2</span> <span class="op">*</span> x <span class="op">+</span> y</span></code></pre></div>
+
+<p>la expresión anterior se evaluaría del siguiente modo:</p>
+<pre><code>f(2 + 1, 6 * 6) → 2 * (2 + 1) + (6 * 6)
+                → 2 * 3 + (6 * 6)
+                → 6 + (6 * 6)
+                → 6 + 36
+                → 42</code></pre>
+<dl>
+</dl></li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>La evaluación perezosa permite evitar la <strong>evaluación
+innecesaria</strong> de expresiones.</p></li>
+<li><p>Por ejemplo, si definimos la función <code>cond</code> anterior
+en Haskell:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cond b x y <span class="ot">=</span> <span class="kw">if</span> b <span class="kw">then</span> x <span class="kw">else</span> y</span></code></pre></div>
+
+<p>La aplicación <code>cond True 1 (1/0)</code> se evalúa a
+<code>1</code> sin producir ningún error, porque no necesita evaluar
+<code>1/0</code>.</p></li>
+</ul>
+</section>
+<section id="estrategia-impaciente-vs-perezosa" class="slide level2">
+<h2>Estrategia impaciente vs perezosa</h2>
+<ul>
+<li><p>La evaluación impaciente es <strong>más eficiente</strong> y más
+<strong>simple</strong> de implementar, ya que solo requiere pasar
+valores como parámetro, y no expresiones sin evaluar
+(<em>thunks</em>).</p>
+<ul>
+<li>Por este motivo, la mayoría de lenguajes tienen evaluación
+impaciente.</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<ul>
+<li><p>No obstante, a veces la evaluación perezosa tiene ventajas:</p>
+<ul>
+<li>Permite ahorrar cómputos innecesarios.</li>
+<li>Permite trabajar con estructuras de datos potencialmente infinitas
+(<em>streams</em>).</li>
+</ul></li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="evaluación-perezosa-en-elixir"
+class="title-slide slide level1">
+<h1>Evaluación perezosa en Elixir</h1>
+
+</section>
+<section id="evaluación-perezosa-en-elixir-1" class="slide level2">
+<h2>Evaluación perezosa en Elixir</h2>
+<ul>
+<li><p>Elixir es un lenguaje con estrategia de <strong>evaluación
+impaciente</strong>.</p></li>
+<li><p>No obstante, es posible evaluar perezosamente los argumentos de
+una función <strong>encapsulándolos dentro de
+funciones</strong>:</p></li>
+</ul>
+<div class="columns">
+<div class="column fragment">
+<p>En lugar de:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>      <span class="arrow_box_down fragment">Valores simples</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="cf">cond</span><span class="fu">(</span>b, <span class="hl">x</span>, <span class="hl">y</span><span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="cf">cond</span>, <span class="va">do:</span> x, <span class="cf">else</span>: y</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column fragment">
+<p>se tendría:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="arrow_box_down fragment">Funciones de cero parámetros</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="cf">cond</span><span class="fu">(</span>b, <span class="hl">x</span>, <span class="hl">y</span><span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="cf">cond</span>, <span class="va">do:</span> <span class="hl">x<span class="op">.</span><span class="fu">()</span></span>, <span class="cf">else</span>: <span class="hl">y<span class="op">.</span><span class="fu">()</span></span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>De este modo, en lugar de tener que realizar la siguiente
+llamada:</p>
+<pre class="text"><code>&gt; cond(true, 1, 1/0)</code></pre>
+
+<p>tendríamos que realizar:</p>
+<pre class="text"><code> <span class="arrow_box_down fragment">Pasamos funciones de cero parámetros</span>
+&gt; cond(true, <span class="hl">fn -&gt; 1 end</span>, <span class="hl">fn -&gt; 1/0 end</span>)
+1</code></pre>
+</li>
+</ul>
+</section>
+<section id="evaluación-perezosa-en-la-librería-estándar"
+class="slide level2">
+<h2>Evaluación perezosa en la librería estándar</h2>
+<ul>
+<li><p>La función <code>Keyword.get/3</code> recibe una <em>keyword
+list</em>, una clave y un valor por defecto.</p>
+<ul>
+<li>Devuelve el valor asociado a la clave indicada en la <em>keyword
+list</em>.</li>
+<li>Si la <em>keyword list</em> no contiene la clave, se devuelve el
+valor por defecto.</li>
+</ul>
+<div class="fragment">
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get<span class="fu">(</span><span class="ot">[]</span>, _, default<span class="fu">)</span>, <span class="va">do:</span> default</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get<span class="fu">(</span><span class="ot">[</span><span class="fu">{</span>k, v<span class="fu">}</span> <span class="op">|</span> _ <span class="ot">]</span>, k, _<span class="fu">)</span>, <span class="va">do:</span> v</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get<span class="fu">(</span><span class="ot">[</span><span class="fu">{</span>_, _<span class="fu">}</span> <span class="op">|</span> ks<span class="ot">]</span>, k, default<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  get<span class="fu">(</span>ks, k, default<span class="fu">)</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div>
+<div class="fragment">
+<pre class="text"><code>&gt; Keyword.get([a: 3, b: 4], :c, -1)
+<span class="fragment">-1</span></code></pre>
+
+</div></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Problema: si el valor por defecto es complejo de calcular, o su
+evaluación tiene efectos laterales, se evalúa aunque no se use.</p>
+<pre class="text"><code>&gt; get([a: 3, b: 4], :a, <span class="hl">factorial(100)</span>)
+<span class="fragment">3</span>
+
+&gt; get([a: 3, b: 4], :a, <span class="hl">IO.puts(&quot;No encontrado&quot;)</span>)
+<span class="fragment">No encontrado</span>
+<span class="fragment">3</span></code></pre>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>La función <code>Keyword.get_lazy/3</code> se comporta igual que
+<code>get</code>, pero evalúa perezosamente su tercer parámetro:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>              <span class="arrow_box_down fragment"> Ahora es una función </span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_lazy<span class="fu">(</span><span class="ot">[]</span>, _, <span class="hl">default</span><span class="fu">)</span>, <span class="va">do:</span> <span class="hl">default<span class="op">.</span><span class="fu">()</span></span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_lazy<span class="fu">(</span><span class="ot">[</span><span class="fu">{</span>k, v<span class="fu">}</span> <span class="op">|</span> _ <span class="ot">]</span>, k, _<span class="fu">)</span>, <span class="va">do:</span> v</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_lazy<span class="fu">(</span><span class="ot">[</span><span class="fu">{</span>_, _<span class="fu">}</span> <span class="op">|</span> ks<span class="ot">]</span>, k, default<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  get_lazy<span class="fu">(</span>ks, k, default<span class="fu">)</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<div class="fragment">
+<pre class="text"><code>&gt; get([a: 3, b: 4], :a, <span class="hl">fn -&gt; factorial(100) end</span>)
+<span class="fragment">3</span>
+
+&gt; get([a: 3, b: 4], :a, <span class="hl">fn -&gt; IO.puts(&quot;No encontrado&quot;) end</span>)
+<span class="fragment">3</span>
+
+&gt; get([a: 3, b: 4], :c, <span class="hl">fn -&gt; IO.puts(&quot;No encontrado&quot;) end</span>)
+No encontrado
+<span class="fragment">:ok</span></code></pre>
+
+</div></li>
+</ul>
+</section></section>
+<section>
+<section id="streams-perezosos" class="title-slide slide level1">
+<h1><em>Streams</em> perezosos</h1>
+
+</section>
+<section id="streams-perezosos-1" class="slide level2">
+<h2><em>Streams</em> perezosos</h2>
+<ul>
+<li><p>En Elixir, un <strong><em>stream</em></strong> es una colección
+de elementos, similar a una lista.</p></li>
+<li><p>Diferencia entre <em>streams</em> y listas:</p>
+<ul>
+<li><p>Un <em>stream</em> produce sus elementos según se van
+necesitando.</p></li>
+<li><p>Por el contrario, una lista contiene todos sus elementos desde el
+momento en el que se crea la lista.</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="streams-en-la-librería-de-elixir" class="slide level2">
+<h2><em>Streams</em> en la librería de Elixir</h2>
+<div>
+<ul>
+<li class="fragment"><p>El módulo <code>Stream</code> contiene funciones
+para transformar <em>streams</em>.</p></li>
+<li class="fragment"><p>Las funciones son similares a las del módulo
+<code>Enum</code>:</p>
+<ul>
+<li class="fragment"><code>Stream.map(enumerable, fun)</code></li>
+<li class="fragment"><code>Stream.filter(enumerable, fun)</code></li>
+<li class="fragment"><code>Stream.flat_map(enumerable, fun)</code></li>
+<li
+class="fragment"><code>Stream.zip(enumerable1, enumerable2)</code></li>
+<li
+class="fragment"><code>Stream.zip_with(enumerable1, enumerable2, fun)</code></li>
+<li class="fragment"><code>Stream.take(enumerable, count)</code></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Además, los <em>streams</em> implementan el protocolo
+<code>Enumerable</code>.</p></li>
+<li><p>Esto significa que podemos pasar <em>streams</em> como parámetros
+a las funciones del módulo <code>Enum</code>.</p>
+<ul>
+<li>Cuando aplicamos una función del módulo <code>Enum</code> a un
+<em>stream</em>, se fuerza la evaluación de los elementos del
+<em>stream</em> que sean necesarios.</li>
+</ul></li>
+</ul>
+<div class="fragment"
+style="background-color: #E0E0FF;padding-left:10px;padding-right:10px">
+<ul>
+<li><p>En resumen:</p>
+<ul>
+<li>Las funciones del módulo <code>Stream</code> <strong>admiten
+cualquier enumerable</strong> (incluyendo <em>streams</em>)</li>
+<li>Las funciones del módulo <code>Enum</code> <strong>admiten
+<em>streams</em></strong>, porque estos son enumerables.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="streams-vs-enums" class="slide level2">
+<h2>Streams vs Enums</h2>
+<p>Uso del módulo <code>Enum</code>:</p>
+<pre class="text"><code>&gt; xs = Enum.map([2, 3, 8, 11, 34], &amp;(&amp;1 * 3))
+<span class="fragment">[6, 9, 24, 33, 102]</span>
+
+&gt; xs = Enum.filter(xs, &amp;Integer.is_even/1)
+<span class="fragment">[6, 24, 102]</span>
+
+&gt; xs = Enum.map(xs, &amp;(&amp;1 + 1))
+<span class="fragment">[7, 25, 103]</span>
+
+&gt; Enum.at(xs, 0)
+<span class="fragment">7</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<p>Uso del módulo <code>Stream</code>:</p>
+<pre class="text"><code>&gt; s = Stream.map([2, 3, 8, 11, 34], &amp;(&amp;1 * 3))
+<span class="fragment">#Stream<[...]></span>
+
+&gt; s = Stream.filter(s, &amp;Integer.is_even/1)
+<span class="fragment">#Stream<[...]></span>
+
+&gt; s = Stream.map(s, &amp;(&amp;1 + 1))
+<span class="fragment">#Stream<[...]></span>
+
+&gt; <span class="hl">Enum</span>.at(s, 0)
+<span class="fragment">7</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="cómo-funciona">¿Cómo funciona?</h3>
+<ul>
+<li>Para comprender el funcionamiento de las funciones de
+<code>Stream</code>, vamos a introducir efectos laterales en cada una de
+las funciones que hemos pasado como parámetro:</li>
+</ul>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> multiplica_por_tres<span class="fu">(</span>x<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Multiplicando </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> por tres&quot;</span><span class="fu">)</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  x <span class="op">*</span> <span class="dv">3</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> es_par<span class="fu">(</span>x<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Comprobando si </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> es par&quot;</span><span class="fu">)</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Integer</span><span class="op">.</span>is_even<span class="fu">(</span>x<span class="fu">)</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> incrementar<span class="fu">(</span>x<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Incrementando </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  x <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<p>Con el módulo <code>Enum</code>:</p>
+<pre class="text"><code>&gt; xs = Enum.map([2, 3, 8, 11, 34], &amp;multiplica_por_tres/1)                                                         
+<span class="fragment">Multiplicando 2 por tres
+Multiplicando 3 por tres
+Multiplicando 8 por tres
+Multiplicando 11 por tres
+Multiplicando 34 por tres</span>
+<span class="fragment">[6, 9, 24, 33, 102]</span>
+
+&gt; xs = Enum.filter(xs, &amp;es_par/1)                                                                                  
+<span class="fragment">Comprobando si 6 es par
+Comprobando si 9 es par
+Comprobando si 24 es par
+Comprobando si 33 es par
+Comprobando si 102 es par</span>
+<span class="fragment">[6, 24, 102]
+...</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>...
+&gt; xs = Enum.map(xs, &amp;incrementar/1)                                                                                
+<span class="fragment">Incrementando 6
+Incrementando 24
+Incrementando 102</span>
+<span class="fragment">[7, 25, 103]</span>
+
+&gt; Enum.at(xs, 1)                                                                                                   
+<span class="fragment">25</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<p><svg
+   width="138.24812mm"
+   height="84.447739mm"
+   viewBox="0 0 138.24812 84.447739"
+   version="1.1"
+   id="svg431"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="TransList.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview433"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="1.4396184"
+     inkscape:cx="259.79107"
+     inkscape:cy="172.26787"
+     inkscape:window-width="2662"
+     inkscape:window-height="1305"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs428">
+    <rect
+       x="133.84895"
+       y="217.8176"
+       width="568.11658"
+       height="168.27376"
+       id="rect3944" />
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="9.6111107"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-7"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-9"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-2"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-2"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-8"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-9"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-7" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-9"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-4"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-7"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-8" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-6"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-3"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-20"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-6" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-93"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-7"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-4"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-5" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-7-2"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-9-5"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-2-4"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-0-7" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-2-4"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-8-4"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-9-3"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-7-0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-9-7"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-4-8"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-7-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-8-8" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-6-8"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-3-4"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-20-3"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-6-1" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-93-9"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-7-3"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-4-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-5-8" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-2-4-5"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-8-4-1"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-9-3-1"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-7-0-0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-6-8-4"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-3-4-6"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-20-3-2"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-6-1-5" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-93-9-6"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-7-3-6"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-4-6-4"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-5-8-0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-2-4-5-0"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-8-4-1-4"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-9-3-1-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-7-0-0-2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-6-8-4-6"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-3-4-6-7"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-20-3-2-5"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-6-1-5-6" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-41.320232,-20.897518)">
+    <g
+       id="g7896-5-5"
+       transform="translate(104.1626,-6.2701473)"
+       style="stroke:#000000">
+      <rect
+         style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-63-3"
+         width="13.210699"
+         height="7.9857564"
+         x="40.880814"
+         y="27.239359" />
+      <rect
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-7-9-8"
+         width="4.0801482"
+         height="7.9858871"
+         x="54.050018"
+         y="27.239294" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="47.492783"
+         y="33.292961"
+         id="text7840-4-8"><tspan
+           sodipodi:role="line"
+           id="tspan7838-8-3"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+           x="47.492783"
+           y="33.292961">34</tspan></text>
+    </g>
+    <g
+       id="g8680-6"
+       transform="translate(52.622949,-28.104377)">
+      <circle
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         id="path8569-4"
+         cx="121.22891"
+         cy="53.093468"
+         r="2.5265293" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 119.61311,55.007464 3.17467,-3.885856"
+         id="path8634-3" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 122.79621,54.972973 -3.17467,-3.885856"
+         id="path8634-9-3" />
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4);marker-end:url(#TriangleStart-9-8-8-6)"
+       d="m 160.27461,25.049983 9.5379,-0.0475"
+       id="path8021-9-0-6-3"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g7896-5-5-2"
+       transform="translate(78.306543,-6.270147)"
+       style="stroke:#000000">
+      <rect
+         style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-63-3-3"
+         width="13.210699"
+         height="7.9857564"
+         x="40.880814"
+         y="27.239359" />
+      <rect
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-7-9-8-7"
+         width="4.0801482"
+         height="7.9858871"
+         x="54.050018"
+         y="27.239294" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="47.492783"
+         y="33.292961"
+         id="text7840-4-8-5"><tspan
+           sodipodi:role="line"
+           id="tspan7838-8-3-9"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+           x="47.492783"
+           y="33.292961">11</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-7);marker-end:url(#TriangleStart-9-8-8-6-2)"
+       d="m 134.41855,25.049983 9.5379,-0.0475"
+       id="path8021-9-0-6-3-2"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g7896-5-5-3"
+       transform="translate(52.221715,-6.270147)"
+       style="stroke:#000000">
+      <rect
+         style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-63-3-6"
+         width="13.210699"
+         height="7.9857564"
+         x="40.880814"
+         y="27.239359" />
+      <rect
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-7-9-8-1"
+         width="4.0801482"
+         height="7.9858871"
+         x="54.050018"
+         y="27.239294" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="47.492783"
+         y="33.292961"
+         id="text7840-4-8-2"><tspan
+           sodipodi:role="line"
+           id="tspan7838-8-3-93"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+           x="47.492783"
+           y="33.292961">8</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-2);marker-end:url(#TriangleStart-9-8-8-6-9)"
+       d="m 108.33372,25.049983 9.5379,-0.0475"
+       id="path8021-9-0-6-3-1"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g7896-5-5-4"
+       transform="translate(26.311003,-6.270147)"
+       style="stroke:#000000">
+      <rect
+         style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-63-3-5"
+         width="13.210699"
+         height="7.9857564"
+         x="40.880814"
+         y="27.239359" />
+      <rect
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-7-9-8-0"
+         width="4.0801482"
+         height="7.9858871"
+         x="54.050018"
+         y="27.239294" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="47.492783"
+         y="33.292961"
+         id="text7840-4-8-3"><tspan
+           sodipodi:role="line"
+           id="tspan7838-8-3-6"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+           x="47.492783"
+           y="33.292961">3</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-9);marker-end:url(#TriangleStart-9-8-8-6-7)"
+       d="m 82.423011,25.049983 9.5379,-0.0475"
+       id="path8021-9-0-6-3-10"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g7896-5-5-1"
+       transform="translate(0.53989568,-6.270147)"
+       style="stroke:#000000">
+      <rect
+         style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-63-3-55"
+         width="13.210699"
+         height="7.9857564"
+         x="40.880814"
+         y="27.239359" />
+      <rect
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-7-9-8-4"
+         width="4.0801482"
+         height="7.9858871"
+         x="54.050018"
+         y="27.239294" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="47.492783"
+         y="33.292961"
+         id="text7840-4-8-7"><tspan
+           sodipodi:role="line"
+           id="tspan7838-8-3-65"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+           x="47.492783"
+           y="33.292961">2</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-6);marker-end:url(#TriangleStart-9-8-8-6-20)"
+       d="m 56.651911,25.049983 9.53789,-0.0475"
+       id="path8021-9-0-6-3-6"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g2031"
+       class="fragment">
+      <g
+         id="g7896-5-5-49"
+         transform="translate(104.1626,13.846002)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-2"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-06"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-8"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-92"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">102</tspan></text>
+      </g>
+      <g
+         id="g8680-6-6"
+         transform="translate(52.622948,-7.9882279)">
+        <circle
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           id="path8569-4-6"
+           cx="121.22891"
+           cy="53.093468"
+           r="2.5265293" />
+        <path
+           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           d="m 119.61311,55.007464 3.17467,-3.885856"
+           id="path8634-3-4" />
+        <path
+           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           d="m 122.79621,54.972973 -3.17467,-3.885856"
+           id="path8634-9-3-9" />
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-93);marker-end:url(#TriangleStart-9-8-8-6-4)"
+         d="m 160.27461,45.166132 9.5379,-0.0475"
+         id="path8021-9-0-6-3-5"
+         sodipodi:nodetypes="cc" />
+      <g
+         id="g7896-5-5-2-0"
+         transform="translate(78.306538,13.846002)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-3-4"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-7-8"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-5-7"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-9-1"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">33</tspan></text>
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-7-2);marker-end:url(#TriangleStart-9-8-8-6-2-4)"
+         d="m 134.41855,45.166132 9.5379,-0.0475"
+         id="path8021-9-0-6-3-2-7"
+         sodipodi:nodetypes="cc" />
+      <g
+         id="g7896-5-5-3-2"
+         transform="translate(52.221718,13.846002)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-6-7"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-1-2"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-2-2"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-93-6"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">24</tspan></text>
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-2-4);marker-end:url(#TriangleStart-9-8-8-6-9-3)"
+         d="m 108.33372,45.166132 9.5379,-0.0475"
+         id="path8021-9-0-6-3-1-1"
+         sodipodi:nodetypes="cc" />
+      <g
+         id="g7896-5-5-4-0"
+         transform="translate(26.310998,13.846002)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-5-6"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-0-1"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-3-5"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-6-9"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">9</tspan></text>
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-9-7);marker-end:url(#TriangleStart-9-8-8-6-7-6)"
+         d="m 82.423008,45.166132 9.5379,-0.0475"
+         id="path8021-9-0-6-3-10-4"
+         sodipodi:nodetypes="cc" />
+      <g
+         id="g7896-5-5-1-9"
+         transform="translate(0.53989568,13.846002)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-55-0"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-4-9"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-7-1"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-65-7"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">6</tspan></text>
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-6-8);marker-end:url(#TriangleStart-9-8-8-6-20-3)"
+         d="m 56.651908,45.166132 9.53789,-0.0475"
+         id="path8021-9-0-6-3-6-7"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text3942"
+       style="font-weight:bold;font-size:21.3333px;font-family:monospace;-inkscape-font-specification:'monospace Bold';text-align:center;white-space:pre;shape-inside:url(#rect3944);display:inline;fill:#00001e;stroke-width:0.755906" />
+    <g
+       id="g2271"
+       class="fragment">
+      <g
+         id="g7896-5-5-49-8"
+         transform="translate(104.1626,33.672405)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-2-6"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-06-2"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-8-8"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-92-4"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">102</tspan></text>
+      </g>
+      <g
+         id="g8680-6-6-7"
+         transform="translate(52.622947,11.838176)">
+        <circle
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           id="path8569-4-6-2"
+           cx="121.22891"
+           cy="53.093468"
+           r="2.5265293" />
+        <path
+           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           d="m 119.61311,55.007464 3.17467,-3.885856"
+           id="path8634-3-4-4" />
+        <path
+           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           d="m 122.79621,54.972973 -3.17467,-3.885856"
+           id="path8634-9-3-9-0" />
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-93-9);marker-end:url(#TriangleStart-9-8-8-6-4-6)"
+         d="m 160.27461,64.992535 9.5379,-0.0475"
+         id="path8021-9-0-6-3-5-6"
+         sodipodi:nodetypes="cc" />
+      <g
+         id="g7896-5-5-3-2-3"
+         transform="translate(52.221717,33.672405)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-6-7-1"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-1-2-1"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-2-2-0"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-93-6-3"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">24</tspan></text>
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-2-4-5);marker-end:url(#TriangleStart-9-8-8-6-9-3-1)"
+         d="m 108.33372,64.992535 35.55761,-0.08789"
+         id="path8021-9-0-6-3-1-1-4"
+         sodipodi:nodetypes="cc" />
+      <g
+         id="g7896-5-5-1-9-9"
+         transform="translate(0.53989568,33.672405)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-55-0-3"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-4-9-3"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-7-1-8"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-65-7-0"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">6</tspan></text>
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-6-8-4);marker-end:url(#TriangleStart-9-8-8-6-20-3-2)"
+         d="m 56.651907,64.992535 35.221244,-0.08789"
+         id="path8021-9-0-6-3-6-7-5"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <g
+       id="g2511"
+       class="fragment">
+      <g
+         id="g7896-5-5-49-8-9"
+         transform="translate(104.52359,51.860364)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-2-6-8"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-06-2-7"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-8-8-2"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-92-4-8"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">103</tspan></text>
+      </g>
+      <g
+         id="g8680-6-6-7-2"
+         transform="translate(52.983932,30.026135)">
+        <circle
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           id="path8569-4-6-2-9"
+           cx="121.22891"
+           cy="53.093468"
+           r="2.5265293" />
+        <path
+           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           d="m 119.61311,55.007464 3.17467,-3.885856"
+           id="path8634-3-4-4-9" />
+        <path
+           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           d="m 122.79621,54.972973 -3.17467,-3.885856"
+           id="path8634-9-3-9-0-6" />
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-93-9-6);marker-end:url(#TriangleStart-9-8-8-6-4-6-4)"
+         d="m 160.6356,83.180498 9.5379,-0.0475"
+         id="path8021-9-0-6-3-5-6-0"
+         sodipodi:nodetypes="cc" />
+      <g
+         id="g7896-5-5-3-2-3-2"
+         transform="translate(52.582702,51.860364)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-6-7-1-7"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-1-2-1-6"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-2-2-0-1"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-93-6-3-3"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">25</tspan></text>
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-2-4-5-0);marker-end:url(#TriangleStart-9-8-8-6-9-3-1-6)"
+         d="m 108.69471,83.180498 35.55761,-0.0879"
+         id="path8021-9-0-6-3-1-1-4-2"
+         sodipodi:nodetypes="cc" />
+      <g
+         id="g7896-5-5-1-9-9-1"
+         transform="translate(0.90088143,51.860364)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-55-0-3-5"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-4-9-3-9"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-7-1-8-9"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-65-7-0-1"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">7</tspan></text>
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-6-8-4-6);marker-end:url(#TriangleStart-9-8-8-6-20-3-2-5)"
+         d="m 57.012892,83.180498 35.221248,-0.0879"
+         id="path8021-9-0-6-3-6-7-5-4"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <g
+       id="g2745"
+       class="fragment">
+      <g
+         id="g7896-5-5-1-9-9-1-8"
+         transform="translate(0.85007979,70.048444)"
+         style="stroke:#000000">
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="108.87608"
+           y="33.292961"
+           id="text7840-4-8-7-1-8-9-0"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-65-7-0-1-4"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="108.87608"
+             y="33.292961">25</tspan></text>
+      </g>
+    </g>
+    <g
+       id="g13156">
+      <rect
+         style="fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.317363;stroke-dasharray:none;stroke-opacity:1"
+         id="rect8883"
+         width="137.3522"
+         height="6.9035192"
+         x="41.507698"
+         y="31.182962" />
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:3.52778px;font-family:monospace;-inkscape-font-specification:'monospace Bold';text-align:center;text-anchor:middle;fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="110.46602"
+         y="35.580166"
+         id="text11279"><tspan
+           sodipodi:role="line"
+           id="tspan11277"
+           style="font-size:3.52778px;fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="110.46602"
+           y="35.580166">map(&amp;multiplica_por_tres/1)</tspan></text>
+      <path
+         style="fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 45.200204,32.360338 v 4.517027"
+         id="path11437" />
+    </g>
+    <g
+       id="g13156-2"
+       transform="translate(-1.2850269e-6,20.494237)">
+      <rect
+         style="fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.317363;stroke-dasharray:none;stroke-opacity:1"
+         id="rect8883-5"
+         width="137.3522"
+         height="6.9035192"
+         x="41.507698"
+         y="31.182962" />
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:3.52778px;font-family:monospace;-inkscape-font-specification:'monospace Bold';text-align:center;text-anchor:middle;fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="110.46602"
+         y="35.580166"
+         id="text11279-4"><tspan
+           sodipodi:role="line"
+           id="tspan11277-4"
+           style="font-size:3.52778px;fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="110.46602"
+           y="35.580166">filter(&amp;es_par/1)</tspan></text>
+      <path
+         style="fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 45.200204,32.360338 v 4.517027"
+         id="path11437-9" />
+    </g>
+    <g
+       id="g13156-9"
+       transform="translate(-0.02878452,39.195365)">
+      <rect
+         style="fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.317363;stroke-dasharray:none;stroke-opacity:1"
+         id="rect8883-3"
+         width="137.3522"
+         height="6.9035192"
+         x="41.507698"
+         y="31.182962" />
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:3.52778px;font-family:monospace;-inkscape-font-specification:'monospace Bold';text-align:center;text-anchor:middle;fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="110.46602"
+         y="35.580166"
+         id="text11279-6"><tspan
+           sodipodi:role="line"
+           id="tspan11277-0"
+           style="font-size:3.52778px;fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="110.46602"
+           y="35.580166">map(&amp;incrementar/1)</tspan></text>
+      <path
+         style="fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 45.200204,32.360338 v 4.517027"
+         id="path11437-5" />
+    </g>
+    <g
+       id="g13156-9-0"
+       transform="translate(0.54977478,57.811711)">
+      <rect
+         style="fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.317363;stroke-dasharray:none;stroke-opacity:1"
+         id="rect8883-3-2"
+         width="137.3522"
+         height="6.9035192"
+         x="41.507698"
+         y="31.182962" />
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:3.52778px;font-family:monospace;-inkscape-font-specification:'monospace Bold';text-align:center;text-anchor:middle;fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="110.46602"
+         y="35.580166"
+         id="text11279-6-9"><tspan
+           sodipodi:role="line"
+           id="tspan11277-0-4"
+           style="font-size:3.52778px;fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="110.46602"
+           y="35.580166">at(1)</tspan></text>
+      <path
+         style="fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 45.200204,32.360338 v 4.517027"
+         id="path11437-5-3" />
+    </g>
+  </g>
+</svg>
+</p>
+</section>
+<section class="slide level2">
+
+<p>Con el módulo <code>Stream</code>:</p>
+<pre class="text"><code>&gt; s = Stream.map([2, 3, 8, 11, 34], &amp;multiplica_por_tres/1)                                                        
+#Stream&lt;[...]&gt;
+
+&gt; s = Stream.filter(s, &amp;es_par/1)                                                                                  
+#Stream&lt;[...]&gt;
+
+&gt; s = Stream.map(s, &amp;incrementar/1)                                                                               
+#Stream&lt;[...]&gt;
+...</code></pre>
+
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>...
+&gt; Enum.at(s, 1)                                                                                                   
+Multiplicando 2 por tres
+Comprobando si 6 es par
+Incrementando 6
+Multiplicando 3 por tres
+Comprobando si 9 es par
+Multiplicando 8 por tres
+Comprobando si 24 es par
+Incrementando 24
+25</code></pre>
+
+</section>
+<section class="slide level2">
+
+<p><svg
+   width="138.24812mm"
+   height="84.447739mm"
+   viewBox="0 0 138.24812 84.447739"
+   version="1.1"
+   id="svg431"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="TransSequence.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview433"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="2"
+     inkscape:cx="226.75"
+     inkscape:cy="150.5"
+     inkscape:window-width="2227"
+     inkscape:window-height="1115"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g7896-5-5-3-2-3-2-5" />
+  <defs
+     id="defs428">
+    <rect
+       x="133.84895"
+       y="217.8176"
+       width="568.11658"
+       height="168.27376"
+       id="rect3944" />
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="9.6111107"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-7"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-9"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-2"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-0" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-2"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-8"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-9"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-7" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-9"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-4"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-7"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-8" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-6"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-3"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-20"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-6" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-9-7"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-4-8"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-7-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-8-8" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-6-8"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-3-4"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-20-3"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-6-1" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-6-8-4"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-3-4-6"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-20-3-2"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-6-1-5" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Dot-1-0-6-4-6-8-4-6"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Dot"
+       markerWidth="5.6666665"
+       markerHeight="5.6666665"
+       viewBox="0 0 5.6666667 5.6666667"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5,0 C 5,2.76 2.76,5 0,5 -2.76,5 -5,2.76 -5,0 c 0,-2.76 2.3,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         id="Dot1-2-8-3-7-3-4-6-7"
+         sodipodi:nodetypes="sssss" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleStart-9-8-8-6-20-3-2-5"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="10"
+       markerHeight="11.111111"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-3-5-5-3-6-1-5-6" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-41.320232,-20.897518)">
+    <g
+       id="g7896-5-5"
+       transform="translate(104.1626,-6.2701473)"
+       style="stroke:#000000">
+      <rect
+         style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-63-3"
+         width="13.210699"
+         height="7.9857564"
+         x="40.880814"
+         y="27.239359" />
+      <rect
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-7-9-8"
+         width="4.0801482"
+         height="7.9858871"
+         x="54.050018"
+         y="27.239294" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="47.492783"
+         y="33.292961"
+         id="text7840-4-8"><tspan
+           sodipodi:role="line"
+           id="tspan7838-8-3"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+           x="47.492783"
+           y="33.292961">34</tspan></text>
+    </g>
+    <g
+       id="g8680-6"
+       transform="translate(52.622949,-28.104377)">
+      <circle
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         id="path8569-4"
+         cx="121.22891"
+         cy="53.093468"
+         r="2.5265293" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 119.61311,55.007464 3.17467,-3.885856"
+         id="path8634-3" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 122.79621,54.972973 -3.17467,-3.885856"
+         id="path8634-9-3" />
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4);marker-end:url(#TriangleStart-9-8-8-6)"
+       d="m 160.27461,25.049983 9.5379,-0.0475"
+       id="path8021-9-0-6-3"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g7896-5-5-2"
+       transform="translate(78.306543,-6.270147)"
+       style="stroke:#000000">
+      <rect
+         style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-63-3-3"
+         width="13.210699"
+         height="7.9857564"
+         x="40.880814"
+         y="27.239359" />
+      <rect
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-7-9-8-7"
+         width="4.0801482"
+         height="7.9858871"
+         x="54.050018"
+         y="27.239294" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="47.492783"
+         y="33.292961"
+         id="text7840-4-8-5"><tspan
+           sodipodi:role="line"
+           id="tspan7838-8-3-9"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+           x="47.492783"
+           y="33.292961">11</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-7);marker-end:url(#TriangleStart-9-8-8-6-2)"
+       d="m 134.41855,25.049983 9.5379,-0.0475"
+       id="path8021-9-0-6-3-2"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g7896-5-5-3"
+       transform="translate(52.221715,-6.270147)"
+       style="stroke:#000000">
+      <rect
+         style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-63-3-6"
+         width="13.210699"
+         height="7.9857564"
+         x="40.880814"
+         y="27.239359" />
+      <rect
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-7-9-8-1"
+         width="4.0801482"
+         height="7.9858871"
+         x="54.050018"
+         y="27.239294" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="47.492783"
+         y="33.292961"
+         id="text7840-4-8-2"><tspan
+           sodipodi:role="line"
+           id="tspan7838-8-3-93"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+           x="47.492783"
+           y="33.292961">8</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-2);marker-end:url(#TriangleStart-9-8-8-6-9)"
+       d="m 108.33372,25.049983 9.5379,-0.0475"
+       id="path8021-9-0-6-3-1"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g7896-5-5-4"
+       transform="translate(26.311003,-6.270147)"
+       style="stroke:#000000">
+      <rect
+         style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-63-3-5"
+         width="13.210699"
+         height="7.9857564"
+         x="40.880814"
+         y="27.239359" />
+      <rect
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-7-9-8-0"
+         width="4.0801482"
+         height="7.9858871"
+         x="54.050018"
+         y="27.239294" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="47.492783"
+         y="33.292961"
+         id="text7840-4-8-3"><tspan
+           sodipodi:role="line"
+           id="tspan7838-8-3-6"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+           x="47.492783"
+           y="33.292961">3</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-9);marker-end:url(#TriangleStart-9-8-8-6-7)"
+       d="m 82.423011,25.049983 9.5379,-0.0475"
+       id="path8021-9-0-6-3-10"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g7896-5-5-1"
+       transform="translate(0.53989568,-6.270147)"
+       style="stroke:#000000">
+      <rect
+         style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-63-3-55"
+         width="13.210699"
+         height="7.9857564"
+         x="40.880814"
+         y="27.239359" />
+      <rect
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-7-9-8-4"
+         width="4.0801482"
+         height="7.9858871"
+         x="54.050018"
+         y="27.239294" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="47.492783"
+         y="33.292961"
+         id="text7840-4-8-7"><tspan
+           sodipodi:role="line"
+           id="tspan7838-8-3-65"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+           x="47.492783"
+           y="33.292961">2</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-6);marker-end:url(#TriangleStart-9-8-8-6-20)"
+       d="m 56.651911,25.049983 9.53789,-0.0475"
+       id="path8021-9-0-6-3-6"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g4249"
+       class="fragment"
+       data-fragment-index="6">
+      <g
+         id="g7896-5-5-3-2"
+         transform="translate(52.221718,13.846002)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-6-7"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-1-2"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-2-2"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-93-6"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">24</tspan></text>
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-9-7);marker-end:url(#TriangleStart-9-8-8-6-7-6)"
+         d="m 82.423008,45.166132 9.5379,-0.0475"
+         id="path8021-9-0-6-3-10-4"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <g
+       id="g7896-5-5-1-9"
+       transform="translate(0.53989568,13.846002)"
+       style="stroke:#000000"
+       class="fragment"
+       data-fragment-index="1">
+      <rect
+         style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-63-3-55-0"
+         width="13.210699"
+         height="7.9857564"
+         x="40.880814"
+         y="27.239359" />
+      <rect
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-7-9-8-4-9"
+         width="4.0801482"
+         height="7.9858871"
+         x="54.050018"
+         y="27.239294" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="47.492783"
+         y="33.292961"
+         id="text7840-4-8-7-1"><tspan
+           sodipodi:role="line"
+           id="tspan7838-8-3-65-7"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+           x="47.492783"
+           y="33.292961">6</tspan></text>
+    </g>
+    <g
+       id="g4109"
+       class="fragment"
+       data-fragment-index="5">
+      <g
+         id="g7896-5-5-4-0"
+         transform="translate(26.310998,13.846002)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-5-6"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-0-1"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-3-5"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-6-9"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">9</tspan></text>
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-6-8);marker-end:url(#TriangleStart-9-8-8-6-20-3)"
+         d="m 56.651908,45.166132 9.53789,-0.0475"
+         id="path8021-9-0-6-3-6-7"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text3942"
+       style="font-weight:bold;font-size:21.3333px;font-family:monospace;-inkscape-font-specification:'monospace Bold';text-align:center;white-space:pre;shape-inside:url(#rect3944);display:inline;fill:#00001e;stroke-width:0.755906" />
+    <g
+       id="g7896-5-5-1-9-9"
+       transform="translate(0.53989568,33.672405)"
+       style="stroke:#000000"
+       class="fragment"
+       data-fragment-index="2">
+      <rect
+         style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-63-3-55-0-3"
+         width="13.210699"
+         height="7.9857564"
+         x="40.880814"
+         y="27.239359" />
+      <rect
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-7-9-8-4-9-3"
+         width="4.0801482"
+         height="7.9858871"
+         x="54.050018"
+         y="27.239294" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="47.492783"
+         y="33.292961"
+         id="text7840-4-8-7-1-8"><tspan
+           sodipodi:role="line"
+           id="tspan7838-8-3-65-7-0"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+           x="47.492783"
+           y="33.292961">6</tspan></text>
+    </g>
+    <g
+       id="g4389"
+       class="fragment"
+       data-fragment-index="7">
+      <g
+         id="g7896-5-5-3-2-3"
+         transform="translate(52.221717,33.672405)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-6-7-1"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-1-2-1"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-2-2-0"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-93-6-3"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">24</tspan></text>
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-6-8-4);marker-end:url(#TriangleStart-9-8-8-6-20-3-2)"
+         d="m 56.651907,64.992535 35.221244,-0.08789"
+         id="path8021-9-0-6-3-6-7-5"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <g
+       id="g7896-5-5-1-9-9-1"
+       transform="translate(0.90088143,51.860364)"
+       style="stroke:#000000"
+       class="fragment"
+       data-fragment-index="3">
+      <rect
+         style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-63-3-55-0-3-5"
+         width="13.210699"
+         height="7.9857564"
+         x="40.880814"
+         y="27.239359" />
+      <rect
+         style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5524-7-9-8-4-9-3-9"
+         width="4.0801482"
+         height="7.9858871"
+         x="54.050018"
+         y="27.239294" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="47.492783"
+         y="33.292961"
+         id="text7840-4-8-7-1-8-9"><tspan
+           sodipodi:role="line"
+           id="tspan7838-8-3-65-7-0-1"
+           style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+           x="47.492783"
+           y="33.292961">7</tspan></text>
+    </g>
+    <g
+       id="g4529"
+       class="fragment"
+       data-fragment-index="8">
+      <g
+         id="g7896-5-5-3-2-3-2"
+         transform="translate(52.582702,51.860364)"
+         style="stroke:#000000">
+        <rect
+           style="fill:#c6e9af;stroke:#000000;stroke-width:0.143388;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-63-3-6-7-1-7"
+           width="13.210699"
+           height="7.9857564"
+           x="40.880814"
+           y="27.239359" />
+        <rect
+           style="fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.143016;stroke-dasharray:none;stroke-opacity:1"
+           id="rect5524-7-9-8-1-2-1-6"
+           width="4.0801482"
+           height="7.9858871"
+           x="54.050018"
+           y="27.239294" />
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="47.492783"
+           y="33.292961"
+           id="text7840-4-8-2-2-0-1"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-93-6-3-3"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="47.492783"
+             y="33.292961">25</tspan></text>
+      </g>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Dot-1-0-6-4-6-8-4-6);marker-end:url(#TriangleStart-9-8-8-6-20-3-2-5)"
+         d="m 57.012892,83.180498 35.221248,-0.0879"
+         id="path8021-9-0-6-3-6-7-5-4"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <g
+       id="g4669"
+       class="fragment"
+       data-fragment-index="9">
+      <g
+         id="g7896-5-5-3-2-3-2-5"
+         transform="translate(52.5319,70.048444)"
+         style="stroke:#000000">
+        <text
+           xml:space="preserve"
+           style="font-size:5.64444px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;text-anchor:middle;fill:#77ae54;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="58.076118"
+           y="33.292961"
+           id="text7840-4-8-2-2-0-1-9"><tspan
+             sodipodi:role="line"
+             id="tspan7838-8-3-93-6-3-3-0"
+             style="font-size:5.64444px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.2"
+             x="58.076118"
+             y="33.292961">25</tspan></text>
+      </g>
+    </g>
+    <g
+       id="g13156">
+      <rect
+         style="fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.317363;stroke-dasharray:none;stroke-opacity:1"
+         id="rect8883"
+         width="137.3522"
+         height="6.9035192"
+         x="41.507698"
+         y="31.182962" />
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:3.52778px;font-family:monospace;-inkscape-font-specification:'monospace Bold';text-align:center;text-anchor:middle;fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="110.46602"
+         y="35.580166"
+         id="text11279"><tspan
+           sodipodi:role="line"
+           id="tspan11277"
+           style="font-size:3.52778px;fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="110.46602"
+           y="35.580166">map(&amp;multiplica_por_tres/1)</tspan></text>
+      <path
+         style="fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 45.200204,32.360338 v 4.517027"
+         id="path11437" />
+    </g>
+    <g
+       id="g13156-2"
+       transform="translate(-1.2850269e-6,20.494237)">
+      <rect
+         style="fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.317363;stroke-dasharray:none;stroke-opacity:1"
+         id="rect8883-5"
+         width="137.3522"
+         height="6.9035192"
+         x="41.507698"
+         y="31.182962" />
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:3.52778px;font-family:monospace;-inkscape-font-specification:'monospace Bold';text-align:center;text-anchor:middle;fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="110.46602"
+         y="35.580166"
+         id="text11279-4"><tspan
+           sodipodi:role="line"
+           id="tspan11277-4"
+           style="font-size:3.52778px;fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="110.46602"
+           y="35.580166">filter(&amp;es_par/1)</tspan></text>
+      <path
+         style="fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 45.200204,32.360338 v 4.517027"
+         id="path11437-9" />
+    </g>
+    <g
+       id="g13156-9"
+       transform="translate(-0.02878452,39.195365)">
+      <rect
+         style="fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.317363;stroke-dasharray:none;stroke-opacity:1"
+         id="rect8883-3"
+         width="137.3522"
+         height="6.9035192"
+         x="41.507698"
+         y="31.182962" />
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:3.52778px;font-family:monospace;-inkscape-font-specification:'monospace Bold';text-align:center;text-anchor:middle;fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="110.46602"
+         y="35.580166"
+         id="text11279-6"><tspan
+           sodipodi:role="line"
+           id="tspan11277-0"
+           style="font-size:3.52778px;fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="110.46602"
+           y="35.580166">map(&amp;incrementar/1)</tspan></text>
+      <path
+         style="fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 45.200204,32.360338 v 4.517027"
+         id="path11437-5" />
+    </g>
+    <g
+       id="g13156-9-0"
+       transform="translate(0.54977478,57.811711)">
+      <rect
+         style="fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.317363;stroke-dasharray:none;stroke-opacity:1"
+         id="rect8883-3-2"
+         width="137.3522"
+         height="6.9035192"
+         x="41.507698"
+         y="31.182962" />
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:3.52778px;font-family:monospace;-inkscape-font-specification:'monospace Bold';text-align:center;text-anchor:middle;fill:#f0ffab;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="110.46602"
+         y="35.580166"
+         id="text11279-6-9"><tspan
+           sodipodi:role="line"
+           id="tspan11277-0-4"
+           style="font-size:3.52778px;fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="110.46602"
+           y="35.580166">at(1)</tspan></text>
+      <path
+         style="fill:#232a00;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 45.200204,32.360338 v 4.517027"
+         id="path11437-5-3" />
+    </g>
+  </g>
+</svg>
+</p>
+</section></section>
+<section>
+<section id="creación-de-streams" class="title-slide slide level1">
+<h1>Creación de <em>Streams</em></h1>
+
+</section>
+<section id="creación-de-streams-1" class="slide level2">
+<h2>Creación de <em>Streams</em></h2>
+<ul>
+<li><p>Un <em>stream</em> puede crearse:</p>
+<ul>
+<li><p>A partir de un enumerable.</p></li>
+<li><p>Mediante funciones del módulo <code>Stream</code>. Entre
+ellas:</p>
+<ul>
+<li><code>repeatedly/1</code></li>
+<li><code>cycle/1</code></li>
+<li><code>iterate/2</code></li>
+<li><code>unfold/2</code></li>
+</ul></li>
+<li><p>Mediante otras funciones de la biblioteca estándar. Entre
+ellas:</p>
+<ul>
+<li><code>File.stream!/2</code></li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="función-repeatedly1" class="slide level2">
+<h2>Función <code>repeatedly/1</code></h2>
+<ul>
+<li><p>Recibe una función <code>f</code> como parámetro.</p></li>
+<li><p>Devuelve un <em>stream</em> infinito en el que cada elemento es
+el resultado de llamar a la función <code>f</code>.</p></li>
+</ul>
+<pre class="text"><code>&gt; Stream.repeatedly(<span class="hl">fn -&gt; 1 end</span>) |&gt; Enum.take(10)
+<span class="fragment">[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]</span>
+
+&gt; Stream.repeatedly(<span class="hl">fn -&gt; :rand.uniform(30) end</span>) |&gt; Enum.take(5)
+<span class="fragment">[28, 13, 4, 11, 18]</span></code></pre>
+
+</section>
+<section id="función-cycle1" class="slide level2">
+<h2>Función <code>cycle/1</code></h2>
+<ul>
+<li>Recibe un enumerable y devuelve el <em>stream</em> que resulta de
+concatenar ese enumerable consigo mismo un número ilimitado de
+veces.</li>
+</ul>
+<pre class="text"><code>&gt; Stream.cycle(1..7) |&gt; Enum.take(20)
+<span class="fragment">[1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6]</span></code></pre>
+
+</section>
+<section id="función-iterate2" class="slide level2">
+<h2>Función <code>iterate/2</code></h2>
+<ul>
+<li><p>Recibe una semilla <code>s</code> y una función
+<code>f</code>.</p>
+<ul>
+<li><p>El primer elemento del <em>stream</em> es la semilla
+<code>s</code>.</p></li>
+<li><p>La función <code>f</code> recibe el último valor generado y
+devuelve el siguiente valor a generar.</p></li>
+<li><p>El <em>stream</em> resultante es infinito.</p></li>
+</ul></li>
+</ul>
+<pre class="text"><code>&gt; Stream.iterate(0, &amp;(&amp;1 + 1)) |&gt; Enum.take(10)
+<span class="fragment">[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]</span>
+
+&gt; Stream.iterate(1, &amp;(&amp;1 * 2)) |&gt; Enum.take(10)
+<span class="fragment">[1, 2, 4, 8, 16, 32, 64, 128, 256, 512]</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>&gt; Stream.iterate([0], fn [x | xs] -&gt; [x + 1, x | xs] end) 
+    |&gt; Enum.take(7)
+<span class="fragment">[
+  [0],
+  [1, 0],
+  [2, 1, 0],
+  [3, 2, 1, 0],
+  [4, 3, 2, 1, 0],
+  [5, 4, 3, 2, 1, 0],
+  [6, 5, 4, 3, 2, 1, 0]
+]</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-fibonacci">Ejemplo: Fibonacci</h3>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fibonacci_stream<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Stream</span><span class="op">.</span>iterate<span class="fu">({</span><span class="dv">0</span>, <span class="dv">1</span><span class="fu">}</span>, <span class="kw">fn</span> <span class="fu">{</span>x, y<span class="fu">}</span> <span class="op">-&gt;</span> <span class="fu">{</span>y, x <span class="op">+</span> y<span class="fu">}</span> <span class="kw">end</span><span class="fu">)</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> <span class="cn">Stream</span><span class="op">.</span>map<span class="fu">(</span><span class="op">&amp;</span>elem<span class="fu">(</span><span class="op">&amp;</span><span class="dv">1</span>, <span class="dv">0</span><span class="fu">))</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; fibonacci_stream() |&gt; Enum.take(30)
+<span class="fragment">[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597,
+  2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418,
+  317811, 514229]</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-potencias">Ejemplo: potencias</h3>
+<ul>
+<li><p>Obtener las potencias de 2 comprendidas entre <code>n</code> y
+<code>m</code>:</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> potencias<span class="fu">(</span>n, m<span class="fu">)</span> <span class="kw">when</span> n <span class="op">&lt;=</span> m <span class="kw">do</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Stream</span><span class="op">.</span>iterate<span class="fu">(</span><span class="dv">1</span>, <span class="op">&amp;</span><span class="fu">(</span><span class="op">&amp;</span><span class="dv">1</span> <span class="op">*</span> <span class="dv">2</span><span class="fu">))</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> <span class="cn">Stream</span><span class="op">.</span>drop_while<span class="fu">(</span><span class="op">&amp;</span><span class="fu">(</span><span class="op">&amp;</span><span class="dv">1</span> <span class="op">&lt;</span> n<span class="fu">))</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> <span class="cn">Stream</span><span class="op">.</span>take_while<span class="fu">(</span><span class="op">&amp;</span><span class="fu">(</span><span class="op">&amp;</span><span class="dv">1</span> <span class="op">&lt;=</span> m<span class="fu">))</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> <span class="cn">Enum</span><span class="op">.</span>into<span class="fu">(</span><span class="ot">[]</span><span class="fu">)</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; potencias(100, 1000)
+[128, 256, 512]</code></pre>
+</li>
+</ul>
+</section>
+<section id="función-unfold2" class="slide level2">
+<h2>Función <code>unfold/2</code></h2>
+<ul>
+<li><p>Recibe un acumulador inicial <code>ac</code> y una función
+<code>f</code></p></li>
+<li><p>La función <code>f</code> recibe el valor acumulado hasta el
+momento y devuelve una tupla con dos componentes:</p>
+<ul>
+<li>El elemento a generar</li>
+<li>El nuevo valor del acumulador que se utilizará para generar los
+siguientes elementos</li>
+</ul>
+<p>La función <code>f</code> puede devolver <code>nil</code>, que indica
+el final del <em>stream</em></p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo">Ejemplo</h3>
+<pre class="text"><code>&gt; Stream.unfold(1, fn ac -&gt; {ac + 1, ac * 2} end) |&gt; Enum.take(5)
+<span class="fragment">[2, 3, 5, 9, 17]</span></code></pre>
+
+<p>La función <code>iterate</code> es un caso particular de
+<code>unfold</code>:</p>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> iterate<span class="fu">(</span>s, f<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Stream</span><span class="op">.</span>unfold<span class="fu">(</span>s, <span class="kw">fn</span> ac <span class="op">-&gt;</span> <span class="fu">{</span>ac, f<span class="op">.</span><span class="fu">(</span>ac<span class="fu">)}</span> <span class="kw">end</span><span class="fu">)</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section id="función-file.stream2" class="slide level2">
+<h2>Función <code>File.stream!/2</code></h2>
+<ul>
+<li><p>Lee un fichero de manera perezosa.</p></li>
+<li><p>Devuelve un <em>stream</em> con los contenidos del fichero.</p>
+<ul>
+<li><p>Si el segundo parámetro de <code>File.stream!</code> es
+<code>:line</code>, cada elemento del <em>stream</em> es una línea del
+fichero.</p></li>
+<li><p>Si el segundo parámetro de <code>File.stream!</code> es un número
+<code>n</code>, cada elemento del <em>stream</em> está formado por
+<code>n</code> bytes del fichero.</p></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-1">Ejemplo</h3>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> primer_multiplo_de_diez<span class="fu">(</span>fichero<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="cn">File</span><span class="op">.</span>stream!<span class="fu">(</span>fichero, <span class="va">:line</span><span class="fu">)</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> <span class="cn">Stream</span><span class="op">.</span>map<span class="fu">(</span><span class="kw">fn</span> line <span class="op">-&gt;</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>        line <span class="op">|&gt;</span> <span class="cn">String</span><span class="op">.</span>trim<span class="fu">()</span> <span class="op">|&gt;</span> <span class="cn">String</span><span class="op">.</span>to_integer<span class="fu">()</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">end</span><span class="fu">)</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> <span class="cn">Enum</span><span class="op">.</span>find<span class="fu">(</span><span class="op">&amp;</span><span class="fu">(</span>rem<span class="fu">(</span><span class="op">&amp;</span><span class="dv">1</span>, <span class="dv">10</span><span class="fu">)</span> <span class="op">==</span> <span class="dv">0</span><span class="fu">))</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<div class="columns">
+<div class="column fragment">
+<p><code>numeros.txt</code></p>
+<pre class="text"><code>34
+23
+96
+231
+324
+230
+235
+63
+98
+51</code></pre>
+
+</div><div class="column fragment">
+<p>Ejemplo:</p>
+<pre><code>&gt; primer_multiplo_de_diez(&quot;numeros.txt&quot;)
+230</code></pre>
+<dl>
+</dl>
+</div>
+</div>
+</section></section>
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/search/search.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Prints all fragments in their visible states on the same slide 
+        pdfSeparateFragments: false,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom,
+          // RevealHighlight          
+        ]
+      });
+    </script>
+    </body>
+</html>
