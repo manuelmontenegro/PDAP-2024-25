@@ -482,12 +482,31 @@ class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb12-1"><a h
 </li>
 </ul>
 </section>
+<section id="directivas-y-ámbitos-léxicos" class="slide level2">
+<h2>Directivas y ámbitos léxicos</h2>
+<ul>
+<li><p>Las directivas <code>alias</code>, <code>require</code> e
+<code>import</code> tienen alcance en el ámbito léxico en el que se
+declaran.</p></li>
+<li><p>Normalmente las utilizamos a nivel de módulo, pero pueden
+utilizarse dentro de una función:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> depurar<span class="fu">(</span>x<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="hl">require <span class="cn">Logger</span></span>  <span class="arrow_box_left"> 'require' dentro de una función </span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Logger</span><span class="op">.</span>debug<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<p>En el ejemplo anterior, la directiva <code>require</code> solo tiene
+alcance dentro de la función <code>depurar</code>.</p></li>
+</ul>
+</section>
 <section id="macro-use" class="slide level2">
 <h2>Macro <code>use</code></h2>
-<div class="sourceCode" id="cb13"><pre
-class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">MiProyecto</span> <span class="kw">do</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="im">use</span> <span class="meta"><span class="cn">Modulo</span></span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">MiProyecto</span> <span class="kw">do</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="im">use</span> <span class="meta"><span class="cn">Modulo</span></span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
 
 <ul>
 <li><p>Cuando utilizamos <code>use</code>, el <code>Modulo</code>
@@ -506,14 +525,14 @@ debemos realizar <code>use</code> sobre él para utilizarlo.</li>
 <section class="slide level2">
 
 <h3 id="ejemplo">Ejemplo</h3>
-<div class="sourceCode" id="cb14"><pre
-class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">MiProyectoTest</span> <span class="kw">do</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="hl">use <span class="cn">ExUnit</span><span class="op">.</span><span class="cn">Case</span></span>  <span class="arrow_box_left"> Inyecta directiva 'import' sobre macros test/2, assert/1, etc. </span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  test <span class="st">&quot;Caso de prueba 1&quot;</span> <span class="kw">do</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    assert length<span class="fu">(</span><span class="ot">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="ot">]</span><span class="fu">)</span> <span class="op">==</span> <span class="dv">3</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">MiProyectoTest</span> <span class="kw">do</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="hl">use <span class="cn">ExUnit</span><span class="op">.</span><span class="cn">Case</span></span>  <span class="arrow_box_left"> Inyecta directiva 'import' sobre macros test/2, assert/1, etc. </span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  test <span class="st">&quot;Caso de prueba 1&quot;</span> <span class="kw">do</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    assert length<span class="fu">(</span><span class="ot">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="ot">]</span><span class="fu">)</span> <span class="op">==</span> <span class="dv">3</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
 
 </section></section>
 <section>
@@ -537,13 +556,13 @@ estándar</a> de Elixir.</p></li>
 <ul>
 <li><p>Basta con añadir la dependencia correspondiente a la función
 <code>deps/0</code> definida en el fichero <code>mix.exs</code>.</p>
-<div class="sourceCode" id="cb15"><pre
-class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> deps <span class="kw">do</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">[</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>      <span class="op">...</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>      <span class="hl"><span class="fu">{</span><span class="va">:ex_doc</span>, <span class="st">&quot;~&gt; 0.34&quot;</span>, <span class="va">only:</span> <span class="va">:dev</span>, <span class="va">runtime:</span> <span class="cn">false</span><span class="fu">}</span></span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> deps <span class="kw">do</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">[</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>      <span class="op">...</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>      <span class="hl"><span class="fu">{</span><span class="va">:ex_doc</span>, <span class="st">&quot;~&gt; 0.34&quot;</span>, <span class="va">only:</span> <span class="va">:dev</span>, <span class="va">runtime:</span> <span class="cn">false</span><span class="fu">}</span></span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
 
 <ul>
 <li><p><code>'only: dev'</code> significa que solamente se hará uso de
@@ -561,23 +580,23 @@ desarrollo).</p></li>
 <li>Se hace mediante los atributos <code>@moduledoc</code> y
 <code>@doc</code></li>
 </ul>
-<div class="sourceCode" id="cb16"><pre
-class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">MiProyecto</span> <span class="kw">do</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">@moduledoc &quot;&quot;&quot;</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Funciones básicas a incorporar en mi proyecto.</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">    La documentación puede ser escrita en formato </span>*Markdown*</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">  </span><span class="ot">&quot;&quot;&quot;</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">@doc &quot;&quot;&quot;</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Devuelve el resultado de incrementar el valor </span><span class="in">`x`</span><span class="co"> pasado</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">    como parámetro</span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co">  </span><span class="ot">&quot;&quot;&quot;</span></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> incrementar<span class="fu">(</span>x<span class="fu">)</span> <span class="kw">do</span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    x <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">MiProyecto</span> <span class="kw">do</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">@moduledoc &quot;&quot;&quot;</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Funciones básicas a incorporar en mi proyecto.</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">    La documentación puede ser escrita en formato </span>*Markdown*</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">  </span><span class="ot">&quot;&quot;&quot;</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">@doc &quot;&quot;&quot;</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Devuelve el resultado de incrementar el valor </span><span class="in">`x`</span><span class="co"> pasado</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">    como parámetro</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co">  </span><span class="ot">&quot;&quot;&quot;</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> incrementar<span class="fu">(</span>x<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    x <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
 
 </section>
 <section id="generar-documentación" class="slide level2">
@@ -600,18 +619,18 @@ style="border: 1px solid black" /></p>
 <li>Es habitual, a la hora de documentar una función, dar ejemplos de su
 comportamiento en una hipotética sesión de <code>iex</code>:</li>
 </ul>
-<div class="sourceCode" id="cb18"><pre
-class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ot">@doc &quot;&quot;&quot;</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">  Devuelve el resultado de incrementar el valor </span><span class="in">`x`</span><span class="co"> pasado como parámetro</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">    <span class="hl">iex&gt; incrementar(3)</span></span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">    <span class="hl">4</span></span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">    <span class="hl">iex&gt; incrementar(4)</span></span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">    <span class="hl">5</span></span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="ot">&quot;&quot;&quot;</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> incrementar<span class="fu">(</span>x<span class="fu">)</span> <span class="kw">do</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  x <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ot">@doc &quot;&quot;&quot;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">  Devuelve el resultado de incrementar el valor </span><span class="in">`x`</span><span class="co"> pasado como parámetro</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">    <span class="hl">iex&gt; incrementar(3)</span></span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">    <span class="hl">4</span></span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">    <span class="hl">iex&gt; incrementar(4)</span></span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">    <span class="hl">5</span></span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="ot">&quot;&quot;&quot;</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> incrementar<span class="fu">(</span>x<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  x <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
 
 </section>
 <section class="slide level2">
