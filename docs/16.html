@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Manuel Montenegro Montes">
+  <title>Funciones de orden superior y streams en Java</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="css/nnfx-light.min.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {  background-color: #f8f8f8; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ef2929; } /* Alert */
+    code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #204a87; } /* Attribute */
+    code span.bn { color: #0000cf; } /* BaseN */
+    code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4e9a06; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #8f5902; font-style: italic; } /* Comment */
+    code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+    code span.dt { color: #204a87; } /* DataType */
+    code span.dv { color: #0000cf; } /* DecVal */
+    code span.er { color: #a40000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #0000cf; } /* Float */
+    code span.fu { color: #204a87; font-weight: bold; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+    code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+    code span.ot { color: #8f5902; } /* Other */
+    code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+    code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+    code span.ss { color: #4e9a06; } /* SpecialString */
+    code span.st { color: #4e9a06; } /* String */
+    code span.va { color: #000000; } /* Variable */
+    code span.vs { color: #4e9a06; } /* VerbatimString */
+    code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="css/pdap.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="img/RedBackground.jpg">
+  <h1 class="title">Funciones de orden superior y <em>streams</em> en
+Java</h1>
+<div id="author-container">
+<div class="author">
+Manuel Montenegro Montes
+<br>
+<span id="email"><a href="montenegro@fdi.ucm.es">montenegro@fdi.ucm.es</a></span>
+</div>
+<div class="subject">
+<strong>Programación Declarativa Aplicada</strong>
+<br>Máster en Ingeniería Informática<br>Facultad de
+Informática<br>Universidad Complutense de Madrid
+</div>
+</div>
+</section>
+
+<section id="section" class="slide level2 outline"
+data-background-image="img/RedBackground.jpg">
+<h2 class="outline" data-background-image="img/RedBackground.jpg"></h2>
+<ol type="1">
+<li>Orden superior antes de Java 8</li>
+<li>Interfaces funcionales y lambda expresiones</li>
+<li>La clase <span
+style="text-transform: none; font-family: monospace">Stream&lt;T&gt;</span></li>
+<li>El método <span
+style="text-transform: none; font-family: monospace">collect</span></li>
+</ol>
+</section>
+<section>
+<section id="orden-superior-antes-de-java-8"
+class="title-slide slide level1">
+<h1>Orden superior antes de Java 8</h1>
+
+</section>
+<section id="introducción" class="slide level2">
+<h2>Introducción</h2>
+<ul>
+<li><p>La versión 8 de Java (marzo de 2014) incorporó múltiples
+novedades en el lenguaje. Entre ellas, se proporcionó soporte para
+<strong>funciones anónimas</strong> (<em>lambda expressions</em>), y
+funciones de <strong>orden superior</strong> en la librería
+estándar.</p></li>
+<li><p>Sin embargo, antes de esa versión, ya era posible implementar
+funciones de orden superior en Java.</p></li>
+<li><p>En general, cualquier lenguaje <strong>orientado a
+objetos</strong> (con herencia y polimorfismo) permite el uso de orden
+superior.</p></li>
+</ul>
+</section>
+<section id="ejemplo-función-map" class="slide level2">
+<h2>Ejemplo: función <code>map</code></h2>
+<ul>
+<li><p>Intentamos implementar la función <code>map</code> de Elixir en
+Java, sin utilizar lambda expresiones.</p>
+<ul>
+<li>Por simplicidad, comenzamos con listas de valores enteros.</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>                                      <span class="arrow_box_down"> ¿Qué tipo tendría el parámetro? </span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> <span class="fu">map</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> xs<span class="op">,</span> <span class="hl"><span class="co">/* tipo_función */</span></span> f<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> result <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;();</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">var</span> x <span class="op">:</span> xs<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    result<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="hl"><span class="co">/* f(x) */</span></span><span class="op">);</span>  <span class="arrow_box_left"> ¿Cómo llamaríamos a la función? </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Podemos definir una <strong>interfaz</strong>
+<code>IntFunction</code> que represente a las funciones que reciben y
+devuelven un valor de tipo entero:</p></li>
+<li><p>Esta interfaz tendrá un único método, llamado <code>apply</code>,
+que definirá el comportamiento de la función que pasemos como parámetro
+a <code>map</code>.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> IntFunction <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> <span class="fu">apply</span><span class="op">(</span><span class="dt">int</span> x<span class="op">);</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Ejemplos de funciones que implementan la interfaz
+<code>IntFunction</code>:</p>
+<ul>
+<li>Multiplicar un valor por dos:</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiplicarPorDos <span class="kw">implements</span> IntFunction <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">@Override</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="dt">int</span> <span class="fu">apply</span><span class="op">(</span><span class="dt">int</span> x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+
+<ul>
+<li>Sumar uno al valor pasado como parámetro:</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SumarUno <span class="kw">implements</span> IntFunction <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">@Override</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="dt">int</span> <span class="fu">apply</span><span class="op">(</span><span class="dt">int</span> x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>La definición de <code>map</code> queda del siguiente modo:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> <span class="fu">map</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> xs<span class="op">,</span> <span class="hl">IntFunction</span> f<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> result <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;();</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">var</span> x <span class="op">:</span> xs<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    result<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="hl">f<span class="op">.</span><span class="fu">apply</span><span class="op">(</span>x<span class="op">)</span></span><span class="op">);</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+
+<p>Ejemplos de uso:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> l <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">8</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span>          <span class="co">// [4, 5, 1, 8, 10]</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> dobles <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>l<span class="op">,</span> <span class="hl">new <span class="fu">MultiplicarPorDos</span><span class="op">()</span></span><span class="op">);</span>   <span class="co">// [8, 10, 2, 16, 20]</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> doblesMasUno <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>dobles<span class="op">,</span> <span class="hl">new <span class="fu">SumarUno</span><span class="op">()</span></span><span class="op">);</span> <span class="co">// [9, 11, 3, 17, 21]</span></span></code></pre></div>
+
+</section>
+<section id="generalización-de-tipos" class="slide level2">
+<h2>Generalización de tipos</h2>
+<ul>
+<li>Actualizamos el código para que <code>map</code> admita funciones de
+cualquier tipo (no necesariamente sobre enteros).</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> Function<span class="op">&lt;</span>T<span class="op">,</span> S<span class="op">&gt;</span> <span class="op">{</span>     <span class="arrow_box_left"> Tipo función T -> S </span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  S <span class="fu">apply</span><span class="op">(</span>T x<span class="op">);</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="op">&lt;</span>T<span class="op">,</span> S<span class="op">&gt;</span> <span class="bu">List</span><span class="op">&lt;</span>S<span class="op">&gt;</span> <span class="fu">map</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>T<span class="op">&gt;</span> xs<span class="op">,</span> Function<span class="op">&lt;</span>T<span class="op">,</span> S<span class="op">&gt;</span> f<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> result <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;</span>S<span class="op">&gt;();</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">var</span> x <span class="op">:</span> xs<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    result<span class="op">.</span><span class="fu">add</span><span class="op">(</span>f<span class="op">.</span><span class="fu">apply</span><span class="op">(</span>x<span class="op">));</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiplicarPorDos <span class="kw">implements</span> Function<span class="op">&lt;</span><span class="bu">Integer</span><span class="op">,</span> <span class="bu">Integer</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">@Override</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="bu">Integer</span> <span class="fu">apply</span><span class="op">(</span><span class="bu">Integer</span> x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+
+</section>
+<section id="clases-anónimas" class="slide level2">
+<h2>Clases anónimas</h2>
+<ul>
+<li><p>Nuestra solución anterior requiere definir una clase por cada
+función que se quiera pasar como parámetro.</p></li>
+<li><p>Es posible definir clases anónimas en Java, mediante una sintaxis
+que define la clase y crea una instancia de esa clase al mismo
+tiempo.</p></li>
+</ul>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> dobles <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>l<span class="op">,</span> <span class="kw">new</span> Function<span class="op">&lt;</span><span class="bu">Integer</span><span class="op">,</span> <span class="bu">Integer</span><span class="op">&gt;()</span> <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">@Override</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="bu">Integer</span> <span class="fu">apply</span><span class="op">(</span><span class="bu">Integer</span> x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="op">});</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Aun así, el código de una llamada a <code>map</code> sigue siendo
+demasiado extenso.</p></li>
+<li><p>Por este motivo, en Java 8 se introducen las <strong>lambda
+expresiones</strong>.</p></li>
+</ul>
+</section></section>
+<section>
+<section id="interfaces-funcionales-y-lambda-expresiones"
+class="title-slide slide level1">
+<h1>Interfaces funcionales y lambda expresiones</h1>
+
+</section>
+<section id="interfaces-funcionales" class="slide level2">
+<h2>Interfaces funcionales</h2>
+<ul>
+<li><p>En Java, una <strong>interfaz funcional</strong> es una interfaz
+que declara un único método abstracto.</p></li>
+<li><p>A las interfaces funcionales se las conoce como interfaces SAM
+(<em>Single Abstract Method</em>).</p></li>
+<li><p>Ejemplo:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> Function<span class="op">&lt;</span>T<span class="op">,</span> S<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  S <span class="fu">apply</span><span class="op">(</span>T x<span class="op">);</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section id="lambda-expresiones" class="slide level2">
+<h2>Lambda expresiones</h2>
+<ul>
+<li><p>La sintaxis de una lambda expresión en Java es la siguiente:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="meta"><span class="">tipo<sub>1</sub></span></span> <span class="meta"><span class="">param<sub>1</sub></span></span><span class="op">,</span> <span class="kw">...</span><span class="op">,</span> <span class="meta"><span class="">tipo<sub>n</sub></span></span> <span class="meta"><span class="">param<sub>n</sub></span></span><span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span> <span class="meta">cuerpo</span> <span class="op">}</span></span></code></pre></div>
+</li>
+<li><p>Ejemplos:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="dt">int</span> x<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span> <span class="cf">return</span> x <span class="op">+</span> <span class="dv">1</span><span class="op">;</span> <span class="op">}</span></span></code></pre></div>
+
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="bu">String</span> x<span class="op">,</span> <span class="bu">String</span> y<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">printf</span><span class="op">(</span><span class="st">&quot;Concatenando &#39;</span><span class="sc">%s</span><span class="st">&#39; y &#39;</span><span class="sc">%s</span><span class="st">&#39;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> x<span class="op">,</span> y<span class="op">);</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x <span class="op">+</span> y</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Las expresiones lambda se evalúan a una instancia de una interfaz
+funcional. El <strong>cuerpo</strong> de la lambda expresión es la
+<strong>implementación del método abstracto</strong>.</p></li>
+<li><p>Por ejemplo, si introducimos la siguiente lambda expresión en un
+contexto en el que se espera un objeto de la clase
+<code>Function&lt;String, Integer&gt;</code>,</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="bu">String</span> s<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span> <span class="cf">return</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>s<span class="op">);</span> <span class="op">}</span></span></code></pre></div>
+
+<p>la lambda expresión es equivalente al siguiente código:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">new</span> Function<span class="op">&lt;</span><span class="bu">String</span><span class="op">,</span> <span class="bu">Integer</span><span class="op">&gt;()</span> <span class="op">{</span>   <span class="arrow_box_left"> Clase anónima </span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="bu">Integer</span> <span class="fu">apply</span><span class="op">(</span><span class="bu">String</span> s<span class="op">)</span> <span class="op">{</span> <span class="cf">return</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>s<span class="op">);</span> <span class="op">}</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section id="azúcar-sintáctico" class="slide level2">
+<h2>«Azúcar» sintáctico</h2>
+<ul>
+<li><p>Es posible omitir los tipos de los parámetros cuando se infieren
+del contexto:</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span>s<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span> <span class="cf">return</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>s<span class="op">);</span> <span class="op">}</span></span></code></pre></div>
+</li>
+<li><p>Si el cuerpo de la lambda expresión es de la forma
+<code>return expresion;</code> o es una llamada simple, es posible
+omitir las llaves y el <code>return</code>:</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span>s<span class="op">)</span> <span class="op">-&gt;</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>s<span class="op">)</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Si la lambda expresión tiene un solo parámetro, es posible omitir
+los paréntesis:</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>s <span class="op">-&gt;</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>s<span class="op">)</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>En nuestro ejemplo anterior (<code>map</code>), las llamadas a
+<code>map</code> pueden escribirse del siguiente modo:</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> l <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">8</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> dobles <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>l<span class="op">,</span> <span class="op">(</span><span class="bu">Integer</span> x<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span> <span class="cf">return</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">;</span> <span class="op">});</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> doblesMasUno <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>dobles<span class="op">,</span> <span class="op">(</span><span class="bu">Integer</span> x<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span> <span class="cf">return</span> x <span class="op">+</span> <span class="dv">1</span><span class="op">;</span> <span class="op">});</span></span></code></pre></div>
+
+<p>o, más brevemente:</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> l <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">8</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> dobles <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>l<span class="op">,</span> <span class="hl">x <span class="op">-&gt;</span> x <span class="op">*</span> <span class="dv">2</span></span><span class="op">);</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> doblesMasUno <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>dobles<span class="op">,</span> <span class="hl">x <span class="op">-&gt;</span> x <span class="op">+</span> <span class="dv">1</span></span><span class="op">);</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section id="referencias-a-métodos" class="slide level2">
+<h2>Referencias a métodos</h2>
+<ul>
+<li><p>A veces, cuando llamamos a una función de orden superior, la
+función que pasamos como parámetro está definida:</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Matematicas <span class="op">{</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">static</span> <span class="bu">Integer</span> <span class="fu">multiplicarDos</span><span class="op">(</span><span class="bu">Integer</span> x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</li>
+<li><p>En ese caso, puede utilizarse:</p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> dobles <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>l<span class="op">,</span> <span class="hl">Matematicas<span class="op">::</span>multiplicarPorDos</span><span class="op">);</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ol type="1">
+<li><p>Si <code>C</code> es una clase y <code>m</code> es un método
+estático,</p>
+<p><code>C::m</code> equivale a <code>x -&gt; C.m(x)</code></p></li>
+<li><p>Si <code>o</code> es una instancia y <code>m</code> es un
+método,</p>
+<p><code>o::m</code> equivale a <code>x -&gt; o.m(x)</code></p></li>
+<li><p>Si <code>C</code> es una case y <code>m</code> es un método no
+estático,</p>
+<p><code>C::m</code> equivale a <code>x -&gt; x.m()</code></p></li>
+<li><p>Si <code>C</code> es una clase,</p>
+<p><code>C::new</code> equivale a <code>x -&gt; new C(x)</code></p></li>
+</ol>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplos">Ejemplos</h3>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> nombres <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;clara&quot;</span><span class="op">,</span> <span class="st">&quot;ricardo&quot;</span><span class="op">,</span> <span class="st">&quot;manuel&quot;</span><span class="op">);</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> mayusculas <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>nombres<span class="op">,</span> <span class="hl">String<span class="op">::</span>toUpperCase</span><span class="op">);</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span>mayusculas<span class="op">);</span>    <span class="co">// [&quot;CLARA&quot;, &quot;RICARDO&quot;, &quot;MANUEL&quot;]</span></span></code></pre></div>
+
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> nombresFicheros <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;dir1/hola.txt&quot;</span><span class="op">,</span> <span class="st">&quot;dir2/adios.java&quot;</span><span class="op">);</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> objetosFile <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>nombresFicheros<span class="op">,</span> <span class="hl">File<span class="op">::</span>new</span><span class="op">);</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> dirPadres <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>objetosFile<span class="op">,</span> <span class="hl">File<span class="op">::</span>getParent</span><span class="op">);</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span>dirPadres<span class="op">);</span>    <span class="co">// [&quot;dir1&quot;, &quot;dir2&quot;]</span></span></code></pre></div>
+
+</section>
+<section id="interfaces-funcionales-predefinidas" class="slide level2">
+<h2>Interfaces funcionales predefinidas</h2>
+<ul>
+<li><p>Además de la interfaz <code>Function&lt;T, S&gt;</code> definida
+anteriormente, en la biblioteca estándar de Java existe un gran número
+de interfaces predefinidas.</p></li>
+<li><p>Se encuentran en el paquete <code>java.util.function</code> <a
+href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/package-summary.html">[+]</a>.</p></li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>Interfaz</th>
+<th>Tipo funcional</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Function&lt;T, S&gt;</code></td>
+<td><code>T</code> → <code>S</code></td>
+</tr>
+<tr class="even">
+<td><code>Predicate&lt;T&gt;</code></td>
+<td><code>T</code> → <code>boolean</code></td>
+</tr>
+<tr class="odd">
+<td><code>UnaryOperator&lt;T&gt;</code></td>
+<td><code>T</code> → <code>T</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2">
+
+<table>
+<thead>
+<tr class="header">
+<th>Interfaz</th>
+<th>Tipo funcional</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Consumer&lt;T&gt;</code></td>
+<td><code>T</code> → <code>void</code></td>
+</tr>
+<tr class="even">
+<td><code>Supplier&lt;T&gt;</code></td>
+<td>→ <code>T</code></td>
+</tr>
+<tr class="odd">
+<td><code>BiFunction&lt;T, S, U&gt;</code></td>
+<td><code>(T, S)</code> → <code>U</code></td>
+</tr>
+<tr class="even">
+<td><code>BinaryOperator&lt;T&gt;</code></td>
+<td><code>(T, T)</code> → <code>T</code></td>
+</tr>
+<tr class="odd">
+<td><code>BiPredicate&lt;T, S&gt;</code></td>
+<td><code>(T, S)</code> → <code>boolean</code></td>
+</tr>
+<tr class="even">
+<td><code>BiConsumer&lt;T, S&gt;</code></td>
+<td><code>(T, S)</code> → <code>void</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="ejemplos-1" class="slide level2">
+<h2>Ejemplos</h2>
+<ul>
+<li><p>Definimos una función <code>filter</code>, similar a la de
+Elixir:</p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="bu">List</span><span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="fu">filter</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>T<span class="op">&gt;</span> xs<span class="op">,</span> <span class="bu">Predicate</span><span class="op">&lt;</span>T<span class="op">&gt;</span> f<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> result <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;</span>T<span class="op">&gt;();</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">var</span> x <span class="op">:</span> xs<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>f<span class="op">.</span><span class="fu">test</span><span class="op">(</span>x<span class="op">))</span> <span class="op">{</span> result<span class="op">.</span><span class="fu">add</span><span class="op">(</span>x<span class="op">);</span> <span class="op">}</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Definimos una función <code>zipWith</code>, similar a la de
+Elixir:</p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="op">&lt;</span>T<span class="op">,</span> S<span class="op">,</span> R<span class="op">&gt;</span> <span class="bu">List</span><span class="op">&lt;</span>R<span class="op">&gt;</span> <span class="fu">zipWith</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>T<span class="op">&gt;</span> xs<span class="op">,</span> <span class="bu">List</span><span class="op">&lt;</span>S<span class="op">&gt;</span> ys<span class="op">,</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                                 BiFunction<span class="op">&lt;</span>T<span class="op">,</span> S<span class="op">,</span> R<span class="op">&gt;</span> f<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> result <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;</span>R<span class="op">&gt;();</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> itXs <span class="op">=</span> xs<span class="op">.</span><span class="fu">iterator</span><span class="op">();</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> itYs <span class="op">=</span> ys<span class="op">.</span><span class="fu">iterator</span><span class="op">();</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> <span class="op">(</span>itXs<span class="op">.</span><span class="fu">hasNext</span><span class="op">()</span> <span class="op">&amp;&amp;</span> itYs<span class="op">.</span><span class="fu">hasNext</span><span class="op">())</span> <span class="op">{</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    result<span class="op">.</span><span class="fu">add</span><span class="op">(</span>f<span class="op">.</span><span class="fu">apply</span><span class="op">(</span>itXs<span class="op">.</span><span class="fu">next</span><span class="op">(),</span> itYs<span class="op">.</span><span class="fu">next</span><span class="op">()));</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section id="método-foreach" class="slide level2">
+<h2>Método <code>forEach</code></h2>
+<ul>
+<li><p>Todas las colecciones implementan un método <code>forEach</code>,
+que realiza una determinada acción sobre todos los elementos de la
+colección.</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> x <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;a&quot;</span><span class="op">,</span> <span class="st">&quot;b&quot;</span><span class="op">,</span> <span class="st">&quot;c&quot;</span><span class="op">);</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>x<span class="op">.</span><span class="fu">forEach</span><span class="op">(</span><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">::</span>println<span class="op">);</span></span></code></pre></div>
+</li>
+<li><p>El tipo de la función <code>forEach</code> es:</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> <span class="bu">Iterable</span><span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="dt">void</span> <span class="fu">forEach</span><span class="op">(</span><span class="hl">Consumer<span class="op">&lt;</span>T<span class="op">&gt;</span></span> action<span class="op">);</span>  <span class="arrow_box_left"> Consumer&lt;T&gt; = T -> void </span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section id="section-1" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
+<h3 id="inciso-contravarianza-con-respecto-a-t">Inciso: contravarianza
+con respecto a <code>T</code></h3>
+<ul>
+<li><p>En realidad, el tipo de <code>forEach</code> es el siguiente:</p>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> <span class="bu">Iterable</span><span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="dt">void</span> <span class="fu">forEach</span><span class="op">(</span>Consumer<span class="op">&lt;</span><span class="hl"><span class="op">?</span> <span class="kw">super</span> T</span><span class="op">&gt;</span> action<span class="op">);</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</li>
+<li><p>Es decir, la función <code>action</code> pasada como parámetro
+puede recibir valores que sean supertipos de <code>T</code>.</p></li>
+<li><p>Por simplicidad, ignoraremos las anotaciones de covarianza
+(<code>? extends T</code>) o contravarianza
+(<code>? super T</code>).</p></li>
+</ul>
+</section></section>
+<section>
+<section id="la-clase-streamt" class="title-slide slide level1">
+<h1>La clase <code>Stream&lt;T&gt;</code></h1>
+
+</section>
+<section id="la-clase-streamt-1" class="slide level2">
+<h2>La clase <code>Stream&lt;T&gt;</code></h2>
+<ul>
+<li><p>Definida en el paquete <code>java.util.stream</code>.</p></li>
+<li><p>Define una colección de elementos, al igual que
+<code>List&lt;T&gt;</code>, <code>Set&lt;T&gt;</code>, etc.</p></li>
+<li><p>Los <em>streams</em> son <strong>perezosos</strong>.</p>
+<ul>
+<li>Solo realizan cómputos cuando se utiliza una de las operaciones
+terminales.</li>
+<li>Solo se consumen los elementos del <em>stream</em> a medida que se
+van necesitando.</li>
+</ul></li>
+<li><p>Documentación: <a
+href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/Stream.html">[+]</a></p></li>
+</ul>
+</section>
+<section id="métodos-transformadores-de-streamt" class="slide level2">
+<h2>Métodos transformadores de <code>Stream&lt;T&gt;</code></h2>
+<dl>
+<dt><code>map(Function&lt;T, S&gt; f)</code></dt>
+<dd>
+<p>Aplica la función <code>f</code> a los elementos y devuelve otro
+stream con los resultados.</p>
+</dd>
+<dt><code>flatMap(Function&lt;T, Stream&lt;S&gt;&gt; f)</code></dt>
+<dd>
+<p>Aplica la función <code>f</code> a los elementos y devuelve el
+resultado de concatenar los resultados.</p>
+</dd>
+<dt><code>concat(Stream&lt;T&gt; s1, Stream&lt;T&gt; s2)</code></dt>
+<dd>
+<p>Concatena los <em>streams</em> pasados como parámetro.</p>
+</dd>
+</dl>
+</section>
+<section class="slide level2">
+
+<dl>
+<dt><code>filter(Predicate&lt;T&gt; f)</code></dt>
+<dd>
+<p>Devuelve un <em>stream</em> con los elementos que satisfacen el
+predicado.</p>
+</dd>
+<dt><code>limit(int n)</code></dt>
+<dd>
+<p>Devuelve un <em>stream</em> con los <code>n</code> primeros elementos
+de <code>this</code>. <span class="rojo"><em>(≈ Enum.take/2 en
+Elixir)</em></span></p>
+</dd>
+<dt><code>skip(int n)</code></dt>
+<dd>
+<p>Descarta los <code>n</code> primeros elementos de <code>this</code>.
+<span class="rojo"><em>(≈ Enum.drop/2 en Elixir)</em></span></p>
+</dd>
+</dl>
+</section>
+<section class="slide level2">
+
+<dl>
+<dt><code>takeWhile(Predicate&lt;T&gt; f)</code></dt>
+<dd>
+<p>Devuelve un <em>stream</em> con los elementos de <code>this</code>
+hasta el primero que no cumpla la condición <code>f</code>.</p>
+</dd>
+<dt><code>dropWhile(Predicate&lt;T&gt; f)</code></dt>
+<dd>
+<p>Devuelve un <em>stream</em> con los elementos de <code>this</code>
+desde el primero que no cumpla la condición <code>f</code>.</p>
+</dd>
+<dt><code>distinct()</code></dt>
+<dd>
+<p>Elimina los duplicados del <em>stream</em>.</p>
+</dd>
+<dt><code>sorted()</code></dt>
+<dd>
+<p>Devuelve un <em>stream</em> ordenado.</p>
+</dd>
+</dl>
+</section>
+<section id="métodos-terminales-de-streamt" class="slide level2">
+<h2>Métodos terminales de <code>Stream&lt;T&gt;</code></h2>
+<dl>
+<dt><code>count()</code> → <code>int</code></dt>
+<dd>
+<p>Devuelve el número de elementos del <em>stream</em>.</p>
+</dd>
+<dt><code>findFirst()</code> → <code>Optional&lt;T&gt;</code></dt>
+<dd>
+<p>Devuelve el primer elemento del <em>stream</em> (si existe).</p>
+</dd>
+<dt><code>reduce(T acIni, BinaryOperator&lt;T&gt; f)</code> →
+<code>T</code></dt>
+<dd>
+<p>Propaga un valor acumulador a lo largo del <em>stream</em> y devuelve
+el valor final del acumulador.</p>
+</dd>
+</dl>
+</section>
+<section class="slide level2">
+
+<dl>
+<dt><code>allMatch(Predicate&lt;T&gt; f)</code> →
+<code>boolean</code></dt>
+<dd>
+<p>Comprueba si la función <code>f</code> devuelve <code>true</code>
+para todos los elementos del <em>stream</em>. <span class="rojo"><em>(≈
+Enum.all?/2 en Elixir)</em></span></p>
+</dd>
+<dt><code>anyMatch(Predicate&lt;T&gt; f)</code> →
+<code>boolean</code></dt>
+<dd>
+<p>Comprueba si la función <code>f</code> devuelve <code>true</code>
+para algún elemento del <em>stream</em>. <span class="rojo"><em>(≈
+Enum.any?/2 en Elixir)</em></span></p>
+</dd>
+</dl>
+</section>
+<section class="slide level2">
+
+<dl>
+<dt><code>toList()</code> → <code>List&lt;T&gt;</code></dt>
+<dd>
+<p>Crea una lista con los elementos del <em>stream</em>.</p>
+</dd>
+<dt><code>toArray()</code> → <code>Array&lt;T&gt;</code></dt>
+<dd>
+<p>Crea un array con los elementos del <em>stream</em>.</p>
+</dd>
+<dt><code>collect(Collector c)</code></dt>
+<dd>
+<p>Acumula los elementos del <em>stream</em> en otra colección de
+elementos. <span class="rojo"><em>(≈ Enum.into/2 en
+Elixir)</em></span></p>
+</dd>
+</dl>
+</section>
+<section id="ejemplo" class="slide level2">
+<h2>Ejemplo</h2>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> nums <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="dv">10</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="op">-</span><span class="dv">2</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">9</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> result <span class="op">=</span> nums<span class="op">.</span><span class="fu">stream</span><span class="op">()</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">filter</span><span class="op">(</span>x <span class="op">-&gt;</span> x <span class="op">&gt;=</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">map</span><span class="op">(</span>x <span class="op">-&gt;</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">)</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">reduce</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="bu">Integer</span><span class="op">::</span>sum<span class="op">);</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span>result<span class="op">);</span>     <span class="co">// Imprime: 76</span></span></code></pre></div>
+
+</section>
+<section id="creación-de-streamt" class="slide level2">
+<h2>Creación de <code>Stream&lt;T&gt;</code></h2>
+<ul>
+<li><p>Todas las colecciones de la biblioteca estándar tienen un método
+<code>.stream()</code> que permiten obtener un <em>stream</em> con los
+elementos de la colección.</p></li>
+<li><p>Además, existen métodos estáticos en la clase
+<code>Stream&lt;T&gt;</code> que permiten crear
+<em>streams</em>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<dl>
+<dt><code>of(T... values)</code></dt>
+<dd>
+<p>Crea un <em>stream</em> con los valores indicados.</p>
+</dd>
+<dt><code>generate(Supplier&lt;T&gt; f)</code></dt>
+<dd>
+<p>Crea un <em>stream</em> infinito, llamando repetidamente a la función
+<code>f</code>. <span class="rojo"><em>(≈ Stream.repeatedly/1 en
+Elixir)</em></span></p>
+</dd>
+<dt><code>iterate(T seed, UnaryOperator&lt;T&gt; f)</code></dt>
+<dd>
+<p>Crea un <em>stream</em> infinito, comenzando por el valor
+<code>seed</code>, seguido por los resultados de aplicar <code>f</code>
+repetidamente sobre ese valor. <span class="rojo"><em>(≈
+Stream.iterate/2 en Elixir)</em></span></p>
+</dd>
+</dl>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-1">Ejemplo</h3>
+<ul>
+<li><p>Imprimir los diez primeros números de la sucesión de
+Fibonacci:</p>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>Stream<span class="op">.</span><span class="fu">iterate</span><span class="op">(</span><span class="kw">new</span> Pair<span class="op">&lt;&gt;(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">),</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>               p <span class="op">-&gt;</span> <span class="kw">new</span> Pair<span class="op">&lt;&gt;(</span>p<span class="op">.</span><span class="fu">second</span><span class="op">(),</span> p<span class="op">.</span><span class="fu">first</span><span class="op">()</span> <span class="op">+</span> p<span class="op">.</span><span class="fu">second</span><span class="op">()))</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">map</span><span class="op">(</span>Pair<span class="op">::</span>first<span class="op">)</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">limit</span><span class="op">(</span><span class="dv">10</span><span class="op">)</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">forEach</span><span class="op">(</span><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">::</span>println<span class="op">);</span></span></code></pre></div>
+
+<p>donde <code>Pair</code> está definido del siguiente modo:</p>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">record</span> Pair<span class="op">&lt;</span>T<span class="op">,</span> S<span class="op">&gt;(</span>T first<span class="op">,</span> S second<span class="op">)</span> <span class="op">{</span> <span class="op">}</span></span></code></pre></div>
+</li>
+</ul>
+</section></section>
+<section>
+<section id="el-método-collect" class="title-slide slide level1">
+<h1>El método <code>collect</code></h1>
+
+</section>
+<section id="el-método-collect-1" class="slide level2">
+<h2>El método <code>collect</code></h2>
+<ul>
+<li><p>Es habitual querer almacenar los elementos de un <em>stream</em>
+en una colección de elementos.</p></li>
+<li><p>El método <code>collect</code> es similar a <code>reduce</code>,
+pero está especializado en transformar un <em>stream</em> en otra
+colección.</p></li>
+</ul>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Stream<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// R = Tipo de la colección generada.</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="op">&lt;</span>R<span class="op">&gt;</span> R <span class="fu">collect</span><span class="op">(</span>Supplier<span class="op">&lt;</span>R<span class="op">&gt;</span> supplier<span class="op">,</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                       BiConsumer<span class="op">&lt;</span>R<span class="op">,</span> T<span class="op">&gt;</span> accumulator<span class="op">,</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>                       BiConsumer<span class="op">&lt;</span>R<span class="op">,</span> R<span class="op">&gt;</span> combiner<span class="op">);</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">// (R = Tipo de la colección generada; T = tipo de elementos del stream)</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="op">&lt;</span>R<span class="op">&gt;</span> R <span class="fu">collect</span><span class="op">(</span>Supplier<span class="op">&lt;</span>R<span class="op">&gt;</span> supplier<span class="op">,</span>            <span class="arrow_box_left"> () -> R </span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                     BiConsumer<span class="op">&lt;</span>R<span class="op">,</span> T<span class="op">&gt;</span> accumulator<span class="op">,</span>    <span class="arrow_box_left"> (R, T) -> void </span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>                     BiConsumer<span class="op">&lt;</span>R<span class="op">,</span> R<span class="op">&gt;</span> combiner<span class="op">);</span>      <span class="arrow_box_left"> (R, R) -> void </span></span></code></pre></div>
+
+<dl>
+<dt><code>supplier()</code></dt>
+<dd>
+<p>Crea una instancia vacía de la colección a generar.</p>
+</dd>
+<dt><code>accumulator(r, t)</code></dt>
+<dd>
+<p>Añade el elemento <code>t</code> a la colección <code>r</code>.</p>
+</dd>
+<dt><code>combiner(r1, r2)</code></dt>
+<dd>
+<p>Combina dos colecciones en una. Añade los elementos de
+<code>r2</code> a <code>r1</code>.</p>
+</dd>
+</dl>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-2">Ejemplo</h3>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> result <span class="op">=</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>        Stream<span class="op">.</span><span class="fu">iterate</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> x <span class="op">-&gt;</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">)</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">limit</span><span class="op">(</span><span class="dv">15</span><span class="op">)</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">collect</span><span class="op">(()</span> <span class="op">-&gt;</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;(),</span>       <span class="arrow_box_left"> <em>supplier</em> </span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>                        <span class="op">(</span>xs<span class="op">,</span> x<span class="op">)</span> <span class="op">-&gt;</span> xs<span class="op">.</span><span class="fu">add</span><span class="op">(</span>x<span class="op">),</span>           <span class="arrow_box_left"> <em>accumulator</em> </span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>                        <span class="op">(</span>xs<span class="op">,</span> ys<span class="op">)</span> <span class="op">-&gt;</span> xs<span class="op">.</span><span class="fu">addAll</span><span class="op">(</span>ys<span class="op">));</span>     <span class="arrow_box_left"> <em>combinator</em> </span></span></code></pre></div>
+
+<p>o, equivalentemente,</p>
+<div class="sourceCode" id="cb37"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> result <span class="op">=</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>        Stream<span class="op">.</span><span class="fu">iterate</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> x <span class="op">-&gt;</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">)</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">limit</span><span class="op">(</span><span class="dv">15</span><span class="op">)</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">collect</span><span class="op">(</span><span class="bu">ArrayList</span><span class="op">::</span><span class="kw">new</span><span class="op">,</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">ArrayList</span><span class="op">::</span>add<span class="op">,</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">ArrayList</span><span class="op">::</span>addAll<span class="op">);</span></span></code></pre></div>
+
+</section>
+<section id="la-interfaz-collector" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">La interfaz
+<code>Collector</code></h2>
+<ul>
+<li><p>Existe otra variante de <code>collect</code> que, en lugar de
+recibir tres parámetros, recibe una instancia de la interfaz
+<code>Collector</code>.</p></li>
+<li><p>Esta interfaz agrupa esencialmente los tres parámetros de la
+sobrecarga de <code>collect</code> vista anteriormente.</p>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Collector<span class="op">&lt;</span>T<span class="op">,</span> A<span class="op">,</span> R<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  Supplier<span class="op">&lt;</span>A<span class="op">&gt;</span> <span class="fu">supplier</span><span class="op">();</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  BiConsumer<span class="op">&lt;</span>A<span class="op">,</span> T<span class="op">&gt;</span> accumulator<span class="op">;</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  BinaryOperator<span class="op">&lt;</span>A<span class="op">&gt;</span> combiner<span class="op">;</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  Function<span class="op">&lt;</span>T<span class="op">,</span> R<span class="op">&gt;</span> finisher<span class="op">;</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ... otras operaciones abstractas ...</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+
+<p>Más información: <a
+href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/Collector.html">[+]</a></p></li>
+</ul>
+</section>
+<section id="la-clase-collectors" class="slide level2">
+<h2>La clase <code>Collectors</code></h2>
+<ul>
+<li>Proporciona varios métodos estáticos que son de utilidad para
+generar instancias de <code>Collector</code>.</li>
+</ul>
+<dl>
+<dt><code>toList()</code></dt>
+<dd>
+<p>Devuelve un colector que almacena los resultados en una lista.</p>
+</dd>
+<dt><code>toMap(Function&lt;T, K&gt; f, Function&lt;T, V&gt; g)</code></dt>
+<dd>
+<p>Devuelve colector que almacena los resultados en un
+<code>Map&lt;K, V&gt;</code> donde los pares <em>(clave, valor)</em>
+provienen de aplicar las funciones <code>f</code> y <code>g</code> a los
+elementos del <em>stream</em>.</p>
+</dd>
+</dl>
+</section>
+<section class="slide level2">
+
+<dl>
+<dt><code>joining(String delimiter)</code></dt>
+<dd>
+<p>Devuelve un colector que concatena los elementos, separados por un
+delimitador</p>
+</dd>
+</dl>
+<div class="sourceCode" id="cb39"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span> str <span class="op">=</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>        Stream<span class="op">.</span><span class="fu">of</span><span class="op">(</span><span class="st">&quot;Marta&quot;</span><span class="op">,</span> <span class="st">&quot;Gerardo&quot;</span><span class="op">,</span> <span class="st">&quot;Diana&quot;</span><span class="op">)</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">map</span><span class="op">(</span><span class="bu">String</span><span class="op">::</span>toLowerCase<span class="op">)</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">map</span><span class="op">(</span>s <span class="op">-&gt;</span> s <span class="op">+</span> <span class="st">&quot;.txt&quot;</span><span class="op">)</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">collect</span><span class="op">(</span>Collectors<span class="op">.</span><span class="fu">joining</span><span class="op">(</span><span class="st">&quot; / &quot;</span><span class="op">));</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="co">// &quot;marta.txt / gerardo.txt / diana.txt&quot;</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<dl>
+<dt><code>groupingBy(Function&lt;T, K&gt; classifier)</code></dt>
+<dd>
+<p>Devuelve un colector que construye un diccionario aplicando a cada
+elemento la función <code>classifier</code>.</p>
+</dd>
+</dl>
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>Stream<span class="op">.</span><span class="fu">of</span><span class="op">(</span><span class="st">&quot;Marta&quot;</span><span class="op">,</span> <span class="st">&quot;Gerardo&quot;</span><span class="op">,</span> <span class="st">&quot;Diana&quot;</span><span class="op">,</span> <span class="st">&quot;Carlos&quot;</span><span class="op">,</span> <span class="st">&quot;David&quot;</span><span class="op">,</span> <span class="st">&quot;Águeda&quot;</span><span class="op">)</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">collect</span><span class="op">(</span>Collectors<span class="op">.</span><span class="fu">groupingBy</span><span class="op">(</span><span class="bu">String</span><span class="op">::</span>length<span class="op">));</span></span></code></pre></div>
+
+<p>se evalúa al siguiente diccionario:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Clave</th>
+<th>Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td><code>[Marta, Diana, David]</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">6</td>
+<td><code>[Carlos, Águeda]</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td><code>[Gerardo]</code></td>
+</tr>
+</tbody>
+</table>
+</section></section>
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/search/search.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Prints all fragments in their visible states on the same slide 
+        pdfSeparateFragments: false,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom,
+          // RevealHighlight          
+        ]
+      });
+    </script>
+    </body>
+</html>
