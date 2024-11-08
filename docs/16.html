@@ -159,11 +159,11 @@ Java, sin utilizar lambda expresiones.</p>
 <li>Por simplicidad, comenzamos con listas de valores enteros.</li>
 </ul>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>                                      <span class="arrow_box_down"> ¿Qué tipo tendría el parámetro? </span></span>
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>                                      <span class="arrow_box_down fragment"> ¿Qué tipo tendría el parámetro? </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> <span class="fu">map</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> xs<span class="op">,</span> <span class="hl"><span class="co">/* tipo_función */</span></span> f<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> result <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;();</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">var</span> x <span class="op">:</span> xs<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    result<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="hl"><span class="co">/* f(x) */</span></span><span class="op">);</span>  <span class="arrow_box_left"> ¿Cómo llamaríamos a la función? </span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    result<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="hl"><span class="co">/* f(x) */</span></span><span class="op">);</span>  <span class="arrow_box_left fragment"> ¿Cómo llamaríamos a la función? </span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> result<span class="op">;</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
@@ -173,9 +173,12 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="
 <section class="slide level2">
 
 <ul>
-<li><p>Podemos definir una <strong>interfaz</strong>
+<li>Podemos definir una <strong>interfaz</strong>
 <code>IntFunction</code> que represente a las funciones que reciben y
-devuelven un valor de tipo entero:</p></li>
+devuelven un valor de tipo entero:</li>
+</ul>
+<div class="fragment">
+<ul>
 <li><p>Esta interfaz tendrá un único método, llamado <code>apply</code>,
 que definirá el comportamiento de la función que pasemos como parámetro
 a <code>map</code>.</p>
@@ -185,6 +188,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </li>
 </ul>
+</div>
 </section>
 <section class="slide level2">
 
@@ -195,7 +199,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="
 <li>Multiplicar un valor por dos:</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiplicarPorDos <span class="kw">implements</span> IntFunction <span class="op">{</span></span>
+class="sourceCode java fragment"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiplicarPorDos <span class="kw">implements</span> IntFunction <span class="op">{</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">@Override</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="dt">int</span> <span class="fu">apply</span><span class="op">(</span><span class="dt">int</span> x<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
@@ -206,7 +210,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="
 <li>Sumar uno al valor pasado como parámetro:</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SumarUno <span class="kw">implements</span> IntFunction <span class="op">{</span></span>
+class="sourceCode java fragment"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SumarUno <span class="kw">implements</span> IntFunction <span class="op">{</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">@Override</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="dt">int</span> <span class="fu">apply</span><span class="op">(</span><span class="dt">int</span> x<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
@@ -227,12 +231,14 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> result<span class="op">;</span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 
+<div class="fragment">
 <p>Ejemplos de uso:</p>
 <div class="sourceCode" id="cb6"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> l <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">8</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span>          <span class="co">// [4, 5, 1, 8, 10]</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> dobles <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>l<span class="op">,</span> <span class="hl">new <span class="fu">MultiplicarPorDos</span><span class="op">()</span></span><span class="op">);</span>   <span class="co">// [8, 10, 2, 16, 20]</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> doblesMasUno <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>dobles<span class="op">,</span> <span class="hl">new <span class="fu">SumarUno</span><span class="op">()</span></span><span class="op">);</span> <span class="co">// [9, 11, 3, 17, 21]</span></span></code></pre></div>
 
+</div>
 </section>
 <section id="generalización-de-tipos" class="slide level2">
 <h2>Generalización de tipos</h2>
@@ -245,6 +251,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  S <span class="fu">apply</span><span class="op">(</span>T x<span class="op">);</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 
+<div class="fragment">
 <div class="sourceCode" id="cb8"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="op">&lt;</span>T<span class="op">,</span> S<span class="op">&gt;</span> <span class="bu">List</span><span class="op">&lt;</span>S<span class="op">&gt;</span> <span class="fu">map</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>T<span class="op">&gt;</span> xs<span class="op">,</span> Function<span class="op">&lt;</span>T<span class="op">,</span> S<span class="op">&gt;</span> f<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> result <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;</span>S<span class="op">&gt;();</span></span>
@@ -254,11 +261,12 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> result<span class="op">;</span></span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 
+</div>
 </section>
 <section class="slide level2">
 
 <div class="sourceCode" id="cb9"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiplicarPorDos <span class="kw">implements</span> Function<span class="op">&lt;</span><span class="bu">Integer</span><span class="op">,</span> <span class="bu">Integer</span><span class="op">&gt;</span> <span class="op">{</span></span>
+class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultiplicarPorDos <span class="kw">implements</span> <span class="hl">Function<span class="op">&lt;</span><span class="bu">Integer</span><span class="op">,</span> <span class="bu">Integer</span><span class="op">&gt;</span></span> <span class="op">{</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">@Override</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="bu">Integer</span> <span class="fu">apply</span><span class="op">(</span><span class="bu">Integer</span> x<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
@@ -272,7 +280,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="
 <li><p>Nuestra solución anterior requiere definir una clase por cada
 función que se quiera pasar como parámetro.</p></li>
 <li><p>Es posible definir clases anónimas en Java, mediante una sintaxis
-que define la clase y crea una instancia de esa clase al mismo
+que define una clase y crea una instancia de esa clase al mismo
 tiempo.</p></li>
 </ul>
 <div class="sourceCode" id="cb10"><pre
@@ -335,12 +343,14 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb14-1"><a href=
 </section>
 <section class="slide level2">
 
+<div>
 <ul>
-<li><p>Las expresiones lambda se evalúan a una instancia de una interfaz
-funcional. El <strong>cuerpo</strong> de la lambda expresión es la
-<strong>implementación del método abstracto</strong>.</p></li>
-<li><p>Por ejemplo, si introducimos la siguiente lambda expresión en un
-contexto en el que se espera un objeto de la clase
+<li class="fragment"><p>Las expresiones lambda se evalúan a una
+instancia de una interfaz funcional. El <strong>cuerpo</strong> de la
+lambda expresión es la <strong>implementación del método
+abstracto</strong>.</p></li>
+<li class="fragment"><p>Por ejemplo, si introducimos la siguiente lambda
+expresión en un contexto en el que se espera un objeto de la clase
 <code>Function&lt;String, Integer&gt;</code>,</p>
 <div class="sourceCode" id="cb15"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="bu">String</span> s<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span> <span class="cf">return</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>s<span class="op">);</span> <span class="op">}</span></span></code></pre></div>
@@ -352,22 +362,25 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb16-1"><a href=
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </li>
 </ul>
+</div>
 </section>
 <section id="azúcar-sintáctico" class="slide level2">
 <h2>«Azúcar» sintáctico</h2>
+<div>
 <ul>
-<li><p>Es posible omitir los tipos de los parámetros cuando se infieren
-del contexto:</p>
+<li class="fragment"><p>Es posible omitir los tipos de los parámetros
+cuando se infieren del contexto:</p>
 <div class="sourceCode" id="cb17"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span>s<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span> <span class="cf">return</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>s<span class="op">);</span> <span class="op">}</span></span></code></pre></div>
 </li>
-<li><p>Si el cuerpo de la lambda expresión es de la forma
-<code>return expresion;</code> o es una llamada simple, es posible
+<li class="fragment"><p>Si el cuerpo de la lambda expresión es de la
+forma <code>return expresion;</code> o es una llamada simple, es posible
 omitir las llaves y el <code>return</code>:</p>
 <div class="sourceCode" id="cb18"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span>s<span class="op">)</span> <span class="op">-&gt;</span> <span class="bu">Integer</span><span class="op">.</span><span class="fu">parseInt</span><span class="op">(</span>s<span class="op">)</span></span></code></pre></div>
 </li>
 </ul>
+</div>
 </section>
 <section class="slide level2">
 
@@ -391,7 +404,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb20-1"><a href=
 
 <p>o, más brevemente:</p>
 <div class="sourceCode" id="cb21"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> l <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">8</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span></span>
+class="sourceCode java fragment"><code class="sourceCode java"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> l <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">8</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> dobles <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>l<span class="op">,</span> <span class="hl">x <span class="op">-&gt;</span> x <span class="op">*</span> <span class="dv">2</span></span><span class="op">);</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> doblesMasUno <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>dobles<span class="op">,</span> <span class="hl">x <span class="op">-&gt;</span> x <span class="op">+</span> <span class="dv">1</span></span><span class="op">);</span></span></code></pre></div>
 </li>
@@ -399,21 +412,24 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb21-1"><a href=
 </section>
 <section id="referencias-a-métodos" class="slide level2">
 <h2>Referencias a métodos</h2>
+<div>
 <ul>
-<li><p>A veces, cuando llamamos a una función de orden superior, la
-función que pasamos como parámetro está definida:</p>
+<li class="fragment"><p>A veces, las funciones que pasamos como
+parámetro ya están definidas:</p>
 <div class="sourceCode" id="cb22"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Matematicas <span class="op">{</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">static</span> <span class="bu">Integer</span> <span class="fu">multiplicarDos</span><span class="op">(</span><span class="bu">Integer</span> x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="dt">static</span> <span class="bu">Integer</span> <span class="fu">multiplicarDos</span><span class="op">(</span><span class="bu">Integer</span> x<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </li>
-<li><p>En ese caso, puede utilizarse:</p>
+<li class="fragment"><p>En ese caso, puede utilizarse una
+<strong>referencia a método</strong>:</p>
 <div class="sourceCode" id="cb23"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> dobles <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>l<span class="op">,</span> <span class="hl">Matematicas<span class="op">::</span>multiplicarPorDos</span><span class="op">);</span></span></code></pre></div>
 </li>
 </ul>
+</div>
 </section>
 <section class="slide level2">
 
@@ -440,7 +456,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb24-1"><a href=
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span>mayusculas<span class="op">);</span>    <span class="co">// [&quot;CLARA&quot;, &quot;RICARDO&quot;, &quot;MANUEL&quot;]</span></span></code></pre></div>
 
 <div class="sourceCode" id="cb25"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> nombresFicheros <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;dir1/hola.txt&quot;</span><span class="op">,</span> <span class="st">&quot;dir2/adios.java&quot;</span><span class="op">);</span></span>
+class="sourceCode java fragment"><code class="sourceCode java"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> nombresFicheros <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;dir1/hola.txt&quot;</span><span class="op">,</span> <span class="st">&quot;dir2/adios.java&quot;</span><span class="op">);</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> objetosFile <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>nombresFicheros<span class="op">,</span> <span class="hl">File<span class="op">::</span>new</span><span class="op">);</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> dirPadres <span class="op">=</span> <span class="fu">map</span><span class="op">(</span>objetosFile<span class="op">,</span> <span class="hl">File<span class="op">::</span>getParent</span><span class="op">);</span></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span>dirPadres<span class="op">);</span>    <span class="co">// [&quot;dir1&quot;, &quot;dir2&quot;]</span></span></code></pre></div>
@@ -828,6 +844,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb35-1"><a href=
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                     BiConsumer<span class="op">&lt;</span>R<span class="op">,</span> T<span class="op">&gt;</span> accumulator<span class="op">,</span>    <span class="arrow_box_left"> (R, T) -> void </span></span>
 <span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>                     BiConsumer<span class="op">&lt;</span>R<span class="op">,</span> R<span class="op">&gt;</span> combiner<span class="op">);</span>      <span class="arrow_box_left"> (R, R) -> void </span></span></code></pre></div>
 
+<div class="fragment">
 <dl>
 <dt><code>supplier()</code></dt>
 <dd>
@@ -843,6 +860,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb35-1"><a href=
 <code>r2</code> a <code>r1</code>.</p>
 </dd>
 </dl>
+</div>
 </section>
 <section class="slide level2">
 
@@ -851,13 +869,13 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb35-1"><a href=
 class="sourceCode java"><code class="sourceCode java"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> result <span class="op">=</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>        Stream<span class="op">.</span><span class="fu">iterate</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> x <span class="op">-&gt;</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">)</span></span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">limit</span><span class="op">(</span><span class="dv">15</span><span class="op">)</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">collect</span><span class="op">(()</span> <span class="op">-&gt;</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;(),</span>       <span class="arrow_box_left"> <em>supplier</em> </span></span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>                        <span class="op">(</span>xs<span class="op">,</span> x<span class="op">)</span> <span class="op">-&gt;</span> xs<span class="op">.</span><span class="fu">add</span><span class="op">(</span>x<span class="op">),</span>           <span class="arrow_box_left"> <em>accumulator</em> </span></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>                        <span class="op">(</span>xs<span class="op">,</span> ys<span class="op">)</span> <span class="op">-&gt;</span> xs<span class="op">.</span><span class="fu">addAll</span><span class="op">(</span>ys<span class="op">));</span>     <span class="arrow_box_left"> <em>combinator</em> </span></span></code></pre></div>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">collect</span><span class="op">(()</span> <span class="op">-&gt;</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;(),</span>       <span class="arrow_box_left fragment"> <em>supplier</em> </span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>                        <span class="op">(</span>xs<span class="op">,</span> x<span class="op">)</span> <span class="op">-&gt;</span> xs<span class="op">.</span><span class="fu">add</span><span class="op">(</span>x<span class="op">),</span>           <span class="arrow_box_left fragment"> <em>accumulator</em> </span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>                        <span class="op">(</span>xs<span class="op">,</span> ys<span class="op">)</span> <span class="op">-&gt;</span> xs<span class="op">.</span><span class="fu">addAll</span><span class="op">(</span>ys<span class="op">));</span>     <span class="arrow_box_left fragment"> <em>combinator</em> </span></span></code></pre></div>
 
 <p>o, equivalentemente,</p>
 <div class="sourceCode" id="cb37"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> result <span class="op">=</span></span>
+class="sourceCode java fragment"><code class="sourceCode java"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> result <span class="op">=</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>        Stream<span class="op">.</span><span class="fu">iterate</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> x <span class="op">-&gt;</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">)</span></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">limit</span><span class="op">(</span><span class="dv">15</span><span class="op">)</span></span>
 <span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">collect</span><span class="op">(</span><span class="bu">ArrayList</span><span class="op">::</span><span class="kw">new</span><span class="op">,</span></span>
