@@ -457,8 +457,8 @@ cualquier enumerable</strong> (incluyendo <em>streams</em>)</li>
 &gt; xs = Enum.map(xs, &amp;(&amp;1 + 1))
 <span class="fragment">[7, 25, 103]</span>
 
-&gt; Enum.at(xs, 0)
-<span class="fragment">7</span></code></pre>
+&gt; Enum.at(xs, 1)
+<span class="fragment">25</span></code></pre>
 
 </section>
 <section class="slide level2">
@@ -473,8 +473,8 @@ cualquier enumerable</strong> (incluyendo <em>streams</em>)</li>
 &gt; s = Stream.map(s, &amp;(&amp;1 + 1))
 <span class="fragment">#Stream<[...]></span>
 
-&gt; <span class="hl">Enum</span>.at(s, 0)
-<span class="fragment">7</span></code></pre>
+&gt; <span class="hl">Enum</span>.at(s, 1)
+<span class="fragment">25</span></code></pre>
 
 </section>
 <section class="slide level2">
