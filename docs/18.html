@@ -1,0 +1,3308 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Manuel Montenegro Montes">
+  <title>Procesos y mensajes en Elixir</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="css/nnfx-light.min.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {  background-color: #f8f8f8; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ef2929; } /* Alert */
+    code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #204a87; } /* Attribute */
+    code span.bn { color: #0000cf; } /* BaseN */
+    code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4e9a06; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #8f5902; font-style: italic; } /* Comment */
+    code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+    code span.dt { color: #204a87; } /* DataType */
+    code span.dv { color: #0000cf; } /* DecVal */
+    code span.er { color: #a40000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #0000cf; } /* Float */
+    code span.fu { color: #204a87; font-weight: bold; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+    code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+    code span.ot { color: #8f5902; } /* Other */
+    code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+    code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+    code span.ss { color: #4e9a06; } /* SpecialString */
+    code span.st { color: #4e9a06; } /* String */
+    code span.va { color: #000000; } /* Variable */
+    code span.vs { color: #4e9a06; } /* VerbatimString */
+    code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="css/pdap.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="img/RedBackground.jpg">
+  <h1 class="title">Procesos y mensajes en Elixir</h1>
+<div id="author-container">
+<div class="author">
+Manuel Montenegro Montes
+<br>
+<span id="email"><a href="montenegro@fdi.ucm.es">montenegro@fdi.ucm.es</a></span>
+</div>
+<div class="subject">
+<strong>Programación Declarativa Aplicada</strong>
+<br>Máster en Ingeniería Informática<br>Facultad de
+Informática<br>Universidad Complutense de Madrid
+</div>
+</div>
+</section>
+
+<section id="section" class="slide level2 outline"
+data-background-image="img/RedBackground.jpg">
+<h2 class="outline" data-background-image="img/RedBackground.jpg"></h2>
+<ol type="1">
+<li><p>Creación de procesos</p></li>
+<li><p>Envío y recepción de mensajes</p></li>
+<li><p>Bucle de proceso</p></li>
+<li><p>Modelo cliente-servidor</p></li>
+</ol>
+</section>
+<section>
+<section id="creación-de-procesos" class="title-slide slide level1">
+<h1>Creación de procesos</h1>
+
+</section>
+<section id="concurrencia-en-elixir" class="slide level2">
+<h2>Concurrencia en Elixir</h2>
+<ul>
+<li><p>Elixir es un lenguaje <strong>funcional
+concurrente</strong>.</p></li>
+<li><p>La concurrencia es una de las principales virtudes de la máquina
+virtual BEAM, en la que se ejecutan los programas de Elixir (y
+Erlang).</p></li>
+<li><p>El modelo de concurrencia de Elixir está basado en
+<strong>actores</strong> y <strong>paso de mensajes</strong>.</p>
+<ul>
+<li>Esto simplifica notablemente el razonamiento sobre programas
+concurrentes, ya que no hay memoria compartida.</li>
+</ul></li>
+</ul>
+</section>
+<section id="concurrencia-basada-en-actores" class="slide level2">
+<h2>Concurrencia basada en actores</h2>
+<ul>
+<li><p>Un actor es un <strong>proceso</strong> independiente que no
+comparte memoria con otros procesos.</p></li>
+<li><p>La máquina virtual permite crear actores, que se envían mensajes
+entre ellos.</p></li>
+<li><p>Un proceso de Elixir <strong>no</strong> es un proceso del
+sistema operativo ni una hebra de ejecución.</p>
+<ul>
+<li>Los procesos de Elixir son <em>ligeros</em>: es posible tener en
+ejecución cientos de miles de procesos.</li>
+</ul></li>
+</ul>
+</section>
+<section id="creación-de-un-proceso-spawn3" class="slide level2">
+<h2>Creación de un proceso: <code>spawn/3</code></h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>spawn<span class="fu">(</span><span class="meta"><span class="cn">Modulo</span></span>, <span class="meta"><span class="va">:funcion</span></span>, <span class="ot">[</span><span class="meta"><span class="">arg<sub>1</sub></span>, <span class="op">...</span>, <span class="">arg<sub>n</sub></span></span><span class="ot">]</span><span class="fu">)</span></span></code></pre></div>
+
+<ul>
+<li><p>La función <code>spawn/3</code> crea un nuevo proceso.</p></li>
+<li><p>El proceso recién creado ejecutará la <code>función</code> del
+<code>Modulo</code> indicado, pasando los argumentos indicados en el
+tercer parámetro.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo">Ejemplo</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">Procesos</span> <span class="kw">do</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> escribir_mensaje<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Hola, mundo!&quot;</span><span class="fu">)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; spawn(Procesos, :escribir_mensaje, [])
+Hola, mundo!
+#PID&lt;0.136.0&gt;</code></pre>
+
+</section>
+<section id="process-identifiers-pids" class="slide level2">
+<h2><em>Process identifiers</em> (<span
+style="text-transform:none">PIDs</span>)</h2>
+<ul>
+<li><p>Cada proceso tiene un <strong>identificador</strong> (PID), que
+es de la forma <code>&lt;x.y.z&gt;</code>, donde <code>x</code>,
+<code>y</code>, <code>z</code> son números.</p></li>
+<li><p>El PID de un proceso servirá para enviar mensajes a ese proceso,
+u obtener información del mismo.</p></li>
+<li><p>La función <code>spawn</code> devuelve el PID del proceso
+creado.</p></li>
+</ul>
+<pre class="text"><code>&gt; p = spawn(Procesos, :escribir_mensaje, [])
+Hola, mundo!
+...
+
+&gt; p
+#PID&lt;0.136.0&gt;   <span class="arrow_box_left"> PID del proceso </span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="finalización-de-un-proceso">Finalización de un proceso</h3>
+<ul>
+<li>Cuando la función que está ejecutando el proceso finaliza, el
+proceso <strong>muere</strong>.</li>
+</ul>
+<pre class="text"><code>&gt; p = spawn(Procesos, :escribir_mensaje, [])
+Hola, mundo!
+#PID&lt;0.136.0&gt;
+
+&gt; Process.alive?(p)
+false</code></pre>
+
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Supongamos que modificamos la función <code>escribir_mensaje</code>
+para que espere 10 segundos antes de terminar.</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> escribir_mensaje<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Hola, mundo!&quot;</span><span class="fu">)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Process</span><span class="op">.</span>sleep<span class="fu">(</span><span class="dv">10000</span><span class="fu">)</span>  <span class="arrow_box_left"> `sleep/1` recibe una cantidad de tiempo (en ms) </span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text fragment"><code>&gt; p = spawn(Procesos, :escribir_mensaje, [])
+Hola, mundo!
+#PID&lt;0.136.0&gt;
+
+&gt; Process.alive?(p)   <span class="arrow_box_left fragment"> Antes de 10 segundos </span>
+true
+
+&gt; Process.alive?(p)   <span class="arrow_box_left fragment"> Después de 10 segundos </span>
+false</code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="otro-ejemplo">Otro ejemplo</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ejecutar_proceso<span class="fu">(</span>i<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Iniciando proceso </span><span class="ot">#{</span>i<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Process</span><span class="op">.</span>sleep<span class="fu">(</span><span class="va">:rand</span><span class="op">.</span>uniform<span class="fu">(</span><span class="dv">10000</span><span class="fu">))</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Finalizando proceso </span><span class="ot">#{</span>i<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text fragment"><code>&gt; <span class="hl">for i &lt;- 1..4, do: spawn(Procesos, :ejecutar_proceso, [i])</span>
+[#PID&lt;0.157.0&gt;, #PID&lt;0.158.0&gt;, #PID&lt;0.159.0&gt;, #PID&lt;0.160.0&gt;]
+Iniciando proceso 1
+Iniciando proceso 2
+Iniciando proceso 3
+Iniciando proceso 4
+Finalizando proceso 3    <span class="arrow_box_left fragment"> El orden de finalización puede variar </span>
+Finalizando proceso 4
+Finalizando proceso 1
+Finalizando proceso 2</code></pre>
+
+</section>
+<section id="la-función-self0" class="slide level2">
+<h2>La función <code>self/0</code></h2>
+<ul>
+<li>La función <code>self</code> devuelve el PID del proceso que la
+ejecuta.</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ejecutar_proceso<span class="fu">(</span>i<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  pid <span class="op">=</span> <span class="va">:erlang</span><span class="op">.</span>pid_to_list<span class="fu">(</span><span class="hl">self<span class="fu">()</span></span><span class="fu">)</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Iniciando proceso </span><span class="ot">#{</span>i<span class="ot">}</span><span class="st"> con PID </span><span class="ot">#{</span>pid<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Process</span><span class="op">.</span>sleep<span class="fu">(</span><span class="va">:rand</span><span class="op">.</span>uniform<span class="fu">(</span><span class="dv">10000</span><span class="fu">))</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Finalizando proceso </span><span class="ot">#{</span>i<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>&gt; for i &lt;- 1..4, do: spawn(Procesos, :ejecutar_proceso, [i])
+[#PID&lt;0.177.0&gt;, #PID&lt;0.178.0&gt;, #PID&lt;0.179.0&gt;, #PID&lt;0.180.0&gt;]
+Iniciando proceso 1 <span class="hl">con PID &lt;0.177.0&gt;</span>
+Iniciando proceso 3 <span class="hl">con PID &lt;0.179.0&gt;</span>
+Iniciando proceso 4 <span class="hl">con PID &lt;0.180.0&gt;</span>
+Iniciando proceso 2 <span class="hl">con PID &lt;0.178.0&gt;</span>
+Finalizando proceso 4
+Finalizando proceso 2
+Finalizando proceso 3
+Finalizando proceso 1</code></pre>
+
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Cuando ejecutamos una sesión de <em>shell</em> con <code>iex</code>,
+esta sesión también se ejecuta en un proceso.</li>
+</ul>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> self<span class="fu">()</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#PID&lt;0.134.0&gt;</span></span></code></pre></div>
+
+<ul>
+<li>Por tanto, al igual que los procesos creados con <code>spawn</code>,
+es posible enviar mensajes al proceso que ejecuta la
+<em>shell</em>.</li>
+</ul>
+</section>
+<section id="variante-spawn1" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Variante:
+<code>spawn/1</code></h2>
+<ul>
+<li><p>Existe una variante de <code>spawn/3</code> que solamente toma un
+parámetro.</p></li>
+<li><p>Esta variante recibe una función (sin parámetros) que será la que
+el proceso ejecute.</p>
+<ul>
+<li>Puede ser una referencia a función, o una función anónima.</li>
+</ul></li>
+</ul>
+<pre class="text"><code>&gt; for i &lt;- 1..5, do: spawn(<span class="hl">fn -&gt; IO.puts(&quot;Hola, soy #{i}&quot;</span>) end)
+[#PID&lt;0.181.0&gt;, #PID&lt;0.182.0&gt;, #PID&lt;0.183.0&gt;, ...]
+Hola, soy 1
+Hola, soy 2
+Hola, soy 3
+Hola, soy 4
+Hola, soy 5</code></pre>
+
+</section></section>
+<section>
+<section id="envío-y-recepción-de-mensajes"
+class="title-slide slide level1">
+<h1>Envío y recepción de mensajes</h1>
+
+</section>
+<section id="enviar-mensajes-send2" class="slide level2">
+<h2>Enviar mensajes: <code>send/2</code></h2>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>send<span class="fu">(</span><span class="meta">pid</span>, <span class="meta">mensaje</span><span class="fu">)</span></span></code></pre></div>
+
+<ul>
+<li><p>Envía el <code>mensaje</code> dado al proceso con el
+<code>pid</code> dado.</p></li>
+<li><p>El mensaje puede ser cualquier término de Elixir: enteros,
+átomos, listas, diccionarios, funciones, etc.</p></li>
+<li><p>Si el proceso con el <code>pid</code> indicado estaba muerto, la
+función <code>send</code> no hace nada.</p></li>
+<li><p>La función <code>send</code> devuelve el mensaje enviado</p>
+<ul>
+<li>No se suele utilizar el valor de retorno de <code>send</code>.</li>
+</ul></li>
+</ul>
+</section>
+<section id="buzón-de-mensajes" class="slide level2">
+<h2>Buzón de mensajes</h2>
+<ul>
+<li><p>Cada proceso tiene un <strong>buzón</strong> de mensajes, al que
+llegan todos los mensajes que se le envían.</p></li>
+<li><p>Este proceso se comporta mediante una <strong>cola de
+mensajes</strong>.</p>
+<ul>
+<li>El primer mensaje recibido se coloca al principio de la cola, el
+siguiente después, etc.</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-1">Ejemplo</h3>
+<pre><code>&gt; self()
+#PID&lt;0.134.0&gt;
+
+&gt; pid = spawn(...)
+#PID&lt;0.208.0&gt;
+
+&gt; send(pid, :hola)
+:hola</code></pre>
+<dl>
+</dl>
+<p><svg
+   width="122.27444mm"
+   height="37.063972mm"
+   viewBox="0 0 122.27444 37.063972"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="EnvioMensaje1.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="1.1385101"
+     inkscape:cx="252.08384"
+     inkscape:cy="222.22025"
+     inkscape:window-width="1704"
+     inkscape:window-height="1187"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="Triangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-37.780697,-11.555838)">
+    <circle
+       style="fill:#99ff55;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1"
+       cx="52.86972"
+       cy="36.834507"
+       r="5.267807" />
+    <circle
+       style="fill:#d7eef4;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1-5"
+       cx="143.86845"
+       cy="36.524197"
+       r="5.267807" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="39.971832"
+       y="47.640846"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267"
+         x="39.971832"
+         y="47.640846" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="53.450706"
+       y="48.570423"
+       id="text2"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.267"
+         x="53.450706"
+         y="48.570423">&lt;0.134.0&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="143.29814"
+       y="48.259621"
+       id="text2-2"><tspan
+         sodipodi:role="line"
+         id="tspan2-9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.267"
+         x="143.29814"
+         y="48.259621">&lt;0.208.0&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="52.288731"
+       y="18.591549"
+       id="text3"><tspan
+         sodipodi:role="line"
+         id="tspan3"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;stroke-width:0.267"
+         x="52.288731"
+         y="18.591549">Proceso shell</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="143.02579"
+       y="15.161235"
+       id="text3-0"><tspan
+         sodipodi:role="line"
+         id="tspan3-9"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;stroke-width:0.267"
+         x="143.02579"
+         y="15.161235">Proceso creado</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;stroke-width:0.267"
+         x="143.02579"
+         y="21.412926"
+         id="tspan4">con spawn</tspan></text>
+    <g
+       id="g6"
+       class="fragment">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.867;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Triangle)"
+         d="M 61.119718,37.183099 C 93.422535,22.077465 133.39436,33.697182 133.39436,33.697182"
+         id="path4" />
+      <g
+         id="g5"
+         transform="translate(5.8098592,-56.93662)">
+        <rect
+           style="fill:none;fill-opacity:1;stroke:#ff5252;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4"
+           width="17.429577"
+           height="10.225351"
+           x="81.105637"
+           y="72.739441" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:none;fill-opacity:1;stroke:#ff5252;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="89.704224"
+           y="79.246483"
+           id="text5"><tspan
+             sodipodi:role="line"
+             id="tspan5"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:monospace;-inkscape-font-specification:monospace;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2"
+             x="89.704224"
+             y="79.246483">:hola</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>
+</p>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>El mensaje <code>:hola</code> queda almacenado en la cola de
+mensajes del proceso destinatario.</li>
+</ul>
+<p><img data-src="18/EnvioMensaje2.svg" /></p>
+<pre><code>&gt; Process.info(p, :messages)
+{:messages, [:hola]}</code></pre>
+<dl>
+</dl>
+</section>
+<section id="recibir-mensajes-receive" class="slide level2">
+<h2>Recibir mensajes: <code>receive</code></h2>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="meta"><span class="">patron<sub>1</sub></span></span> <span class="op">-&gt;</span> <span class="meta"><span class="">expr<sub>1</sub></span></span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="meta"><span class="">patron<sub>2</sub></span></span> <span class="op">-&gt;</span> <span class="meta"><span class="">expr<sub>2</sub></span></span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="meta"><span class="">patron<sub>n</sub></span></span> <span class="op">-&gt;</span> <span class="meta"><span class="">expr<sub>n</sub></span></span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<ul>
+<li><p>Consulta <strong>el primer</strong> mensaje de la cola de
+mensajes, e intenta ajustarla con alguno de los patrones del
+<code>receive</code>.</p></li>
+<li><p>Si <span style="font-family:monospace">patron<sub>i</sub></span>
+es el primer patrón que encaja con el mensaje, se evaluará la expresión
+<span style="font-family:monospace">expr<sub>i</sub></span>, y su
+resultado será el resultado del <code>receive</code>.</p>
+<ul>
+<li>En ese caso, el mensaje <strong>se elimina</strong> de la cola de
+mensajes.</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="caso-especial-1">Caso especial 1</h3>
+<h4 id="la-cola-está-vacía">La cola está vacía</h4>
+<ul>
+<li>Si el proceso que ejecuta el <code>receive</code> no tiene ningún
+mensaje en la cola de mensajes, la ejecución del proceso queda
+<strong>suspendida</strong> en el <code>receive</code> hasta que llegue
+algún mensaje.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_receive<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Esperando mensaje...&quot;</span><span class="fu">)</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">:hola</span> <span class="op">-&gt;</span> <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Mensaje recibido&quot;</span><span class="fu">)</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Finalizando proceso...&quot;</span><span class="fu">)</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; p = spawn(Procesos, :espera_receive, [])
+Esperando mensaje...
+#PID&lt;0.226.0&gt;
+
+&gt; Process.alive?(p)
+true
+
+&gt; send(p, :hola)
+Mensaje recibido
+Finalizando proceso...
+:hola
+
+&gt; Process.alive?(p)
+false </code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="caso-especial-2">Caso especial 2</h3>
+<h4 id="el-primer-mensaje-no-ajusta-con-ningún-patrón-del-receive">El
+primer mensaje no ajusta con ningún patrón del <code>receive</code></h4>
+<ul>
+<li><p>Si el primer mensaje de la cola de mensajes no ajusta con ninguno
+de los patrones de las cláusulas:</p>
+<ul>
+<li>El primer mensaje se extrae de la cola y se guarda al principio de
+una segunda cola (<em>save queue</em>).</li>
+</ul></li>
+<li><p>Se toma el <strong>siguiente mensaje</strong> de la cola de
+mensajes, y se intenta ajustar con alguno de los patrones.</p>
+<ul>
+<li><p>Si ajusta, se evalúa la expresión correspondiente.</p></li>
+<li><p>Si no ajusta, se extrae de la cola y se guarda en la <em>save
+queue</em>. Se prueba con el siguiente mensaje, y así
+sucesivamente.</p></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Cuando finalmente hay un mensaje que <em>sí</em> ajusta con
+alguno de los patrones del <code>receive</code>, todos los mensajes de
+la <em>save queue</em> se vuelven a colocar en la cola de mensajes
+«principal».</p>
+<ul>
+<li><p>…para que puedan ser procesados por un <code>receive</code>
+posterior.</p></li>
+<li><p>Los mensajes se extraen, uno a uno, de la <em>save queue</em>, y
+se insertan al <strong>principio</strong> de la cola de mensajes.</p>
+<ul>
+<li>De este modo, siguen manteniendo el orden que tenían originalmente
+en la cola de mensajes.</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-paso-a-paso">Ejemplo paso a paso</h3>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<pre class="text"><code>&gt; p = spawn(Procesos, 
+            :espera_dos_receives, [])
+#PID&lt;0.149.0&gt;</code></pre>
+
+<p><img data-src="18/SaveQueue1.svg" class="fragment" /></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>La ejecución se detiene en el primer <code>receive</code>, ya que la
+cola está vacía.</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="hl">receive <span class="kw">do</span></span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<p><img data-src="18/SaveQueue1.svg" /></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Supongamos que enviamos el mensaje <code>4</code> al proceso.</li>
+<li>El mensaje se añade a la cola de mensajes del proceso.</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="hl">receive <span class="kw">do</span></span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<pre class="text"><code>&gt; <span class="fragment"><span class="hl">send(p, 4)</span></span>
+<span class="fragment">4</span></code></pre>
+
+<p><svg
+   width="70.049492mm"
+   height="42.179474mm"
+   viewBox="0 0 70.049492 42.179473"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="SaveQueue2.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="2.2770202"
+     inkscape:cx="87.175336"
+     inkscape:cy="109.79261"
+     inkscape:window-width="1593"
+     inkscape:window-height="1161"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <rect
+       x="11.179455"
+       y="56.518354"
+       width="26.706475"
+       height="26.706475"
+       id="rect8" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4" />
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-125.90754,-11.555838)">
+    <circle
+       style="fill:#d7eef4;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1-5"
+       cx="143.86845"
+       cy="36.524197"
+       r="5.267807" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="39.971832"
+       y="47.640846"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267"
+         x="39.971832"
+         y="47.640846" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="143.29814"
+       y="48.259621"
+       id="text2-2"><tspan
+         sodipodi:role="line"
+         id="tspan2-9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.267"
+         x="143.29814"
+         y="48.259621">&lt;0.149.0&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="143.02579"
+       y="15.161235"
+       id="text3-0"><tspan
+         sodipodi:role="line"
+         id="tspan3-9"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;stroke-width:0.267"
+         x="143.02579"
+         y="15.161235">Proceso creado</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;stroke-width:0.267"
+         x="143.02579"
+         y="21.412926"
+         id="tspan4">con spawn</tspan></text>
+    <g
+       id="g7">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 162.63513,34.765077 h 33.23241"
+         id="path6" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 162.63513,40.022368 h 33.23241"
+         id="path6-6" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="178.67447"
+         y="32.936119"
+         id="text6"><tspan
+           sodipodi:role="line"
+           id="tspan6"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="178.67447"
+           y="32.936119">Cola de mensajes</tspan></text>
+    </g>
+    <g
+       id="g8"
+       transform="translate(-5.2859367,-7.8808904)">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#338000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 168.01056,56.258913 h 33.23241"
+         id="path6-4" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#338000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 168.01056,61.516204 h 33.23241"
+         id="path6-6-4" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="183.88557"
+         y="54.429955"
+         id="text6-3"><tspan
+           sodipodi:role="line"
+           id="tspan6-0"
+           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#338000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="183.88557"
+           y="54.429955">Save queue</tspan></text>
+    </g>
+    <g
+       id="g10"
+       transform="matrix(0.6613385,0,0,0.6613385,77.359648,18.114997)"
+       style="stroke-width:0.99948816;stroke-dasharray:none"
+       class="fragment">
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,125.90754,11.555838)"
+         id="text8"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect8-4);display:inline;fill:none;fill-opacity:1;stroke:#338000;stroke-width:3.7775931;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="19.7332"
+           y="71.328481"
+           id="tspan5"><tspan
+             style="font-family:monospace;-inkscape-font-specification:monospace;fill:#000000;stroke:none"
+             id="tspan3">4</tspan></tspan></text>
+      <rect
+         style="fill:none;fill-opacity:1;stroke:#ff7875;stroke-width:0.99948816;stroke-dasharray:none;stroke-opacity:1"
+         id="rect9"
+         width="4.7350354"
+         height="5.4612679"
+         x="130.17778"
+         y="26.400028" />
+    </g>
+  </g>
+</svg>
+</p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>El <code>receive</code> intenta ajustar el <code>4</code> con alguno
+de sus patrones (<code>0</code> o <code>1</code>).</li>
+<li>Como ningún ajuste tiene éxito, el mensaje <code>4</code> pasa a la
+<em>save queue</em>, y el proceso queda a la espera de otro
+mensaje.</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="hl">receive <span class="kw">do</span></span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<p><img data-src="18/SaveQueue3.svg" /></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Supongamos que enviamos el mensaje <code>3</code> al proceso.</li>
+<li>El mensaje se guarda en la cola de mensajes.</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="hl">receive <span class="kw">do</span></span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<pre class="text"><code>&gt; <span class="fragment"><span class="hl">send(p, 3)</span></span>
+<span class="fragment">3</span></code></pre>
+
+<p><svg
+   width="70.049492mm"
+   height="42.179474mm"
+   viewBox="0 0 70.049492 42.179473"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="SaveQueue4.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="2.2770202"
+     inkscape:cx="34.914051"
+     inkscape:cy="14.931796"
+     inkscape:window-width="1593"
+     inkscape:window-height="1161"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <rect
+       x="11.179455"
+       y="56.518354"
+       width="26.706475"
+       height="26.706475"
+       id="rect8" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4-2" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4-2-2" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4-2-8" />
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-125.90754,-11.555838)">
+    <circle
+       style="fill:#d7eef4;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1-5"
+       cx="143.86845"
+       cy="36.524197"
+       r="5.267807" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="39.971832"
+       y="47.640846"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267"
+         x="39.971832"
+         y="47.640846" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="143.29814"
+       y="48.259621"
+       id="text2-2"><tspan
+         sodipodi:role="line"
+         id="tspan2-9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.267"
+         x="143.29814"
+         y="48.259621">&lt;0.149.0&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="143.02579"
+       y="15.161235"
+       id="text3-0"><tspan
+         sodipodi:role="line"
+         id="tspan3-9"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;stroke-width:0.267"
+         x="143.02579"
+         y="15.161235">Proceso creado</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;stroke-width:0.267"
+         x="143.02579"
+         y="21.412926"
+         id="tspan4">con spawn</tspan></text>
+    <g
+       id="g7">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 162.63513,34.765077 h 33.23241"
+         id="path6" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 162.63513,40.022368 h 33.23241"
+         id="path6-6" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="178.67447"
+         y="32.936119"
+         id="text6"><tspan
+           sodipodi:role="line"
+           id="tspan6"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="178.67447"
+           y="32.936119">Cola de mensajes</tspan></text>
+    </g>
+    <g
+       id="g8"
+       transform="translate(-5.2859367,-7.8808904)">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#338000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 168.01056,56.258913 h 33.23241"
+         id="path6-4" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#338000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 168.01056,61.516204 h 33.23241"
+         id="path6-6-4" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="183.88557"
+         y="54.429955"
+         id="text6-3"><tspan
+           sodipodi:role="line"
+           id="tspan6-0"
+           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#338000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="183.88557"
+           y="54.429955">Save queue</tspan></text>
+    </g>
+    <g
+       id="g10"
+       transform="matrix(0.6613385,0,0,0.6613385,78.183665,31.958555)"
+       style="stroke-width:0.999488;stroke-dasharray:none">
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,125.90754,11.555838)"
+         id="text8"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect8-4-2);display:inline;fill:none;fill-opacity:1;stroke:#338000;stroke-width:3.77759;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="19.7332"
+           y="71.328481"
+           id="tspan7"><tspan
+             style="font-family:monospace;-inkscape-font-specification:monospace;fill:#000000;stroke:none"
+             id="tspan5">4</tspan></tspan></text>
+      <rect
+         style="fill:none;fill-opacity:1;stroke:#ff7875;stroke-width:0.999488;stroke-dasharray:none;stroke-opacity:1"
+         id="rect9"
+         width="4.7350354"
+         height="5.4612679"
+         x="130.17778"
+         y="26.400028" />
+    </g>
+    <g
+       id="g10-1"
+       transform="matrix(0.6613385,0,0,0.6613385,77.785575,18.124753)"
+       style="stroke-width:0.999488;stroke-dasharray:none"
+       class="fragment">
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,125.90754,11.555838)"
+         id="text8-7"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect8-4-2-8);display:inline;fill:none;fill-opacity:1;stroke:#338000;stroke-width:3.77759;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="19.7332"
+           y="71.328481"
+           id="tspan9"><tspan
+             style="font-family:monospace;-inkscape-font-specification:monospace;fill:#000000;stroke:none"
+             id="tspan8">3</tspan></tspan></text>
+      <rect
+         style="fill:none;fill-opacity:1;stroke:#ff7875;stroke-width:0.999488;stroke-dasharray:none;stroke-opacity:1"
+         id="rect9-7"
+         width="4.7350354"
+         height="5.4612679"
+         x="130.17778"
+         y="26.400028" />
+    </g>
+  </g>
+</svg>
+</p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Se reanuda la ejecución del proceso, que intenta ajustar el
+<code>3</code> con alguno de los patrones del <code>receive</code>.</li>
+<li>Como el <code>3</code> tampoco ajusta con ninguno de ellos, pasa a
+la <em>save queue</em>.</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="hl">receive <span class="kw">do</span></span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<p><img data-src="18/SaveQueue5.svg" /></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Supongamos que enviamos el mensaje <code>0</code> al proceso.</li>
+<li>El mensaje se guarda en la cola de mensajes.</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="hl">receive <span class="kw">do</span></span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<pre class="text"><code>&gt; <span class="fragment"><span class="hl">send(p, 0)</span></span>
+<span class="fragment">0</span></code></pre>
+
+<p><svg
+   width="70.049492mm"
+   height="42.179474mm"
+   viewBox="0 0 70.049492 42.179473"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="SaveQueue6.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="1.6100964"
+     inkscape:cx="-18.321884"
+     inkscape:cy="5.5897273"
+     inkscape:window-width="1593"
+     inkscape:window-height="1161"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <rect
+       x="11.179455"
+       y="56.518354"
+       width="26.706475"
+       height="26.706475"
+       id="rect8" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4-2" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4-2-2" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4-2-8" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4-2-8-6" />
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-125.90754,-11.555838)">
+    <circle
+       style="fill:#d7eef4;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1-5"
+       cx="143.86845"
+       cy="36.524197"
+       r="5.267807" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="39.971832"
+       y="47.640846"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267"
+         x="39.971832"
+         y="47.640846" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="143.29814"
+       y="48.259621"
+       id="text2-2"><tspan
+         sodipodi:role="line"
+         id="tspan2-9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.267"
+         x="143.29814"
+         y="48.259621">&lt;0.149.0&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="143.02579"
+       y="15.161235"
+       id="text3-0"><tspan
+         sodipodi:role="line"
+         id="tspan3-9"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;stroke-width:0.267"
+         x="143.02579"
+         y="15.161235">Proceso creado</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;stroke-width:0.267"
+         x="143.02579"
+         y="21.412926"
+         id="tspan4">con spawn</tspan></text>
+    <g
+       id="g7">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 162.63513,34.765077 h 33.23241"
+         id="path6" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 162.63513,40.022368 h 33.23241"
+         id="path6-6" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="178.67447"
+         y="32.936119"
+         id="text6"><tspan
+           sodipodi:role="line"
+           id="tspan6"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="178.67447"
+           y="32.936119">Cola de mensajes</tspan></text>
+    </g>
+    <g
+       id="g8"
+       transform="translate(-5.2859367,-7.8808904)">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#338000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 168.01056,56.258913 h 33.23241"
+         id="path6-4" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#338000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 168.01056,61.516204 h 33.23241"
+         id="path6-6-4" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="183.88557"
+         y="54.429955"
+         id="text6-3"><tspan
+           sodipodi:role="line"
+           id="tspan6-0"
+           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#338000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="183.88557"
+           y="54.429955">Save queue</tspan></text>
+    </g>
+    <g
+       id="g10"
+       transform="matrix(0.6613385,0,0,0.6613385,83.475332,31.958555)"
+       style="stroke-width:0.999488;stroke-dasharray:none">
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,125.90754,11.555838)"
+         id="text8"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect8-4-2);display:inline;fill:none;fill-opacity:1;stroke:#338000;stroke-width:3.77759;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="19.7332"
+           y="71.328481"
+           id="tspan7"><tspan
+             style="font-family:monospace;-inkscape-font-specification:monospace;fill:#000000;stroke:none"
+             id="tspan5">4</tspan></tspan></text>
+      <rect
+         style="fill:none;fill-opacity:1;stroke:#ff7875;stroke-width:0.999488;stroke-dasharray:none;stroke-opacity:1"
+         id="rect9"
+         width="4.7350354"
+         height="5.4612679"
+         x="130.17778"
+         y="26.400028" />
+    </g>
+    <g
+       id="g10-1"
+       transform="matrix(0.6613385,0,0,0.6613385,77.785575,31.883089)"
+       style="stroke-width:0.999488;stroke-dasharray:none">
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,125.90754,11.555838)"
+         id="text8-7"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect8-4-2-8);display:inline;fill:none;fill-opacity:1;stroke:#338000;stroke-width:3.77759;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="19.7332"
+           y="71.328481"
+           id="tspan9"><tspan
+             style="font-family:monospace;-inkscape-font-specification:monospace;fill:#000000;stroke:none"
+             id="tspan8">3</tspan></tspan></text>
+      <rect
+         style="fill:none;fill-opacity:1;stroke:#ff7875;stroke-width:0.999488;stroke-dasharray:none;stroke-opacity:1"
+         id="rect9-7"
+         width="4.7350354"
+         height="5.4612679"
+         x="130.17778"
+         y="26.400028" />
+    </g>
+    <g
+       id="g10-1-0"
+       transform="matrix(0.6613385,0,0,0.6613385,77.458197,18.083173)"
+       style="stroke-width:0.999488;stroke-dasharray:none"
+       class="fragment">
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,125.90754,11.555838)"
+         id="text8-7-6"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect8-4-2-8-6);display:inline;fill:none;fill-opacity:1;stroke:#338000;stroke-width:3.77759;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="19.7332"
+           y="71.328481"
+           id="tspan11"><tspan
+             style="font-family:monospace;-inkscape-font-specification:monospace;fill:#000000;stroke:none"
+             id="tspan10">0</tspan></tspan></text>
+      <rect
+         style="fill:none;fill-opacity:1;stroke:#ff7875;stroke-width:0.999488;stroke-dasharray:none;stroke-opacity:1"
+         id="rect9-7-9"
+         width="4.7350354"
+         height="5.4612679"
+         x="130.17778"
+         y="26.400028" />
+    </g>
+  </g>
+</svg>
+</p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Esta vez, el primer mensaje de la cola ajusta con uno de los
+patrones.
+<ul>
+<li>Se elimina el <code>0</code> de la cola.</li>
+<li>Se mueven todos los elementos de la <em>save queue</em> al principio
+de la cola de mensajes.</li>
+</ul></li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="hl"><span class="dv">0</span></span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<p><img data-src="18/SaveQueue7.svg" /></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Se evalúa la expresión del lado derecho de la cláusula seleccionada,
+y su resultado se asigna a la variable <code>x</code>.</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span>    <span class="arrow_box_left"> x = :a </span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="hl"><span class="va">:a</span></span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<p><img data-src="18/SaveQueue7.svg" /></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Pasamos a ejecutar el segundo <code>receive</code>.</p></li>
+<li><p>Intentamos ajustar el primer mensaje (<code>4</code>) con alguno
+de los patrones (<code>2</code> o <code>3</code>).</p></li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span>    <span class="arrow_box_left"> x = :a </span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="hl">receive <span class="kw">do</span></span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<p><img data-src="18/SaveQueue7.svg" /></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>El <code>4</code> no ajusta con ninguno de los mensajes, por lo
+que pasa a la <em>save queue</em>:</p></li>
+<li><p>Intentamos ajustar el siguiente mensaje (<code>3</code>) con
+alguno de los patrones.</p></li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span>    <span class="arrow_box_left"> x = :a </span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="hl">receive <span class="kw">do</span></span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<p><img data-src="18/SaveQueue8.svg" /></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>El <code>3</code> ajusta con el patrón de la segunda
+cláusula.</p></li>
+<li><p>Eliminamos el <code>3</code> de la cola.</p></li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span>    <span class="arrow_box_left"> x = :a </span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    <span class="hl"><span class="dv">3</span></span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<p><img data-src="18/SaveQueue9.svg" /></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>De nuevo, movemos los elementos de la <em>save queue</em> a la cola
+de mensajes.</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span>    <span class="arrow_box_left"> x = :a </span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    <span class="hl"><span class="dv">3</span></span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<p><img data-src="18/SaveQueue10.svg" /></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Evaluamos la expresión del lado derecho de la cláusula del
+<code>receive</code> seleccionada, y su resultado se asigna a la
+variable <code>y</code>:</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb37"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span>    <span class="arrow_box_left"> x = :a </span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span>    <span class="arrow_box_left"> y = :b </span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="hl"><span class="va">:b</span></span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<p><img data-src="18/SaveQueue10.svg" /></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Ejecutamos <code>IO.puts</code></li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span>    <span class="arrow_box_left"> x = :a </span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span>    <span class="arrow_box_left"> y = :b </span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  <span class="hl"><span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<pre class="text"><code>x = :a, y = :b</code></pre>
+
+<p><img data-src="18/SaveQueue10.svg" /></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Al finalizar la función <code>espera_dos_receives</code>, el proceso
+con PID <code>&lt;0.149.0&gt;</code> muere y, con él, se eliminan sus
+colas de mensajes.</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> espera_dos_receives<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="op">-&gt;</span> <span class="va">:a</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span> <span class="op">-&gt;</span> <span class="va">:b</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;x = </span><span class="ot">#{</span>x<span class="ot">}</span><span class="st">, y = </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="hl"><span class="kw">end</span></span></span></code></pre></div>
+
+</div><div class="column">
+<p><svg
+   width="72.743134mm"
+   height="44.86742mm"
+   viewBox="0 0 72.743134 44.867419"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="SaveQueue11.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="1.6100964"
+     inkscape:cx="-13.974318"
+     inkscape:cy="10.558374"
+     inkscape:window-width="1593"
+     inkscape:window-height="1161"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4-2" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4-2-2" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4-2-8" />
+    <rect
+       x="11.179455"
+       y="56.518353"
+       width="26.706474"
+       height="26.706474"
+       id="rect8-4-2-8-6" />
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-124.78425,-10.238229)">
+    <circle
+       style="fill:#d7eef4;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1-5"
+       cx="143.86845"
+       cy="36.524197"
+       r="5.267807" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="39.971832"
+       y="47.640846"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267"
+         x="39.971832"
+         y="47.640846" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="143.29814"
+       y="48.259621"
+       id="text2-2"><tspan
+         sodipodi:role="line"
+         id="tspan2-9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.267"
+         x="143.29814"
+         y="48.259621">&lt;0.149.0&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="143.02579"
+       y="15.161235"
+       id="text3-0"><tspan
+         sodipodi:role="line"
+         id="tspan3-9"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;stroke-width:0.267"
+         x="143.02579"
+         y="15.161235">Proceso creado</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;stroke-width:0.267"
+         x="143.02579"
+         y="21.412926"
+         id="tspan4">con spawn</tspan></text>
+    <g
+       id="g7">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 162.63513,34.765077 h 33.23241"
+         id="path6" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 162.63513,40.022368 h 33.23241"
+         id="path6-6" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="178.67447"
+         y="32.936119"
+         id="text6"><tspan
+           sodipodi:role="line"
+           id="tspan6"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="178.67447"
+           y="32.936119">Cola de mensajes</tspan></text>
+    </g>
+    <g
+       id="g8"
+       transform="translate(-5.2859367,-7.8808904)">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#338000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 168.01056,56.258913 h 33.23241"
+         id="path6-4" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#338000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         d="m 168.01056,61.516204 h 33.23241"
+         id="path6-6-4" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         x="183.88557"
+         y="54.429955"
+         id="text6-3"><tspan
+           sodipodi:role="line"
+           id="tspan6-0"
+           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#338000;fill-opacity:1;stroke:none;stroke-width:0.2;stroke-opacity:1"
+           x="183.88557"
+           y="54.429955">Save queue</tspan></text>
+    </g>
+    <g
+       id="g10"
+       transform="matrix(0.6613385,0,0,0.6613385,78.709831,18.072078)"
+       style="stroke-width:0.999488;stroke-dasharray:none">
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,125.90754,11.555838)"
+         id="text8"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect8-4-2);display:inline;fill:none;fill-opacity:1;stroke:#338000;stroke-width:3.77759;stroke-dasharray:none;stroke-opacity:1"><tspan
+           x="19.7332"
+           y="71.328481"
+           id="tspan5"><tspan
+             style="font-family:monospace;-inkscape-font-specification:monospace;fill:#000000;stroke:none"
+             id="tspan2">4</tspan></tspan></text>
+      <rect
+         style="fill:none;fill-opacity:1;stroke:#ff7875;stroke-width:0.999488;stroke-dasharray:none;stroke-opacity:1"
+         id="rect9"
+         width="4.7350354"
+         height="5.4612679"
+         x="130.17778"
+         y="26.400028" />
+    </g>
+    <g
+       id="g11"
+       class="fragment">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#cc0500;stroke-width:1.161;stroke-dasharray:none;stroke-opacity:1"
+         d="M 125.0859,54.609676 197.22573,10.7342"
+         id="path10" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#cc0500;stroke-width:1.161;stroke-dasharray:none;stroke-opacity:1"
+         d="m 126.04115,11.687845 70.66087,42.889514"
+         id="path10-9"
+         sodipodi:nodetypes="cc" />
+    </g>
+  </g>
+</svg>
+</p>
+</div>
+</div>
+</section>
+<section id="variables-en-los-patrones" class="slide level2">
+<h2>Variables en los patrones</h2>
+<ul>
+<li>Los patrones de un <code>receive</code> pueden tener variables, que
+quedarán ligadas a las partes del mensaje enviado que ajusten con
+ellas.</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb41"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculadora<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> + </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">+</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> - </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">-</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<pre class="text"><code>&gt; p = spawn(Procesos, 
+            :calculadora, [])
+#PID&lt;0.167.0&gt;
+
+&gt; send(p, {:suma, 3, 4})
+3 + 4 = 7
+{:suma, 3, 4}</code></pre>
+
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="cláusulas-catch-all">Cláusulas <em>catch-all</em></h3>
+<ul>
+<li>Al igual que en un <code>case</code>, si un patrón es una variable,
+ajustará con cualquier mensaje que no haya ajustado con los patrones
+anteriores:</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb43"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculadora<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> + </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">+</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> - </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">-</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="hl">otro</span> <span class="op">-&gt;</span>   <span class="arrow_box_left"> Cláusula <em>catch-all</em> </span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Mensaje desconocido&quot;</span><span class="fu">)</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>inspect<span class="fu">(</span>otro<span class="fu">)</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<pre class="text"><code>&gt; p = spawn(Procesos, 
+            :calculadora, [])
+#PID&lt;0.168.0&gt;
+
+&gt; send(p, {:mult, 1, 4})
+Mensaje desconocido
+{:mult, 1, 4}</code></pre>
+
+</div>
+</div>
+</section>
+<section id="guardas-en-un-receive" class="slide level2">
+<h2>Guardas en un <code>receive</code></h2>
+<ul>
+<li>Se permiten guardas en las cláusulas de un <code>receive</code>.
+<ul>
+<li>Para ello se utiliza <code>when</code>, al igual que en los
+<code>case</code>.</li>
+</ul></li>
+<li>Si un mensaje encaja con un patrón, pero no satisface su guarda,
+será como si no hubiese encajado con el patrón.</li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb45"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculadora<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">}</span> <span class="hl">when x <span class="op">&gt;=</span> <span class="dv">0</span></span> <span class="op">-&gt;</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> + </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">+</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> - </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">-</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>    otro <span class="op">-&gt;</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Mensaje desconocido&quot;</span><span class="fu">)</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>inspect<span class="fu">(</span>otro<span class="fu">)</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<pre class="text"><code>&gt; p = spawn(Procesos, 
+            :calculadora, [])
+#PID&lt;0.169.0&gt;
+
+&gt; send(p, {:suma, -4, 0})
+Mensaje desconocido
+{:suma, -4, 0}</code></pre>
+
+</div>
+</div>
+</section>
+<section id="la-cláusula-after" class="slide level2">
+<h2>La cláusula <code>after</code></h2>
+<div class="sourceCode" id="cb47"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="meta"><span class="">patron<sub>1</sub></span></span> <span class="op">-&gt;</span> <span class="meta"><span class="">expr<sub>1</sub></span></span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="meta"><span class="">patron<sub>2</sub></span></span> <span class="op">-&gt;</span> <span class="meta"><span class="">expr<sub>2</sub></span></span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="meta"><span class="">patron<sub>n</sub></span></span> <span class="op">-&gt;</span> <span class="meta"><span class="">expr<sub>n</sub></span></span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="hl">after</span> <span class="meta">num</span> <span class="op">-&gt;</span> <span class="meta"><span class="">expr<sub>after</sub></span></span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<ul>
+<li><code>num</code> es un número entero que indica una cantidad de
+tiempo en milisegundos.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Si el proceso que ejecuta el <code>receive</code> tiene mensajes
+en la cola que ajuste con alguno de los patrones, se ejecuta la cláusula
+correspondiente, como si no hubiera un <code>after</code>.</p></li>
+<li><p>Pero si ninguno de los mensajes de la cola encaja con alguno de
+los patrones, del <code>receive</code>, la ejecución se suspende hasta
+que:</p>
+<ul>
+<li>llegue algún mensaje que ajuste con algún patrón, o bien,</li>
+<li>hayan transcurrido <code>num</code> milisegundos.</li>
+</ul></li>
+<li><p>En este segundo caso, se evaluará la expresión <span
+style="font-family: monospace;">expr<sub>after</sub></span>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-2">Ejemplo</h3>
+<pre class="text"><code>&gt; receive do
+    x -&gt; IO.puts(&quot;Mensaje recibido!&quot;)
+    after 2000 -&gt; IO.puts(&quot;Demasiado tarde!&quot;)
+  end
+
+<span class="fragment">...Transcurren dos segundos...</span>
+<span class="fragment">Demasiado tarde!</span></code></pre>
+
+<pre class="text fragment"><code>&gt; send(self(), :ok)
+&gt; receive do
+    x -&gt; IO.puts(&quot;Mensaje recibido!&quot;)
+    after 2000 -&gt; IO.puts(&quot;Demasiado tarde!&quot;)
+  end
+
+<span class="fragment">Mensaje recibido!</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="casos-especiales-en-cláusula-after">Casos especiales en cláusula
+<code>after</code></h3>
+<ul>
+<li><p><code>after 0</code></p>
+<ul>
+<li><p>Sirve para no bloquear la ejecución si no hay mensajes en la cola
+que ajusten con los patrones del <code>receive</code>.</p></li>
+<li><p>Si la cola esta vacía, o ninguno de sus mensajes ajusta con
+ningún patrón del receive, se evaluará la expresión del
+<code>after</code> de manera inmediata.</p></li>
+</ul></li>
+<li><p><code>after :infinity</code></p>
+<p>Equivale a no colocar un <code>after</code>.</p></li>
+</ul>
+</section></section>
+<section>
+<section id="bucle-de-proceso" class="title-slide slide level1">
+<h1>Bucle de proceso</h1>
+
+</section>
+<section id="ejemplo-3" class="slide level2">
+<h2>Ejemplo</h2>
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb50"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculadora<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> + </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">+</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> - </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">-</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<pre class="text"><code>&gt; p = spawn(Procesos, 
+            :calculadora, [])
+#PID&lt;0.169.0&gt;
+
+&gt; <span class="fragment">send(p, {:suma, 1, 3})</span>
+<span class="fragment">1 + 3 = 4</span>
+<span class="fragment">{:suma, 1, 3}</span>
+
+<span class="fragment">> send(p, {:resta, 0, 4})</span>
+<span class="fragment">...No ocurre nada...</span></code></pre>
+
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>¿Por qué no se imprime nada tras enviar el mensaje
+<code>{:resta, 0, 4}</code>?</li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Cuando el proceso ha recibido el primer mensaje
+<code>{:suma, 1, 3}</code>, se ejecuta el <code>IO.puts</code>
+correspondiente a la guarda <code>{:suma, x, y}</code> y la función
+<code>calculadora</code> finaliza.</p>
+<ul>
+<li>Por tanto, el proceso muere.</li>
+</ul></li>
+<li><p>Cuando enviamos el mensaje <code>{:resta, 0, 4}</code>, ya no
+existe ningún proceso con el PID <code>p</code>.</p>
+<ul>
+<li>Por tanto, la llamada a <code>send(p, {:resta, 0, 4})</code> no hace
+nada.</li>
+</ul></li>
+</ul>
+<div class="info_box fragment">
+<p>¿Y si quisiéramos que <span
+style="font-family:monospace">calculadora</span> pudiese recibir más de
+un mensaje?</p>
+</div>
+</section>
+<section id="bucle-de-recepción-de-mensajes" class="slide level2">
+<h2>Bucle de recepción de mensajes</h2>
+<ul>
+<li>Podemos hacer que, tras procesar un mensaje,
+<code>calculadora</code> se haga una <strong>llamada recursiva a sí
+misma</strong> para volver a esperar el siguiente mensaje:</li>
+</ul>
+<div class="sourceCode" id="cb52"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculadora<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> + </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">+</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>      <span class="hl">calculadora<span class="fu">()</span></span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> - </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">-</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>      <span class="hl">calculadora<span class="fu">()</span></span></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<ul>
+<li>De este modo, la llamada recursiva ejecutará otro
+<code>receive</code> y esperará al siguiente mensaje.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>&gt; p = spawn(Procesos, :calculadora, [])
+#PID&lt;0.216.0&gt;
+
+&gt; <span class="fragment">send(p, {:suma, 4, 9})</span>
+<span class="fragment">4 + 9 = 13
+{:suma, 4, 9}</span>
+
+<span class="fragment">> send(p, {:resta, 10, 3})</span>
+<span class="fragment">10 - 3 = 7
+{:resta, 10, 3}</span>
+
+<span class="fragment">> send(p, {:suma, 1, 1})</span>
+<span class="fragment">1 + 1 = 2
+{:suma, 1, 1}</span>
+</code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="sobre-el-desbordamiento-de-pila">Sobre el desbordamiento de
+pila</h3>
+<div class="sourceCode" id="cb54"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculadora<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> + </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">+</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>      <span class="hl">calculadora<span class="fu">()</span></span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> - </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">-</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>      <span class="hl">calculadora<span class="fu">()</span></span></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<ul>
+<li><p>¿Puede haber desbordamiento de la pila de llamadas si
+<code>calculadora</code> se hace demasiadas llamadas a sí
+misma?</p></li>
+<li><p>No, porque la función <code>calculadora</code> tiene
+<strong>recursión de cola</strong>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Por tanto, el proceso que ejecuta <code>calculadora</code> puede
+estar ejecutándose de manera permanente, y nunca terminará.</li>
+</ul>
+</section>
+<section id="terminación-de-un-proceso" class="slide level2">
+<h2>Terminación de un proceso</h2>
+<p>¿Y si queremos que el proceso <code>calculadora</code> finalice?
+<br/>Hay dos maneras:</p>
+<ol type="1">
+<li>Añadir una cláusula al <code>receive</code> que no haga una llamada
+recursiva a <code>calculadora</code>:</li>
+</ol>
+<div class="sourceCode" id="cb55"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculadora<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> + </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">+</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>      calculadora<span class="fu">()</span></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> - </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">-</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>      calculadora<span class="fu">()</span></span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>    <span class="hl"><span class="va">:salir</span> <span class="op">-&gt;</span> <span class="va">:ok</span></span>    <span class="arrow_box_left"> No se hace llamada recursiva </span></span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>&gt; p = spawn(Procesos, :calculadora, [])
+...
+
+&gt; send(p, {:suma, 3, 5})
+3 + 5 = 8
+{:suma, 3, 5}
+
+&gt; send(p, :salir)
+:salir
+
+&gt; Process.alive?(p)
+false</code></pre>
+
+</section>
+<section class="slide level2">
+
+<ol start="2" type="1">
+<li><p>Utilizar <code>Process.exit/2</code>:</p>
+<pre><code>&gt; p = spawn(Procesos, :calculadora, [])
+...
+
+
+&gt; Process.exit(p, :kill)</code></pre>
+<dl>
+</dl>
+<p>El segundo parámetro de <code>exit</code> es el <em>motivo</em> de la
+finalización del proceso.</p>
+<p>El átomo <code>:kill</code> fuerza la finalización.</p></li>
+</ol>
+</section></section>
+<section>
+<section id="modelo-cliente-servidor" class="title-slide slide level1">
+<h1>Modelo cliente-servidor</h1>
+
+</section>
+<section id="modelo-cliente-servidor-1" class="slide level2">
+<h2>Modelo cliente-servidor</h2>
+<ul>
+<li><p>En la arquitectura cliente-servidor, un <strong>servidor</strong>
+es un proceso que proporciona un determinado servicio a uno o varios
+<strong>clientes</strong>.</p>
+<ul>
+<li>El servidor actúa de forma <em>pasiva</em>, esperando a recibir
+peticiones de los clientes.</li>
+<li>Las peticiones y respuestas se realizan mediante
+<strong>mensajes</strong>.</li>
+</ul></li>
+</ul>
+<p><svg
+   width="107.29716mm"
+   height="44.161587mm"
+   viewBox="0 0 107.29716 44.161586"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="ClienteServidor1.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="1.1385101"
+     inkscape:cx="220.0244"
+     inkscape:cy="205.97094"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g3" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="marker7"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path7" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path6" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="ArrowWide"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path5" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-46.005396,-15.702821)">
+    <circle
+       style="fill:#99ff55;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1"
+       cx="52.86972"
+       cy="36.834507"
+       r="5.267807" />
+    <circle
+       style="fill:#d7eef4;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1-5"
+       cx="143.86845"
+       cy="36.524197"
+       r="5.267807" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="39.971832"
+       y="47.640846"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267"
+         x="39.971832"
+         y="47.640846" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="53.347065"
+       y="19.923738"
+       id="text3"><tspan
+         sodipodi:role="line"
+         id="tspan3"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;stroke-width:0.267"
+         x="53.347065"
+         y="19.923738">Cliente</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="144.08411"
+       y="19.923738"
+       id="text3-0"><tspan
+         sodipodi:role="line"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;stroke-width:0.267"
+         x="144.08411"
+         y="19.923738"
+         id="tspan4">Servidor</tspan></text>
+    <g
+       id="g6"
+       class="fragment">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.867;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ArrowWide)"
+         d="M 61.119718,37.183099 C 93.422535,22.077465 133.39436,33.697182 133.39436,33.697182"
+         id="path4" />
+      <g
+         id="g5"
+         transform="translate(5.8098592,-56.93662)">
+        <rect
+           style="fill:none;fill-opacity:1;stroke:#ff5252;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4"
+           width="34.626759"
+           height="10.225351"
+           x="72.274651"
+           y="72.739441" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:none;fill-opacity:1;stroke:#ff5252;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="89.704224"
+           y="79.246483"
+           id="text5"><tspan
+             sodipodi:role="line"
+             id="tspan5"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:monospace;-inkscape-font-specification:monospace;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2"
+             x="89.704224"
+             y="79.246483">{:suma, 3, 5}</tspan></text>
+      </g>
+    </g>
+    <g
+       id="g3"
+       class="fragment">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.865;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker7)"
+         d="M 137.80988,39.22387 C 99.000016,52.935139 61.584524,40.618237 61.584524,40.618237"
+         id="path2" />
+      <g
+         id="g5-3"
+         transform="translate(8.6474023,-23.652072)">
+        <rect
+           style="fill:none;fill-opacity:1;stroke:#ff5252;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4-6"
+           width="6.5070405"
+           height="10.225351"
+           x="84.591553"
+           y="72.50705" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:none;fill-opacity:1;stroke:#ff5252;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+           x="87.733635"
+           y="79.014091"
+           id="text5-0"><tspan
+             sodipodi:role="line"
+             id="tspan5-6"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:monospace;-inkscape-font-specification:monospace;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2"
+             x="87.733635"
+             y="79.014091">8</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>
+</p>
+</section>
+<section id="llamadas-síncronas-vs-asíncronas" class="slide level2">
+<h2>Llamadas síncronas vs asíncronas</h2>
+<dl>
+<dt>Llamada síncrona</dt>
+<dd>
+<p>Cuando un cliente envía una petición a un servidor, el cliente
+<strong>espera</strong> hasta recibir una respuesta del mismo.</p>
+</dd>
+<dt>Llamada asíncrona</dt>
+<dd>
+<p>Cuando un cliente envía una petición a un servidor, el cliente
+<strong>continúa su ejecución</strong> sin esperar la respuesta del
+servidor.</p>
+</dd>
+</dl>
+</section>
+<section id="ejemplo-calculadora" class="slide level2">
+<h2>Ejemplo: calculadora</h2>
+<ul>
+<li><p>Partimos de la siguiente implementación del proceso
+calculadora:</p>
+<div class="sourceCode" id="cb58"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculadora<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> + </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">+</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>      calculadora<span class="fu">()</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> - </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> = </span><span class="ot">#{</span>x <span class="op">-</span> y<span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>      calculadora<span class="fu">()</span></span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>    <span class="va">:salir</span> <span class="op">-&gt;</span></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Adios&quot;</span><span class="fu">)</span></span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">-&gt;</span></span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Mensaje desconocido&quot;</span><span class="fu">)</span></span>
+<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>      calculadora<span class="fu">()</span>        </span>
+<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb58-15"><a href="#cb58-15" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span>  </span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>En lugar de imprimir el resultado de la operación por pantalla,
+queremos <strong>responder</strong> al cliente con dicho resultado.</p>
+<div class="sourceCode" id="cb59"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculadora<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>      send<span class="fu">(</span><span class="hl">???</span>, x <span class="op">+</span> y<span class="fu">)</span></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>      calculadora<span class="fu">()</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>      send<span class="fu">(</span><span class="hl">???</span>, x <span class="op">-</span> y<span class="fu">)</span></span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>      calculadora<span class="fu">()</span></span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ...</span></span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span>  </span></code></pre></div>
+</li>
+</ul>
+<div class="info_box fragment">
+<p>🤔 ¿Cómo obtenemos el PID del cliente que envió la petición?</p>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><strong>Solución:</strong> hacer el cliente envíe su propio PID
+junto con la petición.</li>
+</ul>
+<p><img data-src="18/ClienteServidor2.svg" style="width:70.0%" /></p>
+<ul>
+<li>Todas las peticiones tendrán la forma <code>{pid, mensaje}</code>,
+donde <code>mensaje</code> es el contenido de la petición
+(<em>payload</em>).</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column">
+<div class="sourceCode" id="cb60"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculadora<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="hl">pid</span>, <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">}}</span> <span class="op">-&gt;</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>      <span class="hl">send<span class="fu">(</span>pid, x <span class="op">+</span> y<span class="fu">)</span></span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>      calculadora<span class="fu">()</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="hl">pid</span>, <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">}}</span> <span class="op">-&gt;</span></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>      <span class="hl">send<span class="fu">(</span>pid, x <span class="op">-</span> y<span class="fu">)</span></span></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>      calculadora<span class="fu">()</span></span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span>_, <span class="va">:salir</span><span class="fu">}</span> <span class="op">-&gt;</span> <span class="va">:ok</span></span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">-&gt;</span></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;error&quot;</span><span class="fu">)</span></span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>      calculadora<span class="fu">()</span></span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column">
+<pre class="text"><code>&gt; p = spawn(ClienteServidor, 
+            :calculadora, [])
+#PID&lt;0.125.0&gt;
+
+    <span class="arrow_box_down fragment"> El cliente es la <em>shell</em> </span>
+&gt; send(p, {<span class="hl">self()</span>, {:suma, 1, 10}})
+{#PID&lt;0.118.0&gt;, {:suma, 1, 11}}
+
+&gt; receive do
+    result -&gt; result
+  end
+<span class="hl">12</span>  <span class="arrow_box_left fragment"> Respuesta del servidor </span>
+
+&gt; send(p, {self(), {:resta, 3, 5}})
+{#PID&lt;0.118.0&gt;, {:resta, 3, 5}}
+&gt; receive do: (result -&gt; result)
+<span class="hl">-2</span></code></pre>
+
+</div>
+</div>
+</section>
+<section id="funciones-envoltorio" class="slide level2">
+<h2>Funciones envoltorio</h2>
+<ul>
+<li><p>Podemos encapsular la lógica del cliente en sendas funciones
+<code>suma/3</code> y <code>resta/3</code>, que hagan el envío y la
+recepción de los mensajes correspondientes.</p></li>
+<li><p>Estas funciones reciben como primer parámetro el PID del
+servidor.</p>
+<div class="sourceCode" id="cb62"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> suma<span class="fu">(</span>pid, x, y<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  send<span class="fu">(</span>pid, <span class="fu">{</span>self<span class="fu">()</span>, <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">}})</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="va">do:</span> <span class="fu">(</span>result <span class="op">-&gt;</span> result<span class="fu">)</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> resta<span class="fu">(</span>pid, x, y<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>  send<span class="fu">(</span>pid, <span class="fu">{</span>self<span class="fu">()</span>, <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">}})</span></span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="va">do:</span> <span class="fu">(</span>result <span class="op">-&gt;</span> result<span class="fu">)</span></span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>&gt; p = spawn(ClienteServidor, :calculadora, [])
+#PID&lt;0.128.0&gt;
+
+&gt; ClienteServidor.suma(p, 4, 5)
+9
+
+&gt; ClienteServidor.resta(p, 5, 2)
+3</code></pre>
+
+</section>
+<section id="problema-recepción-de-respuesta" class="slide level2">
+<h2>Problema: recepción de respuesta</h2>
+<ul>
+<li>Hemos visto que, cuando un cliente envía una petición mediante
+<code>send</code>, hace un <code>receive</code> para esperar una
+respuesta del servidor.</li>
+</ul>
+<div class="info_box fragment">
+<p>🤔 ¿Qué pasa si el cliente ha recibido previamente un mensaje de un
+tercer proceso?</p>
+</div>
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>&gt; p = spawn(ClienteServidor, :calculadora, [])
+#PID&lt;0.128.0&gt;
+
+&gt; send(self(), :mensaje_inoportuno)<span class="arrow_box_left"> El cliente se envía un mensaje a sí mismo </span>
+
+&gt; ClienteServidor.suma(p, 4, 5)
+:mensaje_inoportuno <span class="arrow_box_left"> 😲 </span>
+
+&gt; ClienteServidor.resta(p, 10, 3)
+9  <span class="arrow_box_left"> 😰 </span></code></pre>
+
+<ul>
+<li><p>El <code>receive</code> de <code>suma</code> obtiene el mensaje
+«intruso» en el <code>receive</code>, porque es el primero en la cola de
+mensajes.</p></li>
+<li><p>El resultado real de la operación <code>suma</code> (9) se queda
+en la cola de mensajes del cliente, y es el que se obtiene en la
+siguiente llamada a <code>resta</code>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="cómo-evitarlo">¿Cómo evitarlo?</h3>
+<ul>
+<li><p>Cuando un cliente hace un <code>receive</code> tras enviar la
+petición al servidor, debería exigir que la respuesta recibida sea la
+del servidor, y no un mensaje cualquiera de otro proceso.</p></li>
+<li><p>Para asegurar esto, hacemos que el servidor también devuelva su
+propio PID junto con la respuesta.</p></li>
+</ul>
+<p><img data-src="18/ClienteServidor3.svg" style="width:60.0%" /></p>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>La implementación del código del servidor queda del siguiente
+modo:</p>
+<div class="sourceCode" id="cb65"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculadora<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span>pid, <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">}}</span> <span class="op">-&gt;</span></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>      send<span class="fu">(</span>pid, <span class="fu">{</span><span class="hl">self<span class="fu">()</span></span>, x <span class="op">+</span> y<span class="fu">})</span>  <span class="arrow_box_left"> self() = PID del servidor </span></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>      calculadora<span class="fu">()</span></span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span>pid, <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">}}</span> <span class="op">-&gt;</span></span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>      send<span class="fu">(</span>pid, <span class="fu">{</span><span class="hl">self<span class="fu">()</span></span>, x <span class="op">-</span> y<span class="fu">})</span></span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>      calculadora<span class="fu">()</span></span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span>_, <span class="va">:salir</span><span class="fu">}</span> <span class="op">-&gt;</span> <span class="va">:ok</span></span>
+<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">-&gt;</span></span>
+<span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a>      <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Mensaje desconocido&quot;</span><span class="fu">)</span></span>
+<span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a>      calculadora<span class="fu">()</span></span>
+<span id="cb65-13"><a href="#cb65-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>A partir de ahora, el cliente exigirá que la respuesta recibida
+provenga del servidor:</p>
+<div class="sourceCode" id="cb66"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> suma<span class="fu">(</span>pid, x, y<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  send<span class="fu">(</span>pid, <span class="fu">{</span>self<span class="fu">()</span>, <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">}})</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="hl"><span class="op">^</span>pid</span>, result<span class="fu">}</span> <span class="op">-&gt;</span> result</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> resta<span class="fu">(</span>pid, x, y<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>  send<span class="fu">(</span>pid, <span class="fu">{</span>self<span class="fu">()</span>, <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">}})</span></span>
+<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="hl"><span class="op">^</span>pid</span>, result<span class="fu">}</span> <span class="op">-&gt;</span> result</span>
+<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+<li><p>Utilizando el operador <em>pin</em> (<code>^</code>), estamos
+exigiendo que la primera componente del mensaje recibido sea igual que
+el parámetro <code>pid</code>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>&gt; p = spawn(ClienteServidor, :calculadora, [])
+#PID&lt;0.128.0&gt;
+
+&gt; send(self(), :mensaje_inoportuno)
+
+&gt; ClienteServidor.suma(p, 4, 5)
+9
+
+&gt; ClienteServidor.resta(p, 10, 3)
+7</code></pre>
+
+</section>
+<section id="refactorización-de-código" class="slide level2">
+<h2>Refactorización de código</h2>
+<ul>
+<li>Para evitar duplicidad de código en las funciones <code>suma</code>
+y <code>resta</code>, definimos una función <code>call</code> que agrupa
+las partes comunes:</li>
+</ul>
+<div class="sourceCode" id="cb68"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defp</span> call<span class="fu">(</span>pid, msg<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  send<span class="fu">(</span>pid, <span class="fu">{</span>self<span class="fu">()</span>, msg<span class="fu">})</span></span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="op">^</span>pid, result<span class="fu">}</span> <span class="op">-&gt;</span> result</span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> suma<span class="fu">(</span>pid, x, y<span class="fu">)</span>, <span class="va">do:</span> call<span class="fu">(</span>pid, <span class="fu">{</span><span class="va">:suma</span>, x, y<span class="fu">})</span></span>
+<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> resta<span class="fu">(</span>pid, x, y<span class="fu">)</span>, <span class="va">do:</span> call<span class="fu">(</span>pid, <span class="fu">{</span><span class="va">:resta</span>, x, y<span class="fu">})</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Del mismo modo, suele ser habitual abstraer el inicio del servidor
+en una función <code>start</code>:</li>
+</ul>
+<div class="sourceCode" id="cb69"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> start<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>  spawn<span class="fu">(</span><span class="cn">ClienteServidor</span>, <span class="va">:calculadora</span>, <span class="ot">[]</span><span class="fu">)</span></span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<pre class="text"><code>&gt; p = ClienteServidor.start()
+
+&gt; ClienteServidor.suma(p, 4, 1)
+5</code></pre>
+
+</section>
+<section id="uso-de-referencias" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Uso de
+referencias</h2>
+<ul>
+<li><p>El enfoque anterior es suficiente cuando el cliente solamente
+recibe llamadas síncronas.</p></li>
+<li><p>Sin embargo, si se mezclan llamadas síncronas y asíncronas, es
+posible que el cliente, cuando espera la respuesta de una petición al
+servidor, reciba un mensaje del servidor correspondiente a <strong>otra
+petición distinta</strong>.</p></li>
+<li><p>Para evitar esto, se utilizan <strong>referencias</strong>
+(<em>references</em>).</p></li>
+</ul>
+</section>
+<section id="section-1" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
+<ul>
+<li><p>Las referencias son un tipo básico de Elixir que actúan como
+identificadores únicos.</p></li>
+<li><p>Cada vez que el cliente hace una petición al servidor, envía una
+referencia nueva que identifica unívocamente a esa petición, y espera
+que el servidor devuelva esa misma referencia en su respuesta.</p></li>
+<li><p>Más información: <a
+href="https://hexdocs.pm/elixir/Kernel.html#make_ref/0"><code>make_ref/0</code></a>.</p></li>
+</ul>
+</section></section>
+<section>
+<section id="servidores-con-estado" class="title-slide slide level1">
+<h1>Servidores con estado</h1>
+
+</section>
+<section id="servidores-con-estado-1" class="slide level2">
+<h2>Servidores con estado</h2>
+<ul>
+<li><p>El servidor <code>calculadora</code> explicado anteriormente era
+un servidor <strong>sin estado</strong> (<em>stateless</em>).</p>
+<ul>
+<li>Cada petición era completamente independiente de la anterior.</li>
+</ul></li>
+<li><p>No obstante, en algunos casos hemos de almacenar información que
+se conserve entre peticiones.</p>
+<ul>
+<li>Esta información conforma el <strong>estado del
+servidor</strong>.</li>
+</ul></li>
+</ul>
+</section>
+<section id="ejemplo-servidor-de-tickets" class="slide level2">
+<h2>Ejemplo: servidor de tickets</h2>
+<ul>
+<li><p>Supongamos que queremos implementar un servidor que expida
+tickets numerados desde 1 hasta un número <em>N</em>.</p></li>
+<li><p>Cuando el servidor recibe una petición <code>:get_ticket</code>,
+devuelve una respuesta con el número de ticket más bajo que aún no haya
+sido asignado.</p></li>
+<li><p>Cuando el servidor ha respondido con último ticket (<em>N</em>),
+finaliza.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-de-funcionamiento">Ejemplo de funcionamiento</h3>
+<pre class="text"><code>&gt; p = ServidorTickets.start(5)  <span class="arrow_box_left"> Repartimos 5 tickets </span>
+&gt; ServidorTickets.get_ticket()
+{:ticket, 1}
+&gt; ServidorTickets.get_ticket()
+{:ticket, 2}
+
+...
+
+&gt; ServidorTickets.get_ticket()
+{:ticket, 5}
+10:52:20.380 [info] Servidor de tickets finaliza</code></pre>
+
+</section>
+<section id="implementación" class="slide level2">
+<h2>Implementación</h2>
+<ul>
+<li><p>Comenzamos con la función recursiva de cola que se encarga de
+recibir y atender los mensajes en el servidor.</p></li>
+<li><p>Esta función tiene <strong>dos parámetros</strong>:</p>
+<ul>
+<li>El número del siguiente ticket a expedir.</li>
+<li>El número de tickets total.</li>
+</ul></li>
+<li><p>Estos dos parámetros conforman el <strong>estado</strong> del
+servidor.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div class="sourceCode" id="cb72"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> tickets_loop<span class="fu">(</span><span class="hl">siguiente_ticket</span>, <span class="hl">max_tickets</span><span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span>pid, <span class="va">:get_ticket</span><span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>      send<span class="fu">(</span>pid, <span class="fu">{</span>self<span class="fu">()</span>, <span class="fu">{</span><span class="va">:ticket</span>, siguiente_ticket<span class="fu">}})</span></span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>      tickets_loop<span class="fu">(</span><span class="hl">siguiente_ticket <span class="op">+</span> <span class="dv">1</span></span>, <span class="hl">max_tickets</span><span class="fu">)</span>   <span class="arrow_box_left fragment"> Siguiente estado </span></span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">-&gt;</span></span>
+<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>      <span class="cn">Logger</span><span class="op">.</span>warning<span class="fu">(</span><span class="st">&quot;Mensaje incorrecto&quot;</span><span class="fu">)</span></span>
+<span id="cb72-9"><a href="#cb72-9" aria-hidden="true" tabindex="-1"></a>      tickets_loop<span class="fu">(</span>siguiente_ticket, max_tickets<span class="fu">)</span></span>
+<span id="cb72-10"><a href="#cb72-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb72-11"><a href="#cb72-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<p>Añadimos el caso base:</p>
+<div class="sourceCode" id="cb73"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> tickets_loop<span class="fu">(</span>siguiente_ticket, max_tickets<span class="fu">)</span> </span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">when</span> <span class="hl">siguiente_ticket <span class="op">&gt;</span> max_tickets</span> <span class="kw">do</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Logger</span><span class="op">.</span>info<span class="fu">(</span><span class="st">&quot;Servidor de tickets finaliza&quot;</span><span class="fu">)</span></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> tickets_loop<span class="fu">(</span>siguiente_ticket, max_tickets<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span>pid, <span class="va">:get_ticket</span><span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>      send<span class="fu">(</span>pid, <span class="fu">{</span>self<span class="fu">()</span>, <span class="fu">{</span><span class="va">:ticket</span>, siguiente_ticket<span class="fu">}})</span></span>
+<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>      tickets_loop<span class="fu">(</span>siguiente_ticket <span class="op">+</span> <span class="dv">1</span>, max_tickets<span class="fu">)</span>   <span class="arrow_box_left fragment"> Siguiente estado </span></span>
+<span id="cb73-11"><a href="#cb73-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-12"><a href="#cb73-12" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">-&gt;</span></span>
+<span id="cb73-13"><a href="#cb73-13" aria-hidden="true" tabindex="-1"></a>      <span class="cn">Logger</span><span class="op">.</span>warning<span class="fu">(</span><span class="st">&quot;Mensaje incorrecto&quot;</span><span class="fu">)</span></span>
+<span id="cb73-14"><a href="#cb73-14" aria-hidden="true" tabindex="-1"></a>      tickets_loop<span class="fu">(</span>siguiente_ticket, max_tickets<span class="fu">)</span></span>
+<span id="cb73-15"><a href="#cb73-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb73-16"><a href="#cb73-16" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<h3 id="funciones-de-interfaz">Funciones de interfaz</h3>
+<ul>
+<li><p>La función <code>start/1</code> arranca el servidor, utilizando
+el tercer parámetro de <code>spawn</code> para establecer el
+<strong>estado inicial</strong>.</p>
+<div class="sourceCode" id="cb74"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> start<span class="fu">(</span>num_tickets<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>  spawn<span class="fu">(</span><span class="cn">ServidorTickets</span>, <span class="va">:tickets_loop</span>, <span class="ot">[</span><span class="dv">1</span>, num_tickets<span class="ot">]</span><span class="fu">)</span></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+<li><p>La función <code>get_ticket/0</code> realiza la petición al
+servidor cuyo PID se pasa como parámetro:</p>
+<div class="sourceCode" id="cb75"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_ticket<span class="fu">(</span>pid<span class="fu">)</span>, <span class="va">do:</span> call<span class="fu">(</span>pid, <span class="va">:get_ticket</span><span class="fu">)</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a><span class="co"># call/2 se define igual que en el servidor calculadora</span></span></code></pre></div>
+</li>
+</ul>
+</section></section>
+<section>
+<section id="funciones-útiles-sobre-procesos"
+class="title-slide slide level1">
+<h1>Funciones útiles sobre procesos</h1>
+
+</section>
+<section id="registro-de-nombres" class="slide level2">
+<h2>Registro de nombres</h2>
+<ul>
+<li><p>Habitualmente se suele utilizar un PID para enviar un mensaje a
+un proceso.</p></li>
+<li><p>Esto nos obliga a propagar el PID de un proceso <em>X</em> a
+todos los procesos que hagan uso de <em>X</em>.</p></li>
+<li><p>A veces es más fácil utilizar un <strong>átomo</strong> para
+hacer referencia a un proceso. Por ejemplo:</p>
+<div class="sourceCode" id="cb76"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>send<span class="fu">(</span><span class="hl"><span class="va">:servidor_tickets</span></span>, <span class="fu">{</span>self<span class="fu">()</span>, <span class="va">:get_ticket</span><span class="fu">})</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section id="función-process.register2" class="slide level2">
+<h2>Función <code>Process.register/2</code></h2>
+<ul>
+<li><p>Elixir dispone de un <strong>registro</strong> que asocia nombres
+de procesos (átomos) con PIDs.</p></li>
+<li><p>La función <code>Process.register/2</code> añade una nueva
+entrada a ese registro.</p>
+<div class="sourceCode" id="cb77"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> p <span class="op">=</span> spawn<span class="fu">(</span><span class="op">...</span><span class="fu">)</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="hl"><span class="cn">Process</span><span class="op">.</span>register<span class="fu">(</span>p, <span class="va">:mi_nombre</span><span class="fu">)</span></span></span></code></pre></div>
+</li>
+<li><p>A partir de ese momento, se puede utilizar el nombre asignado al
+proceso en la función <code>send/2</code>:</p>
+<div class="sourceCode" id="cb78"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="hl">send<span class="fu">(</span><span class="va">:mi_nombre</span>, <span class="op">...</span><span class="fu">)</span></span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-servidor-de-tickets-1">Ejemplo: servidor de tickets</h3>
+<ul>
+<li><p>Para facilitar el uso del servidor de tickets, le asignamos un
+nombre.</p>
+<ul>
+<li>Esto solo es útil cuando se tiene un único proceso del servidor de
+tickets en ejecución.</li>
+</ul></li>
+<li><p>Por convenio, suele utilizarse el nombre del módulo en el que se
+define el servidor.</p>
+<div class="sourceCode" id="cb79"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> start<span class="fu">(</span>num_tickets<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>  p <span class="op">=</span> spawn<span class="fu">(</span><span class="cn">ServidorTickets</span>, <span class="va">:tickets_loop</span>, <span class="ot">[</span><span class="dv">1</span>, num_tickets<span class="ot">]</span><span class="fu">)</span></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Process</span><span class="op">.</span>register<span class="fu">(</span>p, <span class="hl"><span class="cn">ServidorTickets</span></span><span class="fu">)</span>    <span class="arrow_box_left"> Nombre asignado al proceso </span></span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_ticket<span class="fu">()</span>, <span class="va">do:</span> call<span class="fu">(</span><span class="hl"><span class="cn">ServidorTickets</span></span>, <span class="va">:get_ticket</span><span class="fu">)</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>También hay que actualizar el código del servidor para que, en lugar
+de devolver su PID, devuelva su nombre:</p>
+<div class="sourceCode" id="cb80"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> tickets_loop<span class="fu">(</span>siguiente_ticket, max_tickets<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span>pid, <span class="va">:get_ticket</span><span class="fu">}</span> <span class="op">-&gt;</span></span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>      send<span class="fu">(</span>pid, <span class="fu">{</span><span class="hl"><span class="cn">ServidorTicketsNombre</span></span>, <span class="fu">{</span><span class="va">:ticket</span>, siguiente_ticket<span class="fu">}})</span></span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>      tickets_loop<span class="fu">(</span>siguiente_ticket <span class="op">+</span> <span class="dv">1</span>, max_tickets<span class="fu">)</span></span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">-&gt;</span></span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>      <span class="op">...</span></span>
+<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<h3 id="otras-funciones-relacionadas">Otras funciones relacionadas</h3>
+<ul>
+<li><p><code>Process.whereis/1</code> <a
+href="https://hexdocs.pm/elixir/Process.html#whereis/1">[+]</a></p></li>
+<li><p><code>Process.registered/0</code> <a
+href="https://hexdocs.pm/elixir/Process.html#registered/0">[+]</a></p></li>
+<li><p><code>Process.unregister/1</code> <a
+href="https://hexdocs.pm/elixir/Process.html#unregister/1">[+]</a></p></li>
+</ul>
+</section>
+<section id="función-flush" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Función
+<code>flush</code></h2>
+<ul>
+<li><p>Solamente disponible desde <code>iex</code>.</p></li>
+<li><p>Vacía la cola de mensajes del proceso que ejecuta la
+<em>shell</em> de <code>iex</code>, mostrando los mensajes que
+había.</p></li>
+</ul>
+<div class="sourceCode" id="cb81"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> send<span class="fu">(</span>self<span class="fu">()</span>, <span class="va">:hola</span><span class="fu">)</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> send<span class="fu">(</span>self<span class="fu">()</span>, <span class="va">:adios</span><span class="fu">)</span></span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> send<span class="fu">(</span>self<span class="fu">()</span>, <span class="dv">15</span><span class="fu">)</span></span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> flush</span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a><span class="va">:hola</span></span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a><span class="va">:adios</span></span>
+<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a><span class="dv">15</span></span></code></pre></div>
+
+</section>
+<section id="función-pid" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Función
+<code>pid</code></h2>
+<ul>
+<li><p>Solamente disponible desde <code>iex</code>.</p></li>
+<li><p>Permite construir un PID a partir de los tres números que lo
+identifican.</p></li>
+<li><p>Útil cuando estamos trabajando desde la <em>shell</em> y se nos
+ha olvidado asignar el PID de un proceso recién creado a una
+variable.</p></li>
+</ul>
+<pre class="text"><code>&gt; spawn(...)
+#PID&lt;0.124.0&gt;
+&gt; p = <span class="hl">pid(0, 124, 0)</span>
+&gt; send(p, ...)</code></pre>
+
+</section>
+<section id="función-process.info1" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Función
+<code>Process.info/1</code></h2>
+<ul>
+<li><p>Devuelve información sobre el proceso pasado como parámetro:</p>
+<ul>
+<li>Estado del proceso</li>
+<li>Función que está ejecutando</li>
+<li>Mensajes</li>
+<li>etc.</li>
+</ul></li>
+<li><p>La información se devuelve en forma de <em>keyword
+list</em>.</p></li>
+</ul>
+</section>
+<section id="section-2" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
+<pre><code>&gt; p = ClienteServidor.start()
+&gt; Process.info(p)
+[
+  current_function: {ClienteServidor, :calculadora, 0},
+  initial_call: {ClienteServidor, :calculadora, 0},
+  status: :waiting,
+  message_queue_len: 0,
+  links: [],
+  trap_exit: false,
+  error_handler: :error_handler,
+  priority: :normal,
+  total_heap_size: 233,
+  heap_size: 233,
+  stack_size: 1,
+  reductions: 5,
+  ...
+]</code></pre>
+<dl>
+</dl>
+</section>
+<section id="section-3" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
+<ul>
+<li>Se puede utilizar <code>Process.info/2</code> para acceder a una
+determinada componente de información.</li>
+</ul>
+<pre><code>&gt; send(self(), :hola)
+&gt; send(self(), :adios)
+
+&gt; Process.info(self(), :messages)
+{:messages, [:hola, :adios]}</code></pre>
+<dl>
+</dl>
+</section></section>
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/search/search.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Prints all fragments in their visible states on the same slide 
+        pdfSeparateFragments: false,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom,
+          // RevealHighlight          
+        ]
+      });
+    </script>
+    </body>
+</html>
