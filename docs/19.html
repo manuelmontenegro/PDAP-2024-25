@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Manuel Montenegro Montes">
+  <title>Enlaces vitales, señales y monitores</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="css/nnfx-light.min.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {  background-color: #f8f8f8; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ef2929; } /* Alert */
+    code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #204a87; } /* Attribute */
+    code span.bn { color: #0000cf; } /* BaseN */
+    code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4e9a06; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #8f5902; font-style: italic; } /* Comment */
+    code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+    code span.dt { color: #204a87; } /* DataType */
+    code span.dv { color: #0000cf; } /* DecVal */
+    code span.er { color: #a40000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #0000cf; } /* Float */
+    code span.fu { color: #204a87; font-weight: bold; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+    code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+    code span.ot { color: #8f5902; } /* Other */
+    code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+    code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+    code span.ss { color: #4e9a06; } /* SpecialString */
+    code span.st { color: #4e9a06; } /* String */
+    code span.va { color: #000000; } /* Variable */
+    code span.vs { color: #4e9a06; } /* VerbatimString */
+    code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="css/pdap.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="img/RedBackground.jpg">
+  <h1 class="title">Enlaces vitales, señales y monitores</h1>
+<div id="author-container">
+<div class="author">
+Manuel Montenegro Montes
+<br>
+<span id="email"><a href="montenegro@fdi.ucm.es">montenegro@fdi.ucm.es</a></span>
+</div>
+<div class="subject">
+<strong>Programación Declarativa Aplicada</strong>
+<br>Máster en Ingeniería Informática<br>Facultad de
+Informática<br>Universidad Complutense de Madrid
+</div>
+</div>
+</section>
+
+<section id="section" class="slide level2 outline"
+data-background-image="img/RedBackground.jpg">
+<h2 class="outline" data-background-image="img/RedBackground.jpg"></h2>
+<ol type="1">
+<li><p>Enlaces vitales</p></li>
+<li><p>Señales</p></li>
+<li><p>Monitores</p></li>
+</ol>
+</section>
+<section>
+<section id="enlaces-vitales" class="title-slide slide level1">
+<h1>Enlaces vitales</h1>
+
+</section>
+<section id="enlaces-vitales-1" class="slide level2">
+<h2>Enlaces vitales</h2>
+<ul>
+<li><p>En Elixir es posible establecer un <strong>enlace vital</strong>
+(<em>link</em>) entre dos procesos, de modo que cada uno de ellos puede
+<strong>detectar</strong> si el otro ha
+<strong>muerto</strong>.</p></li>
+<li><p>Los enlaces vitales son
+<strong>bidireccionales</strong>.</p></li>
+</ul>
+<div class="fragment">
+<p><img data-src="19/EnlaceVital1.svg" /></p>
+</div>
+</section>
+<section id="cómo-se-crean-enlaces-vitales" class="slide level2">
+<h2>¿Cómo se crean enlaces vitales?</h2>
+<ul>
+<li>La función <code>spawn_link/3</code> funciona igual que
+<code>spawn/3</code> pero además crea un enlace vital entre el proceso
+que hace la llamada a <code>spawn_link</code> y el proceso recién
+creado.</li>
+</ul>
+<div class="columns">
+<div class="column fragment">
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">EnlacesVitales</span> <span class="kw">do</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> saludar<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Hola, mundo&quot;</span><span class="fu">)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</div><div class="column fragment">
+<pre class="text"><code>&gt; self()
+#PID&lt;0.155.0&gt;
+
+&gt; spawn_link(EnlacesVitales,
+             :saludar, [])
+Hola, mundo
+#PID&lt;0.156.0&gt;</code></pre>
+
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>En el ejemplo, se ha generado un enlace vital entre los procesos
+<code>&lt;0.155.0&gt;</code> y <code>&lt;0.156.0&gt;</code>.</li>
+</ul>
+</div>
+</section>
+<section id="otras-funciones" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Otras
+funciones</h2>
+<ul>
+<li><p><code>Process.link/1</code> <a
+href="https://hexdocs.pm/elixir/Process.html#link/1">[+]</a></p>
+<p>Crea un enlace con un proceso ya existente.</p></li>
+<li><p><code>Process.unlink/1</code> <a
+href="https://hexdocs.pm/elixir/Process.html#unlink/1">[+]</a></p>
+<p>Elimina un enlace vital.</p></li>
+</ul>
+</section></section>
+<section>
+<section id="señales" class="title-slide slide level1">
+<h1>Señales</h1>
+
+</section>
+<section id="propagación-de-señales" class="slide level2">
+<h2>Propagación de señales</h2>
+<ul>
+<li>Cuando un proceso muere, envía una <strong>señal</strong> a todos
+los procesos con los que mantiene un enlace vital.</li>
+</ul>
+<p><svg
+   width="112.63799mm"
+   height="62.874737mm"
+   viewBox="0 0 112.63799 62.874738"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="EnlaceVital2.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="1.1385101"
+     inkscape:cx="241.54375"
+     inkscape:cy="243.7396"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <rect
+       x="192.35666"
+       y="95.739159"
+       width="36.890318"
+       height="42.160364"
+       id="rect8" />
+    <marker
+       style="overflow:visible"
+       id="marker7"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path7" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="ArrowWide"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path5" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-40.560195,-5.9342435)">
+    <circle
+       style="fill:#99ff55;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1"
+       cx="52.86972"
+       cy="36.834507"
+       r="5.267807" />
+    <circle
+       style="fill:#d7eef4;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1-5"
+       cx="97.621979"
+       cy="36.988983"
+       r="5.267807" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="39.971832"
+       y="47.640846"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267"
+         x="39.971832"
+         y="47.640846" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="53.450706"
+       y="48.570423"
+       id="text2"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.267"
+         x="53.450706"
+         y="48.570423">&lt;0.134.0&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="97.051666"
+       y="48.724407"
+       id="text2-2"><tspan
+         sodipodi:role="line"
+         id="tspan2-9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.267"
+         x="97.051666"
+         y="48.724407">&lt;0.208.0&gt;</tspan></text>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#ff1300;stroke-width:0.865;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 57.766612,37.119218 H 92.160981"
+       id="path2"
+       sodipodi:nodetypes="cc" />
+    <circle
+       style="fill:#99ff55;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1-0"
+       cx="139.90306"
+       cy="11.296617"
+       r="5.267807" />
+    <circle
+       style="fill:#99ff55;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1-0-0"
+       cx="140.59073"
+       cy="56.878109"
+       r="5.267807" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#ff1300;stroke-width:0.865;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 101.50629,33.48226 135.20348,14.425922"
+       id="path2-1"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#ff1300;stroke-width:0.865;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 101.20003,41.261064 33.92959,13.943662"
+       id="path2-1-2"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="140.29695"
+       y="23.278576"
+       id="text2-7"><tspan
+         sodipodi:role="line"
+         id="tspan2-5"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.267"
+         x="140.29695"
+         y="23.278576">&lt;0.210.0&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="140.30768"
+       y="68.75959"
+       id="text2-7-8"><tspan
+         sodipodi:role="line"
+         id="tspan2-5-9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.267"
+         x="140.30768"
+         y="68.75959">&lt;0.195.0&gt;</tspan></text>
+    <path
+       style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.865;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 101.67991,29.17368 c 0,0 1.16197,-7.204225 6.27465,-11.619718 5.11268,-4.415493 22.30986,-4.647888 22.30986,-4.647888"
+       id="path3" />
+    <g
+       id="g9"
+       class="fragment">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#610c00;stroke-width:1.665;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         d="M 91.919349,42.884949 102.37709,29.870863"
+         id="path9" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#610c00;stroke-width:1.665;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         d="M 92.152769,30.241396 101.21614,42.79069"
+         id="path9-4"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <g
+       id="g8"
+       class="fragment">
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.564999;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#ArrowWide)"
+         d="M 100.98273,30.103257 132.35597,12.906074"
+         id="path4" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.564999;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker7)"
+         d="m 104.00386,39.166637 29.74648,11.852114"
+         id="path6" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.564999;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker7)"
+         d="M 89.827799,34.983538 H 60.778505"
+         id="path8" />
+    </g>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,40.560195,5.9342435)"
+       id="text8"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.3333px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect8);display:inline;fill:none;fill-opacity:1;stroke:#000000;stroke-width:2.13543;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+  </g>
+</svg>
+</p>
+<div class="fragment">
+<ul>
+<li>La señal enviada contiene la «causa» de la muerte del proceso.</li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="señales-1">¿Señales?</h3>
+<div>
+<ul>
+<li class="fragment"><p>Un proceso puede enviar señales a otro.</p></li>
+<li class="fragment"><p>Las señales no se comportan como los mensajes
+vistos anteriormente.</p>
+<ul>
+<li class="fragment">No se almacenan en la cola de mensajes del
+destinatario.</li>
+<li class="fragment">Se tratan de manera inmediata, sin necesidad de un
+<code>receive</code>.</li>
+<li class="fragment">Se tratan de manera interna por la máquina
+virtual.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="causa-de-la-muerte">¿Causa de la muerte?</h3>
+<div>
+<ul>
+<li class="fragment"><p>La «causa» es un término de Elixir que indica la
+razón por la que un proceso finaliza.</p></li>
+<li class="fragment"><p>Si un proceso termina debido a que la función
+que estaba ejecutando ha finalizado, decimos que el proceso ha terminado
+de manera <strong>normal</strong>.</p>
+<ul>
+<li class="fragment">En este caso, la causa se representa mediante
+<code>:normal</code>.</li>
+</ul></li>
+<li class="fragment"><p>…pero un proceso puede terminar de manera
+<strong>anormal</strong>.</p>
+<ul>
+<li class="fragment">Por ejemplo, si se produce una excepción durante su
+ejecución, o lo matamos mediante
+<code>Process.exit(pid, :kill)</code>.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="muerte-por-causa-normal" class="slide level2">
+<h2>Muerte por causa normal</h2>
+<p><img data-src="19/EnlaceVital3.svg" /></p>
+<ul>
+<li>Cuando los procesos enlazados reciben la señal con un causa
+<code>:normal</code>, siguen ejecutándose sin realizar ninguna acción
+especial.</li>
+</ul>
+</section>
+<section id="muerte-por-causa-anormal" class="slide level2">
+<h2>Muerte por causa anormal</h2>
+<p><svg
+   width="112.63799mm"
+   height="65.262558mm"
+   viewBox="0 0 112.63799 65.262559"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="EnlaceVital4.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="1.1385101"
+     inkscape:cx="241.54375"
+     inkscape:cy="253.40135"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <rect
+       x="192.35666"
+       y="95.739159"
+       width="36.89032"
+       height="42.160362"
+       id="rect8" />
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-40.560195,-3.5464196)">
+    <circle
+       style="fill:#99ff55;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1"
+       cx="52.86972"
+       cy="36.834507"
+       r="5.267807" />
+    <ellipse
+       style="fill:#d3d3d3;fill-opacity:1;stroke:#8d8d8d;stroke-width:0.189;stroke-dasharray:none;stroke-opacity:1"
+       id="path1-5"
+       cx="97.621979"
+       cy="36.988983"
+       rx="5.2680001"
+       ry="5.267807" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="39.971832"
+       y="47.640846"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267"
+         x="39.971832"
+         y="47.640846" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="53.450706"
+       y="48.570423"
+       id="text2"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.267"
+         x="53.450706"
+         y="48.570423">&lt;0.134.0&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="97.051666"
+       y="48.724407"
+       id="text2-2"><tspan
+         sodipodi:role="line"
+         id="tspan2-9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;fill:#b5b5b5;fill-opacity:1;stroke-width:0.267"
+         x="97.051666"
+         y="48.724407">&lt;0.208.0&gt;</tspan></text>
+    <circle
+       style="fill:#99ff55;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1-0"
+       cx="139.90306"
+       cy="11.296617"
+       r="5.267807" />
+    <circle
+       style="fill:#99ff55;stroke:#000000;stroke-width:0.189132;stroke-opacity:1"
+       id="path1-0-0"
+       cx="140.59073"
+       cy="56.878109"
+       r="5.267807" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="140.29695"
+       y="23.278576"
+       id="text2-7"><tspan
+         sodipodi:role="line"
+         id="tspan2-5"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.267"
+         x="140.29695"
+         y="23.278576">&lt;0.210.0&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.266999;stroke-opacity:1"
+       x="140.30768"
+       y="68.75959"
+       id="text2-7-8"><tspan
+         sodipodi:role="line"
+         id="tspan2-5-9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.267"
+         x="140.30768"
+         y="68.75959">&lt;0.195.0&gt;</tspan></text>
+    <path
+       style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.865;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 101.67991,29.17368 c 0,0 1.16197,-7.204225 6.27465,-11.619718 5.11268,-4.415493 22.30986,-4.647888 22.30986,-4.647888"
+       id="path3" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,40.560195,5.9342435)"
+       id="text8"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.3333px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect8);display:inline;fill:none;fill-opacity:1;stroke:#000000;stroke-width:2.13543;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <g
+       id="g10"
+       class="fragment">
+      <g
+         id="g1"
+         transform="translate(-44.548944,0.10741482)">
+        <g
+           id="g9"
+           class="fragment">
+          <path
+             style="fill:none;fill-opacity:1;stroke:#610c00;stroke-width:1.665;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+             d="M 91.919349,42.884949 102.37709,29.870863"
+             id="path9" />
+          <path
+             style="fill:none;fill-opacity:1;stroke:#610c00;stroke-width:1.665;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+             d="M 92.152769,30.241396 101.21614,42.79069"
+             id="path9-4"
+             sodipodi:nodetypes="cc" />
+        </g>
+      </g>
+      <g
+         id="g9-0"
+         class="fragment"
+         transform="translate(43.380251,-25.802973)">
+        <path
+           style="fill:none;fill-opacity:1;stroke:#610c00;stroke-width:1.665;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           d="M 91.919349,42.884949 102.37709,29.870863"
+           id="path9-6" />
+        <path
+           style="fill:none;fill-opacity:1;stroke:#610c00;stroke-width:1.665;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           d="M 92.152769,30.241396 101.21614,42.79069"
+           id="path9-4-3"
+           sodipodi:nodetypes="cc" />
+      </g>
+      <g
+         id="g9-5"
+         class="fragment"
+         transform="translate(43.58973,20.339868)">
+        <path
+           style="fill:none;fill-opacity:1;stroke:#610c00;stroke-width:1.665;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           d="M 91.919349,42.884949 102.37709,29.870863"
+           id="path9-5" />
+        <path
+           style="fill:none;fill-opacity:1;stroke:#610c00;stroke-width:1.665;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           d="M 92.152769,30.241396 101.21614,42.79069"
+           id="path9-4-4"
+           sodipodi:nodetypes="cc" />
+      </g>
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#ff1300;stroke-width:0.865;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 57.706176,36.605737 H 92.100543"
+       id="path2"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#ff1300;stroke-width:0.865;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 101.44585,32.968777 135.14304,13.912444"
+       id="path2-1"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#ff1300;stroke-width:0.865;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 101.13959,40.747587 33.92959,13.94366"
+       id="path2-1-2"
+       sodipodi:nodetypes="cc" />
+  </g>
+</svg>
+</p>
+<ul>
+<li><p>Sin embargo, si un proceso recibe una señal con una causa
+distinta de <code>:normal</code>, el proceso también muere.</p></li>
+<li><p>…y también propagará la señal de salida a todos los procesos con
+los que estuviera enlazados.</p></li>
+</ul>
+</section>
+<section id="ejemplo" class="slide level2">
+<h2>Ejemplo</h2>
+<ul>
+<li><p>Supongamos que tenemos la siguiente función que terminará por
+causas anormales:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fallar<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span> <span class="op">/</span> <span class="dv">0</span>   <span class="arrow_box_left fragment"> Lanza excepción `ArithmeticError` </span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Creamos un enlace vital entre la <em>shell</em> y un proceso que
+ejecute <code>fallar</code>.</li>
+</ul>
+<pre class="text"><code>Interactive Elixir (1.17.1) - press Ctrl+C to exit (...)
+&gt; self()
+#PID&lt;0.160.0&gt;
+
+&gt; <span class="fragment"><span class="hl">spawn_link(EnlacesVitales, :fallar, [])</span></span>
+<span class="fragment">12:00:23.821 [error] Process #PID<0.176.0> raised an exception
+** (ArithmeticError) bad argument in arithmetic expression</span>
+
+<span class="fragment">Interactive Elixir (1.17.1) - press Ctrl+C to exit (...)
+></span> <span class="fragment">self()
+#PID<0.162.0></span>   <span class="arrow_box_left fragment"> El proceso de la shell ha muerto ¡y se ha reiniciado! </span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="por-qué-se-ha-reiniciado">¿Por qué se ha reiniciado?</h3>
+<ul>
+<li><p>Como esperábamos, el proceso que ejecutaba la <em>shell</em> ha
+muerto, al tener un enlace vital con el proceso creado mediante
+<code>spawn_link</code>.</p></li>
+<li><p>Pero, ¿por qué se ha reiniciado?</p></li>
+<li><p>El proceso de la <em>shell</em>, a su vez, está siendo
+monitorizado por otro proceso <strong>supervisor</strong> que se encarga
+de reiniciar la <em>shell</em> cada vez que su proceso correspondiente
+muere.</p></li>
+</ul>
+</section>
+<section id="evitar-la-muerte-de-los-procesos-enlazados"
+class="slide level2">
+<h2>Evitar la muerte de los procesos enlazados</h2>
+<div>
+<ul>
+<li class="fragment"><p>Como hemos visto, por defecto, cuando un proceso
+<code>X</code> recibe una señal de terminación de otro proceso
+<code>Y</code> enlazado, y la causa de la finalización de <code>Y</code>
+es anormal, el proceso <code>X</code> también muere.</p></li>
+<li class="fragment"><p>Es posible evitar este comportamiento por
+defecto, de modo que <code>X</code> pueda <strong>capturar</strong> la
+señal de terminación.</p></li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<div>
+<ul>
+<li class="fragment"><p>Cuando un proceso hace la siguiente llamada:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cn">Process</span><span class="op">.</span>flag<span class="fu">(</span><span class="va">:trap_exit</span>, <span class="cn">true</span><span class="fu">)</span></span></code></pre></div>
+
+<p>está indicando que quiere <strong>capturar</strong> las señales de
+terminación de otreos procesos.</p></li>
+<li class="fragment"><p>De este modo, cuando el proceso reciba una señal
+de terminación de otro, esta señal se transformará en un
+<strong>mensaje</strong> que se guardará en su cola de mensajes, y que
+podrá obtener mediante <code>receive</code>.</p></li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>&gt; self()
+#PID&lt;0.179.0&gt;
+
+&gt; Process.flag(:trap_exit, true)
+
+&gt; spawn_link(EnlacesVitales, :fallar, [])
+#PID&lt;0.180.0&gt;
+12:22:16.770 [error] Process #PID&lt;0.180.0&gt; raised an exception
+** (ArithmeticError) bad argument in arithmetic expression
+
+&gt; <span class="fragment">self()
+#PID<0.179.0></span>   <span class="arrow_box_left fragment"> La shell sigue viva </span>
+
+&gt; <span class="fragment">receive do: (x -> x)
+{:EXIT, #PID<0.180.0>, ...}</span>   <span class="arrow_box_left fragment"> La shell ha recibido la señal como mensaje </span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>El mensaje recibido tiene la siguiente forma:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="va">:EXIT</span>, pid, reason<span class="fu">}</span></span></code></pre></div>
+
+<ul>
+<li><p><code>pid</code>: es el PID del proceso muerto que ha enviado la
+señal.</p></li>
+<li><p><code>reason</code>: causa de la finalización del
+proceso.</p></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Cuando un proceso captura las señales de salida recibidas,
+también captura aquellas asociadas a terminación normal:</p>
+<pre class="text"><code>&gt; Process.flag(:trap_exit, true)
+
+&gt; spawn_link(EnlacesVitales, :saludar, [])
+Hola, mundo
+#PID&lt;0.181.0&gt;
+
+&gt; flush
+{:EXIT, #PID&lt;0.181.0&gt;, :normal}</code></pre>
+</li>
+</ul>
+</section></section>
+<section>
+<section id="monitores" class="title-slide slide level1 ext"
+data-background-image="img/Extension.jpg">
+<h1 class="ext" data-background-image="img/Extension.jpg">Monitores</h1>
+
+</section>
+<section id="monitores-1" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Monitores</h2>
+<ul>
+<li><p>Los <strong>monitores</strong> son una alternativa a los enlaces
+vitales.</p></li>
+<li><p>Mientras que los enlaces vitales son bidireccionales, los
+monitores son <strong>unidireccionales</strong>:</p></li>
+<li><p>Si <code>X</code> monitoriza un proceso <code>Y</code>:</p>
+<ul>
+<li><p>Cuando <code>Y</code> finalice, enviará una señal a
+<code>X</code>.</p></li>
+<li><p>pero <code>X</code>, cuando finalice, no enviará una señal a
+<code>Y</code>.</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="creación-de-monitores" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Creación de
+monitores</h2>
+<ul>
+<li><p>Mediante la función <code>spawn_monitor/3</code>, que funciona
+igual que <code>spawn</code>, pero el proceso que hace la llamada a
+<code>spawn_monitor</code> monitorizará el proceso recien
+creado.</p></li>
+<li><p>También se puede utilizar la función
+<code>Process.monitor/1</code> que monitoriza un proceso ya
+existente.</p></li>
+</ul>
+</section>
+<section id="recepción-de-mensajes" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg">Recepción de
+mensajes</h2>
+<ul>
+<li><p>Cuando un proceso muere, todos aquellos que le monitorizan
+reciben un mensaje de la siguiente forma:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="va">:DOWN</span>, ref, <span class="va">:process</span>, pid, reason<span class="fu">}</span></span></code></pre></div>
+
+<ul>
+<li><code>pid</code> es el proceso que ha finalizado.</li>
+<li><code>reason</code> es la causa de la finalización (puede ser
+<code>:normal</code>).</li>
+<li><code>ref</code> es la referencia del monitor (devuelta por
+<code>spawn_monitor</code>).</li>
+</ul></li>
+</ul>
+</section>
+<section id="section-1" class="slide level2 ext"
+data-background-image="img/Extension.jpg">
+<h2 class="ext" data-background-image="img/Extension.jpg"></h2>
+<pre class="text"><code>&gt; spawn_monitor(EnlacesVitales, :saludar, [])
+{#PID&lt;0.182.0&gt;, #Reference&lt;...&gt;}
+
+&gt; receive do: (x -&gt; x)
+{:DOWN, #Reference&lt;...&gt;, :process, #PID&lt;0.182.0&gt;, :normal}</code></pre>
+
+</section></section>
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/search/search.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Prints all fragments in their visible states on the same slide 
+        pdfSeparateFragments: false,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom,
+          // RevealHighlight          
+        ]
+      });
+    </script>
+    </body>
+</html>
