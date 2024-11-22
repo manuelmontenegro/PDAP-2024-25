@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Manuel Montenegro Montes">
+  <title>Programación distribuida en Elixir</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="css/nnfx-light.min.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="css/pdap.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="img/RedBackground.jpg">
+  <h1 class="title">Programación distribuida en Elixir</h1>
+<div id="author-container">
+<div class="author">
+Manuel Montenegro Montes
+<br>
+<span id="email"><a href="montenegro@fdi.ucm.es">montenegro@fdi.ucm.es</a></span>
+</div>
+<div class="subject">
+<strong>Programación Declarativa Aplicada</strong>
+<br>Máster en Ingeniería Informática<br>Facultad de
+Informática<br>Universidad Complutense de Madrid
+</div>
+</div>
+</section>
+
+<section id="section" class="slide level2 outline"
+data-background-image="img/RedBackground.jpg">
+<h2 class="outline" data-background-image="img/RedBackground.jpg"></h2>
+<ol type="1">
+<li>Procesos, nodos y <em>hosts</em></li>
+<li>Invocación de código remoto</li>
+<li>Seguridad de sistemas distribuídos</li>
+</ol>
+</section>
+<section>
+<section id="procesos-nodos-y-hosts" class="title-slide slide level1">
+<h1>Procesos, nodos y <em>hosts</em></h1>
+
+</section>
+<section id="qué-es-un-sistema-distribuido" class="slide level2">
+<h2>¿Qué es un sistema distribuido?</h2>
+<ul>
+<li><p>Es un conjunto de ordenadores separados físicamente, pero
+conectados entre sí por una red de comunicaciones.</p></li>
+<li><p>Esta separación física es <strong>transparente</strong> al
+programador/a.</p>
+<ul>
+<li><p>La comunicación con otros nodos se realiza de la misma manera
+tanto si estos están en la mismo ordenador, o están en ordenadores
+distintos.</p></li>
+<li><p>Se utiliza la misma interfaz entre componentes remotos y
+componentes locales.</p></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="por-qué-un-sistema-distribuido">¿Por qué un sistema
+distribuido?</h3>
+<ul>
+<li><p><span class="rojo"><strong>Eficiencia</strong></span>: Permite
+que distintas partes de un mismo programa se ejecuten de manera paralela
+en distintas máquinas.</p></li>
+<li><p><span class="rojo"><strong>Tolerancia a fallos</strong></span>:
+Si una de los ordenadores del sistema falla, los demás pueden realizar
+el trabajo por él.</p></li>
+<li><p><span class="rojo"><strong>Acceso a recursos y servicios
+remotos</strong></span>: Por ejemplo, es posible proporcionar una API de
+acceso a nuestros servicios web.</p></li>
+<li><p><span class="rojo"><strong>Escalabilidad</strong></span>: Es
+posible aumentar la capacidad de trabajo de nuestro sistema añadiendo
+más máquinas.</p></li>
+</ul>
+</section>
+<section id="nodos-en-elixir" class="slide level2">
+<h2>Nodos en Elixir</h2>
+<ul>
+<li><p>El mecanismo de abstracción que proporciona Elixir para la
+programación distribuida se basa en el concepto de
+<strong>nodo</strong>.</p></li>
+<li><p>Un nodo es un entorno de ejecución de Elixir al que se ha dado un
+<strong>nombre</strong>.</p>
+<ul>
+<li>Dentro de un nodo pueden ejecutarse varios procesos.</li>
+</ul></li>
+</ul>
+<p><img data-src="20/Nodo1.png" /></p>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Un mismo ordenador (<strong>host</strong>) puede tener varios
+nodos en ejecución.</p></li>
+<li><p>Un nodo puede comunicarse con los nodos de una misma máquina, o
+con los de otra distinta.</p></li>
+<li><p>Tenemos, por tanto, tres niveles: <strong><em>host</em></strong>,
+<strong>nodo</strong> y <strong>proceso</strong>.</p></li>
+</ul>
+<p><img data-src="20/Nodo2.png" /></p>
+</section>
+<section class="slide level2">
+
+<h3 id="iniciar-un-nodo">Iniciar un nodo</h3>
+<ul>
+<li>Cuando iniciamos un entorno de ejecución de Elixir mediante
+<code>iex</code>, este entorno no forma un nodo a menos que le demos un
+nombre.
+<ul>
+<li>Esto implica que no podrá comunicarse con otros nodos.</li>
+</ul></li>
+<li>La función <code>Node.alive?/0</code> nos permite conocer si estamos
+dentro de un entorno de ejecución con nombre.</li>
+</ul>
+<pre class="text"><code># iex
+
+Interactive Elixir (1.17.1) - press Ctrl+C to exit (type h() ENTER for help)
+
+&gt; Node.alive?()
+<span class="hl">false</span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="nombres-de-nodo">Nombres de nodo</h3>
+<ul>
+<li><p>Los nombres de nodo permiten identificar a un nodo dentro de un
+mismo <strong>host</strong>.</p></li>
+<li><p>Dos nodos distintos pueden tener el mismo nombre, siempre que se
+encuentren en <strong>hosts</strong> distintos.</p></li>
+<li><p>Un identificador de nodo es un par <em>(nombre_nodo,
+nombre_host)</em>, y se representa del siguiente modo:</p>
+<p><code>nombre_nodo@nombre_host</code></p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>A su vez, el nombre de un host puede ser <strong>corto</strong> o
+<strong>largo</strong>.</p></li>
+<li><p><strong>Nombres cortos</strong>: hacen referencia a un
+<em>host</em> dentro de la red local.</p>
+<p><code>mi_nodo@ucmsafe</code></p></li>
+<li><p><strong>Nombres largos</strong>: hacen referencia a un
+<em>host</em> local o externo. Incluyen el nombre del dominio, o la
+dirección IP.</p>
+<p><code>mi_nodo@ucmsafe.esi.ucm.es</code><br/>
+<code>mi_nodo@147.96.80.234</code></p>
+<p>La traducción de nombres largos a direcciones IP se realiza mediante
+un servidor DNS.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div class="info_box">
+<p>⚠️ Los nodos con nombre corto solo pueden comunicarse con otros nodos
+con nombre corto, e igualmente para los nodos con nombre largo.</p>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="cómo-dar-nombre-a-un-nodo">¿Cómo dar nombre a un nodo?</h3>
+<ul>
+<li>Mediante las opciones <code>--sname</code> y <code>--name</code> de
+<code>iex</code>.
+<ul>
+<li><code>--sname</code> indica un nombre corto</li>
+<li><code>--name</code> indica un nombre largo</li>
+</ul></li>
+</ul>
+<pre class="text"><code># <span class="hl">iex --sname mi_nodo</span> <span class="arrow_box_left"> Nombre corto </span>
+Erlang/OTP 27 [erts-15.0] [source] [64-bit] [smp:4:4] [ds:4:4:10] [async-threads:1] [jit:ns]
+
+Interactive Elixir (1.17.1) - press Ctrl+C to exit (type h() ENTER for help)
+iex(<span class="hl">mi_nodo@localhost</span>)1&gt; Node.alive?()
+true
+
+iex(<span class="hl">mi_nodo@localhost</span>)2&gt; node()
+:mi_nodo@localhost</code></pre>
+
+</section>
+<section class="slide level2">
+
+<pre class="text"><code># <span class="hl">iex --name mi_nodo</span>   <span class="arrow_box_left"> Nombre largo </span>
+Erlang/OTP 27 [erts-15.0] [source] [64-bit] [smp:4:4] [ds:4:4:10] [async-threads:1] [jit:ns]
+
+Interactive Elixir (1.17.1) - press Ctrl+C to exit (type h() ENTER for help)
+iex(<span class="hl">mi_nodo@localhost.localdomain.com</span>)1&gt; Node.alive?()
+true
+
+iex(<span class="hl">mi_nodo@localhost.localdomain.com</span>)2&gt; node()
+:&quot;mi_nodo@localhost.localdomain.com&quot;</code></pre>
+
+</section>
+<section id="conexión-entre-nodos" class="slide level2">
+<h2>Conexión entre nodos</h2>
+<ul>
+<li><p>La función <code>Node.list/0</code> permite obtener la lista de
+nodos conectados al actual.</p></li>
+<li><p>Inicialmente, esa lista está vacía.</p></li>
+</ul>
+<pre class="text"><code>iex(mi_nodo@localhost)&gt; Node.list()
+[]</code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="cómo-conectarse-a-un-nodo">¿Cómo conectarse a un nodo?</h3>
+<ol type="1">
+<li><p>Mediante <code>Node.connect/1</code></p>
+<pre class="text"><code>iex(mi_nodo@localhost)&gt; Node.connect(:otro_nodo@localhost)
+<span class="hl">true</span>
+
+iex(mi_nodo@localhost)&gt; nodes()
+<span class="hl">[:otro_nodo@localhost]</span></code></pre>
+</li>
+<li><p>Directamente, enviando un mensaje al nodo remoto.</p></li>
+</ol>
+</section>
+<section id="hola-mundo-distribuido" class="slide level2">
+<h2>«Hola, Mundo» distribuido</h2>
+<ul>
+<li><p>Hemos visto que la función <code>send/2</code> recibe como primer
+argumento:</p>
+<ol type="1">
+<li><p>Un PID del proceso destinatario</p></li>
+<li><p>Un átomo con el nombre del proceso destinatario, en caso de que
+estuviera registrado con un nombre.</p></li>
+</ol></li>
+<li><p>Con los nodos distribuidos, hay una tercera posibilidad:</p>
+<ol start="3" type="1">
+<li>Una tupla <code>{nombre_proceso, nodo}</code>.</li>
+</ol></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p>Comenzamos creando dos nodos: <code>nodo1</code> y
+<code>nodo2</code></p>
+<div class="columns">
+<div class="column">
+<pre class="text" style="background-color:#D0FFD0"><code># iex --sname nodo1
+nodo1@localhost&gt; </code></pre>
+
+</div><div class="column">
+<pre class="text" style="background-color:#D0D0FF"><code># iex --sname nodo2
+nodo2@localhost&gt; </code></pre>
+
+</div>
+</div>
+<p>Queremos enviar un mensaje desde la <em>shell</em> de
+<code>nodo1</code> a la shell de <code>nodo2</code>. Para ello, tenemos
+que registrar el proceso de la segunda <em>shell</em> y asignarle un
+nombre:</p>
+<div class="columns">
+<div class="column">
+
+</div><div class="column">
+<pre class="text" style="background-color:#D0D0FF"><code>nodo2@localhost&gt; Process.register(self(), :mi_proceso)</code></pre>
+
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<p>Enviamos el mensaje desde la primera <em>shell</em>:</p>
+<div class="columns">
+<div class="column">
+<pre class="text" style="background-color:#D0FFD0"><code>nodo1@localhost&gt; send({:mi_proceso, :nodo2@localhost}, 
+  &quot;Hola, mundo&quot;)</code></pre>
+
+</div><div class="column">
+
+</div>
+</div>
+<p>Comprobamos que hemos recibido el mensaje desde la segunda
+<em>shell</em>:</p>
+<div class="columns">
+<div class="column">
+
+</div><div class="column">
+<pre class="text" style="background-color:#D0D0FF"><code>nodo2@localhost&gt; flush()
+&quot;Hola, mundo&quot;</code></pre>
+
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<p>¿Qué pasa si la primera <em>shell</em> también envía su PID?</p>
+<div class="columns">
+<div class="column">
+<pre class="text" style="background-color:#D0FFD0"><code>nodo1@localhost&gt; self()
+#PID&lt;0.110.0&gt;
+
+nodo1@localhost&gt; send({:mi_proceso, :nodo2@localhost}, 
+  {<span class="hl">self()</span>, &quot;Hola, mundo&quot;})
+{<span class="hl">#PID&lt;0.110.0&gt;</span>, &quot;Hola, mundo&quot;}</code></pre>
+
+</div><div class="column">
+
+</div>
+</div>
+<div class="columns">
+<div class="column">
+
+</div><div class="column">
+<pre class="text" style="background-color:#D0D0FF"><code>nodo2@localhost&gt; flush
+{<span class="hl">#PID&lt;13866.110.0&gt;</span>, &quot;Hola, mundo&quot;}</code></pre>
+
+</div>
+</div>
+<p>¡Los PIDs son distintos!</p>
+<p>De los tres números que componen un PID, el primero indica el
+<strong>nodo</strong> en el que se encuentra el proceso identificado. Si
+el proceso forma parte del mismo nodo, esta componente tiene el valor
+0.</p>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Una vez identificado un nodo mediante un PID «remoto», es posible
+utilizar ese PID para enviar mensajes:</li>
+</ul>
+<div class="columns">
+<div class="column">
+
+</div><div class="column">
+<pre class="text" style="background-color:#D0D0FF"><code>nodo2@localhost&gt; p = pid(13866,110,0)
+nodo2@localhost&gt; send(p, &quot;¿Qué tal?&quot;)</code></pre>
+
+</div>
+</div>
+<div class="columns">
+<div class="column">
+<pre class="text" style="background-color:#D0FFD0"><code>nodo1@localhost&gt; flush()
+&quot;¿Qué tal?&quot;</code></pre>
+
+</div><div class="column">
+
+</div>
+</div>
+</section>
+<section id="nombres-globales-y-locales" class="slide level2">
+<h2>Nombres globales y locales</h2>
+<ul>
+<li>Ya sabemos que se puede utilizar <code>Process.register/2</code>
+para asignar un nombre a un proceso. El nombre registrado de esta manera
+es <strong>local</strong>.
+<ul>
+<li>Solo es visible desde el nodo en el que se define.</li>
+<li>Si se quiere utilizar desde otro nodo, ha de utilizarse la tupla
+<code>{nombre, nodo}</code>.</li>
+<li>Esto nos permite tener dos procesos con igual nombre, pero en
+distintos nodos.</li>
+</ul></li>
+<li>Es posible registrar nombres de manera <strong>global</strong>
+mediante <code>:global.register_name/2</code>.
+<ul>
+<li>¡Cuidado con los conflictos!</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div class="columns">
+<div class="column">
+
+</div><div class="column">
+<pre class="text" style="background-color:#D0D0FF"><code>nodo2@localhost&gt; :global.register_name(:mi_proceso, self()</code></pre>
+
+</div>
+</div>
+<p>La función <code>send/2</code> no admite nombres globales. Para poder
+hacer uso de un nombre global desde otro nodo, debemos obtener el PID
+del proceso registrado mediante <code>:global.whereis_name/1</code>.</p>
+<div class="columns">
+<div class="column">
+<pre class="text" style="background-color:#D0FFD0"><code>nodo1@localhost&gt; p = :global.whereis_name(:mi_proceso)
+#PID&lt;13035.110.0&gt;
+
+nodo1@localhost&gt; send(p, &quot;Hola!&quot;)</code></pre>
+
+</div><div class="column">
+
+</div>
+</div>
+<div class="columns">
+<div class="column">
+
+</div><div class="column">
+<pre class="text" style="background-color:#D0D0FF"><code>nodo2@localhost&gt; flush()
+&quot;Hola!&quot;</code></pre>
+
+</div>
+</div>
+</section>
+<section id="transitividad-de-las-conexiones" class="slide level2">
+<h2>Transitividad de las conexiones</h2>
+<ul>
+<li><p>¿Qué pasa si añadimos un tercer nodo y lo conectamos con el
+segundo?</p>
+<pre class="text" style="background-color:#FFFFD0"><code># iex --sname nodo3
+nodo3@localhost&gt; Node.connect(:nodo2@localhost)
+true
+
+nodo3@localhost&gt; Node.list()
+[:nodo2@localhost, :nodo1@localhost]   <span class="arrow_box_left fragment"> ¡También se conecta a `nodo1`! </span></code></pre>
+</li>
+<li><p>Volvemos al primer nodo, para comprobar sus conexiones:</p>
+<pre class="text" style="background-color:#D0FFD0"><code>nodo1@localhost&gt; Node.list()
+[:nodo2@localhost, :nodo3@localhost]</code></pre>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Cuando un nodo <em>A</em> se conecta a otro nodo <em>B</em>, el
+nodo <em>A</em> también se conectará a aquellos con los que <em>^</em>
+estuviera conectado previamente.</p></li>
+<li><p>De este modo, se tiene una red de nodos completamente
+conectada.</p></li>
+</ul>
+<div class="columns">
+<div class="column">
+<p><img data-src="20/Conexiones.png" /></p>
+</div><div class="column">
+<div class="info_box fragment" style="font-size:80%">
+<p>⚠️ ¿Cuántas conexiones se producen en una red de <em>N</em>
+nodos?</p>
+</div>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="nodos-ocultos">Nodos ocultos</h3>
+<ul>
+<li><p>Es posible declarar un nodo como oculto, mediante la opción
+<code>--hidden</code> de <code>iex</code>.</p></li>
+<li><p>Los nodos ocultos:</p>
+<ul>
+<li>No se conectan de modo transitivo. Han de iniciar conexiones
+explícitamente.</li>
+<li>Las conexiones que involucran un nodo oculto no aparecen en la lista
+devuelta por <code>Node.list</code>, salvo que se haga con el argumento
+<code>:connected</code>.</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>En el ejemplo anterior, si hubiésemos declarado
+<code>nodo3</code> como oculto:</p>
+<pre class="text" style="background-color:#FFFFD0"><code># iex --sname nodo3 --hidden
+nodo3@localhost&gt; Node.connect(:nodo2@localhost)
+true
+
+nodo3@localhost&gt; Node.list()
+[:nodo2@localhost]   <span class="arrow_box_left fragment"> Esta vez no se conecta a `nodo2` </span></code></pre>
+
+<pre class="text" style="background-color:#D0D0FF"><code>nodo2@localhost&gt; Node.list()
+[:nodo1@localhost]    <span class="arrow_box_left fragment"> Solo nodos visibles </span>
+
+nodo2@localhost&gt; Node.list(<span class="hl">:connected</span>)
+[:nodo1@localhost, :nodo3@localhost]   <span class="arrow_box_left fragment"> También nodos ocultos </span></code></pre>
+</li>
+</ul>
+</section></section>
+<section>
+<section id="invocación-de-código-remoto"
+class="title-slide slide level1">
+<h1>Invocación de código remoto</h1>
+
+</section>
+<section id="función-node.spawn" class="slide level2">
+<h2>Función <code>Node.spawn</code></h2>
+<ul>
+<li><p>Permite crear un proceso en un nodo distinto al actual.</p></li>
+<li><p>Tiene dos variantes:</p>
+<ul>
+<li><code>Node.spawn(nodo, funcion)</code></li>
+<li><code>Node.spawn(nodo, modulo, funcion, args)</code></li>
+</ul></li>
+</ul>
+<pre class="text"><code>nodo1@localhost&gt; mi_pid = self()
+
+nodo1@localhost&gt; Node.spawn(:nodo2@localhost, fn -&gt; 
+                              send(mi_pid, {self(), &quot;Gracias&quot;})
+                            end)
+
+nodo1@localhost&gt; flush
+{#PID&lt;14168.121.0&gt;, &quot;Gracias&quot;}</code></pre>
+
+</section>
+<section id="función-rpc.call" class="slide level2">
+<h2>Función <code>:rpc.call</code></h2>
+<ul>
+<li>Permite llamar a una función determinada en otro nodo, y además
+<strong>devuelve</strong> el resultado de esa función.</li>
+</ul>
+<pre class="text"><code>nodo2@localhost&gt; :rpc.call(:nodo1@localhost, Kernel, :+, [3, 4])
+7  <span class="arrow_box_left"> La suma se ha calculado en `nodo1` </span></code></pre>
+
+</section></section>
+<section>
+<section id="seguridad-de-sistemas-distribuidos"
+class="title-slide slide level1">
+<h1>Seguridad de sistemas distribuidos</h1>
+
+</section>
+<section id="problemas-de-seguridad" class="slide level2">
+<h2>Problemas de seguridad</h2>
+<ul>
+<li><p>Cualquier proceso remoto o llamada remota creada mediante
+<code>Node.spawn</code> o <code>:rpc.call</code> se ejecuta con los
+mismos derechos que cualquier otro proceso en el nodo remoto.</p></li>
+<li><p>¡Esto permitiría ejecutar remotamente código malicioso en
+cualquier nodo Elixir!</p>
+<pre class="text"><code>&gt; :rpc.call(:servidor@localhost, System, :cmd, &quot;rm -rf *&quot;).  <span class="arrow_box_left"> ⚠️⚠️ </span></code></pre>
+</li>
+<li><p>Existe un mecanismo de seguridad que limita los nodos que pueden
+conectarse a uno dado. Este mecanismo está basado en <strong><em>secret
+cookies</em></strong>.</p></li>
+</ul>
+</section>
+<section id="secret-cookies" class="slide level2">
+<h2><em>Secret cookies</em></h2>
+<ul>
+<li><p>Para que dos nodos puedan comunicarse, no basta con que uno
+conozca el nombre del otro y que ambos estén vivos.</p></li>
+<li><p>Cuando un nodo se inicia, se le asigna un valor especial
+(<em>secret cookie</em>).</p></li>
+<li><p><strong>Solamente los nodos que tengan la misma <em>secret
+cookie</em> pueden comunicarse.</strong></p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="cookies-por-defecto"><em>Cookies</em> por defecto</h3>
+<ul>
+<li><p>¿Cómo hemos conseguido hasta ahora que los nodos de un mismo
+<em>host</em> puedan comunicarse?</p></li>
+<li><p>Cuando se inicia un entorno de ejecución Elixir en un
+<em>host</em> sin especificar ninguna <em>cookie</em>, se le asigna un
+valor de cookie aleatorio, guardado en un fichero llamado
+<code>.erlang.cookie</code>.</p></li>
+<li><p>Cuando se inician otro entorno en el mismo <em>host</em>,
+comprueba si existe un fichero llamado <code>.erlang.cookie</code> y, en
+ese caso, establecen su <em>cookie</em> al valor contenido en dicho
+fichero.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<div class="info_box">
+<p>Todos los nodos de un mismo <em>host</em>, por defecto, comparten la
+misma cookie.</p>
+</div>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>No obstante, para que dos nodos en distintas máquinas (o
+distintos sistemas de ficheros) puedan comunicarse, es necesario
+establecer en ambos la misma <strong>secret cookie</strong>.</p></li>
+<li><p>Esto es posible mediante la opción <code>--setcookie</code> de
+<code>iex</code>.</p>
+<pre class="text"><code># iex --sname nodo1 <span class="hl">--setcookie ABCD</span></code></pre>
+
+<p>o bien mediante la función <code>Node.set_cookie/1</code></p>
+<pre class="text"><code>&gt; Node.set_cookie(:ABCD)</code></pre>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="alternativas-a-las-cookies">Alternativas a las
+<em>cookies</em></h3>
+<ul>
+<li><p>Las <em>cookies</em> permite acotar qué nodos pueden conectarse a
+uno dado.</p></li>
+<li><p>Sin embargo, cuando dos nodos se conectan, uno siempre podrá
+ejecutar código arbitrario sobre otro.</p></li>
+<li><p>Esto no es un problema si ambos nodos pertenecen al mismo
+cluster, y ambos tienen confianza mutua (<em>trusted
+environment</em>).</p></li>
+<li><p>Sin embargo, en contextos en los que no existe ese tipo de
+confianza, hay que utilizar otro tipo de mecanismos, como los
+<em>sockets</em>.</p>
+<ul>
+<li>Más información: <code>:gen_tcp</code> <a
+href="https://www.erlang.org/doc/apps/kernel/gen_tcp.html">[+]</a>,
+<code>:gen_udp</code> <a
+href="https://www.erlang.org/doc/apps/kernel/gen_udp.html">[+]</a></li>
+</ul></li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/search/search.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Prints all fragments in their visible states on the same slide 
+        pdfSeparateFragments: false,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom,
+          // RevealHighlight          
+        ]
+      });
+    </script>
+    </body>
+</html>
