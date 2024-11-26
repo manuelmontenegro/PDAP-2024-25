@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210.22079mm"
+   height="121.81783mm"
+   viewBox="0 0 210.2208 121.81783"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="GenServer4.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.4378367"
+     inkscape:cx="411.72965"
+     inkscape:cy="252.81035"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="marker10"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path10" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="ArrowWideRounded"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide, rounded arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:round"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="ArrowWide"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path1" />
+    </marker>
+  </defs>
+  <g
+     id="g5"
+     transform="matrix(1.3134921,0,0,1.3134921,-56.558285,-8.4595719)"
+     style="stroke-width:0.761329">
+    <rect
+       style="fill:#d4f5ff;fill-opacity:1;stroke:none;stroke-width:0.380664;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4"
+       width="62.933086"
+       height="92.743484"
+       x="43.059479"
+       y="6.4405198" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#d4f5ff;fill-opacity:1;stroke:none;stroke-width:0.380664;stroke-dasharray:none;stroke-opacity:1"
+       x="74.894051"
+       y="14.905205"
+       id="text5"><tspan
+         sodipodi:role="line"
+         id="tspan5"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:'Raleway Bold';fill:#006f91;fill-opacity:1;stroke-width:0.380665"
+         x="74.894051"
+         y="14.905205">Servidor</tspan></text>
+  </g>
+  <g
+     id="g3"
+     transform="matrix(1.3134921,0,0,1.3134921,-36.738715,-11.118295)"
+     style="stroke-width:0.761329;fill:#d9d9d9;fill-opacity:1;stroke:#ffffff;stroke-opacity:1">
+    <rect
+       style="fill:#d9d9d9;fill-opacity:1;stroke:#ffffff;stroke-width:0.380665;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1"
+       width="51.156136"
+       height="25.578068"
+       x="33.674721"
+       y="26.49814" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.9389px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#d9d9d9;fill-opacity:1;stroke:#ffffff;stroke-width:0.380664;stroke-dasharray:none;stroke-opacity:1"
+       x="58.700741"
+       y="37.723049"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#d9d9d9;fill-opacity:1;stroke:#ffffff;stroke-width:0.380665;stroke-opacity:1"
+         x="58.700741"
+         y="37.723049">Parte genérica</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#d9d9d9;fill-opacity:1;stroke:#ffffff;stroke-width:0.380665;stroke-opacity:1"
+         x="58.700741"
+         y="43.974739"
+         id="tspan2">(bibliotecas OTP)</tspan></text>
+  </g>
+  <g
+     id="g4"
+     transform="matrix(1.3134921,0,0,1.3134921,-36.980418,-11.359997)"
+     style="stroke-width:0.761329">
+    <rect
+       style="fill:#ffecbd;fill-opacity:1;stroke:#000000;stroke-width:0.380665;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1-1"
+       width="51.156136"
+       height="25.578068"
+       x="34.063931"
+       y="64.583519" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.9389px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ceffbd;fill-opacity:1;stroke:#000000;stroke-width:0.380664;stroke-dasharray:none;stroke-opacity:1"
+       x="59.089951"
+       y="73.16259"
+       id="text1-2"><tspan
+         sodipodi:role="line"
+         id="tspan1-7"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.380665"
+         x="59.089951"
+         y="73.16259">Parte específica</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.380665"
+         x="59.089951"
+         y="79.414284"
+         id="tspan2-0">(escrita por</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.380665"
+         x="59.089951"
+         y="85.66597"
+         id="tspan4">programador/a)</tspan></text>
+  </g>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-26.314126,-10.304832)" />
+  <g
+     id="g5-6"
+     transform="matrix(1.3134921,0,0,1.3134921,71.184417,-8.4595719)"
+     style="stroke-width:0.761329">
+    <g
+       id="g6"
+       transform="translate(-0.14009591,3.6357509)"
+       style="stroke-width:0.761329">
+      <rect
+         style="fill:#d4f5ff;fill-opacity:1;stroke:none;stroke-width:0.380664;stroke-dasharray:none;stroke-opacity:1"
+         id="rect4-1"
+         width="62.933086"
+         height="45.366604"
+         x="43.059479"
+         y="3.2175584" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#d4f5ff;fill-opacity:1;stroke:none;stroke-width:0.380664;stroke-dasharray:none;stroke-opacity:1"
+         x="74.894051"
+         y="12.890854"
+         id="text5-8"><tspan
+           sodipodi:role="line"
+           id="tspan5-7"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:'Raleway Bold';fill:#006f91;fill-opacity:1;stroke-width:0.380665"
+           x="74.894051"
+           y="12.890854">Cliente</tspan></text>
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#005dbd;stroke-width:0.380665;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ArrowWide)"
+       d="M 49.168776,30.730482 C 25.982072,23.737918 3.2208133,32.202602 3.2208133,32.202602"
+       id="path6" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#005dbd;stroke-width:0.380664;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ArrowWide)"
+       d="M 2.8088595,37.723049 C 25.700164,44.531598 48.803427,37.355019 48.803427,37.355019"
+       id="path7" />
+  </g>
+  <path
+     style="fill:none;fill-opacity:1;stroke:#005dbd;stroke-width:0.499999;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ArrowWideRounded)"
+     d="M 48.02788,57.596653 V 73.237917"
+     id="path8" />
+  <path
+     style="fill:none;fill-opacity:1;stroke:#005dbd;stroke-width:0.499999;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker10)"
+     d="M 29.994423,73.237917 V 57.596653"
+     id="path9" />
+  <g
+     id="g3-9"
+     transform="matrix(1.3134921,0,0,1.3134921,91.720942,-15.261452)"
+     style="stroke-width:0.761329;fill:#d9d9d9;fill-opacity:1;stroke:#ffffff;stroke-opacity:1">
+    <rect
+       style="fill:#d9d9d9;fill-opacity:1;stroke:#ffffff;stroke-width:0.380665;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1-2"
+       width="51.156136"
+       height="25.578068"
+       x="33.674721"
+       y="26.49814" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.9389px;font-family:monospace;-inkscape-font-specification:monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#d9d9d9;fill-opacity:1;stroke:#ffffff;stroke-width:0.380664;stroke-dasharray:none;stroke-opacity:1"
+       x="58.700741"
+       y="37.723049"
+       id="text1-28"><tspan
+         sodipodi:role="line"
+         id="tspan1-9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#d9d9d9;fill-opacity:1;stroke:#ffffff;stroke-width:0.380665;stroke-opacity:1"
+         x="58.700741"
+         y="37.723049">Parte genérica</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Raleway;-inkscape-font-specification:Raleway;fill:#d9d9d9;fill-opacity:1;stroke:#ffffff;stroke-width:0.380665;stroke-opacity:1"
+         x="58.700741"
+         y="43.974739"
+         id="tspan2-7">(bibliotecas OTP)</tspan></text>
+  </g>
+</svg>

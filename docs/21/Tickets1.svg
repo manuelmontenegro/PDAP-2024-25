@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="222.40439mm"
+   height="46.298988mm"
+   viewBox="0 0 222.4044 46.298988"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="Tickets1.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.0167041"
+     inkscape:cx="336.87285"
+     inkscape:cy="116.55309"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="Triangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-27.523301,-10.99542)">
+    <g
+       id="g3"
+       transform="matrix(1.594202,0,0,1.594202,-16.285729,-6.224111)"
+       style="stroke-width:0.627273">
+      <rect
+         style="fill:#b4e8ff;fill-opacity:1;stroke:#000000;stroke-width:0.24401"
+         id="rect1"
+         width="35.8829"
+         height="11.960966"
+         x="27.60223"
+         y="22.10714" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.98318px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#b4e8ff;fill-opacity:1;stroke:#000000;stroke-width:0.24401"
+         x="44.819489"
+         y="29.362242"
+         id="text1"><tspan
+           sodipodi:role="line"
+           id="tspan1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.98318px;font-family:Raleway;-inkscape-font-specification:'Raleway Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.244009"
+           x="44.819489"
+           y="29.362242">Cliente</tspan></text>
+    </g>
+    <g
+       id="g4"
+       transform="matrix(1.594202,0,0,1.594202,-16.285729,-8.8699445)"
+       style="stroke-width:0.627273">
+      <rect
+         style="fill:#b4e8ff;fill-opacity:1;stroke:#000000;stroke-width:0.24401"
+         id="rect1-5"
+         width="45.0243"
+         height="15.04926"
+         x="121.84221"
+         y="22.107138" />
+      <text
+         xml:space="preserve"
+         style="font-size:3.98318px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#b4e8ff;fill-opacity:1;stroke:#000000;stroke-width:0.24401"
+         x="144.37677"
+         y="28.16374"
+         id="text1-9"><tspan
+           sodipodi:role="line"
+           id="tspan1-3"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.98318px;font-family:Raleway;-inkscape-font-specification:'Raleway Bold';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.244009"
+           x="144.37677"
+           y="28.16374">Servidor</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#b4e8ff;fill-opacity:1;stroke:#000000;stroke-width:0.389001"
+       x="56.162384"
+       y="55.181961"
+       id="text1-6"><tspan
+         sodipodi:role="line"
+         id="tspan1-1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:Monospace;-inkscape-font-specification:Monospace;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.389"
+         x="56.162384"
+         y="55.181961">&lt;0.162.0&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#b4e8ff;fill-opacity:1;stroke:#000000;stroke-width:0.389001"
+       x="214.45735"
+       y="57.245018"
+       id="text1-6-0"><tspan
+         sodipodi:role="line"
+         id="tspan1-1-2"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:Monospace;-inkscape-font-specification:Monospace;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.389"
+         x="214.45735"
+         y="57.245018">&lt;0.163.0&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:Monospace;-inkscape-font-specification:Monospace;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.389001;stroke-opacity:1"
+       x="78.390335"
+       y="8.2806692"
+       id="text5"><tspan
+         sodipodi:role="line"
+         id="tspan5"
+         style="stroke-width:0.389"
+         x="78.390335"
+         y="8.2806692" /></text>
+    <g
+       id="g9"
+       class="fragment"
+       transform="matrix(1.594202,0,0,1.594202,-16.285729,-6.224111)"
+       style="stroke-width:0.627273">
+      <text
+         xml:space="preserve"
+         style="font-size:3.09803px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#b4e8ff;fill-opacity:1;stroke:#000000;stroke-width:0.24401"
+         x="90.874802"
+         y="13.155851"
+         id="text1-6-9"><tspan
+           sodipodi:role="line"
+           id="tspan1-1-22"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.09803px;font-family:Monospace;-inkscape-font-specification:Monospace;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.244009"
+           x="90.874802"
+           y="13.155851">{&lt;0.162.0&gt;, <tspan
+   style="font-size:3.09803px;fill:#004cff;fill-opacity:1;stroke-width:0.244009"
+   id="tspan6">:get_ticket</tspan>}</tspan></text>
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.244009;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Triangle)"
+         d="m 63.474645,22.067676 c 34.226764,-11.960967 58.148695,0 58.148695,0"
+         id="path8" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;font-family:Raleway;-inkscape-font-specification:Raleway;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#0039a3;fill-opacity:1;stroke:none;stroke-width:0.389001"
+       x="213.31158"
+       y="45.538605"
+       id="text1-9-7"><tspan
+         sodipodi:role="line"
+         id="tspan1-3-8"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:monospace;-inkscape-font-specification:monospace;fill:#0039a3;fill-opacity:1;stroke:none;stroke-width:0.389"
+         x="213.31158"
+         y="45.538605">tickets = [1, 2, 3]</tspan></text>
+  </g>
+</svg>
