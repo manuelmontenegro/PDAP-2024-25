@@ -2049,7 +2049,7 @@ especificado por el cliente al arrancar el servidor.</p></li>
 <p><code>{:ok, state, timeout}</code></p>
 <p><code>{:ok, state, :hibernate}</code></p>
 <p><code>{:stop, reason}</code></p>
-<p><code>:ignore</code> ###</p></li>
+<p><code>:ignore</code></p></li>
 </ul>
 </section>
 <section class="slide level2">
@@ -2122,9 +2122,9 @@ colocar cualquier otro valor en lugar de <code>false</code>.</p>
 <li><code>{:reply, reply, new_state}</code></li>
 <li><code>{:reply, reply, new_state, timeout}</code></li>
 <li><code>{:reply, reply, new_state, :hibernate}</code></li>
-<li><code>{:noreply, reply, new_state}</code></li>
-<li><code>{:noreply, reply, new_state, timeout}</code></li>
-<li><code>{:noreply, reply, new_state, :hibernate}</code></li>
+<li><code>{:noreply, new_state}</code></li>
+<li><code>{:noreply, new_state, timeout}</code></li>
+<li><code>{:noreply, new_state, :hibernate}</code></li>
 <li><code>{:stop, reason, reply, new_state}</code></li>
 <li><code>{:stop, reason, new_state}</code></li>
 </ul></li>
@@ -2238,9 +2238,9 @@ class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb33-1"><a h
 <code>state</code></p></li>
 <li><p>Ha de devolver alguna de las siguientes tuplas:</p>
 <ul>
-<li><code>{:noreply, reply, new_state}</code></li>
-<li><code>{:noreply, reply, new_state, timeout}</code></li>
-<li><code>{:noreply, reply, new_state, :hibernate}</code></li>
+<li><code>{:noreply, new_state}</code></li>
+<li><code>{:noreply, new_state, timeout}</code></li>
+<li><code>{:noreply, new_state, :hibernate}</code></li>
 <li><code>{:stop, reason, new_state}</code></li>
 </ul>
 <p>Son iguales que las de <code>handle_call</code>, pero omitiendo la
