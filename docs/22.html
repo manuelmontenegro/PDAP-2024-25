@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Manuel Montenegro Montes">
+  <title>Comportamientos OTP: supervisores</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="css/nnfx-light.min.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {  background-color: #f8f8f8; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ef2929; } /* Alert */
+    code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #204a87; } /* Attribute */
+    code span.bn { color: #0000cf; } /* BaseN */
+    code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4e9a06; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #8f5902; font-style: italic; } /* Comment */
+    code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+    code span.dt { color: #204a87; } /* DataType */
+    code span.dv { color: #0000cf; } /* DecVal */
+    code span.er { color: #a40000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #0000cf; } /* Float */
+    code span.fu { color: #204a87; font-weight: bold; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+    code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+    code span.ot { color: #8f5902; } /* Other */
+    code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+    code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+    code span.ss { color: #4e9a06; } /* SpecialString */
+    code span.st { color: #4e9a06; } /* String */
+    code span.va { color: #000000; } /* Variable */
+    code span.vs { color: #4e9a06; } /* VerbatimString */
+    code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="css/pdap.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="img/RedBackground.jpg">
+  <h1 class="title">Comportamientos OTP: supervisores</h1>
+<div id="author-container">
+<div class="author">
+Manuel Montenegro Montes
+<br>
+<span id="email"><a href="montenegro@fdi.ucm.es">montenegro@fdi.ucm.es</a></span>
+</div>
+<div class="subject">
+<strong>Programación Declarativa Aplicada</strong>
+<br>Máster en Ingeniería Informática<br>Facultad de
+Informática<br>Universidad Complutense de Madrid
+</div>
+</div>
+</section>
+
+<section id="section" class="slide level2 outline"
+data-background-image="img/RedBackground.jpg">
+<h2 class="outline" data-background-image="img/RedBackground.jpg"></h2>
+<ol type="1">
+<li>Supervisores y árboles de supervisión</li>
+<li>El comportamiento <span
+style="font-family: monospace; text-transform: none;">Supervisor</span></li>
+<li>Definición alternativa de <em>child specifications</em></li>
+<li>Supervisores dinámicos</li>
+</ol>
+</section>
+<section>
+<section id="supervisores-y-árboles-de-supervisión"
+class="title-slide slide level1">
+<h1>Supervisores y árboles de supervisión</h1>
+
+</section>
+<section id="supervisores" class="slide level2">
+<h2>Supervisores</h2>
+<div class="columns">
+<div class="column">
+<ul>
+<li><p>Decimos que un proceso supervisa a otro si captura sus señales de
+salida con el fin de reinicializarlo en caso necesario.</p></li>
+<li><p>El <strong>supervisor</strong> crea un enlace vital con el
+proceso supervisado (<strong>trabajador</strong>) y ejecuta
+<code>Process.flag(:trap_exit, true)</code> para capturar sus señales de
+salida.</p></li>
+</ul>
+</div><div class="column" style="width:30%;">
+<p><img data-src="22/Sup1.png" /></p>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="implementar-un-supervisor-sencillo">Implementar un supervisor
+sencillo</h3>
+<ul>
+<li>La siguiente función reinicia un proceso trabajador en caso de
+terminación anormal.</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> restarter<span class="fu">(</span>mod, fun, args<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Process</span><span class="op">.</span>flag<span class="fu">(</span><span class="va">:trap_exit</span>, <span class="cn">true</span><span class="fu">)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  pid <span class="op">=</span> spawn_link<span class="fu">(</span>mod, fun, args<span class="fu">)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">receive</span> <span class="kw">do</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:EXIT</span>, <span class="op">^</span>pid, <span class="va">:normal</span><span class="fu">}</span> <span class="op">-&gt;</span> <span class="va">:ok</span>    <span class="arrow_box_left fragment"> Terminación normal </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:EXIT</span>, <span class="op">^</span>pid, <span class="va">:shutdown</span><span class="fu">}</span> <span class="op">-&gt;</span> <span class="va">:ok</span>  <span class="arrow_box_left fragment"> Terminación normal </span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:EXIT</span>, <span class="op">^</span>pid, _<span class="fu">}</span> <span class="op">-&gt;</span> restarter<span class="fu">(</span>mod, fun, args<span class="fu">)</span>  <span class="arrow_box_left fragment"> Terminación anormal </span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-trabajador">Ejemplo: trabajador</h3>
+<ul>
+<li>En cada segundo, el siguiente trabajador tiene probabilidad 1/5 de
+terminar.</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> exploder<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Iniciando proceso exploder&quot;</span><span class="fu">)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  exploder_loop<span class="fu">()</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">defp</span> exploder_loop<span class="fu">()</span> <span class="kw">do</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Ejecutando exploder_loop&quot;</span><span class="fu">)</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Process</span><span class="op">.</span>sleep<span class="fu">(</span><span class="dv">1000</span><span class="fu">)</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> <span class="va">:rand</span><span class="op">.</span>uniform<span class="fu">(</span><span class="dv">5</span><span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="op">-&gt;</span> <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Finalizando exploder&quot;</span><span class="fu">)</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>         <span class="kw">exit</span><span class="fu">(</span><span class="va">:explode</span><span class="fu">)</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">-&gt;</span> exploder_loop<span class="fu">()</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<p>Ejemplo de ejecución:</p>
+<pre class="text"><code>&gt; restarter(Exploder, :exploder, [])
+
+Iniciando proceso exploder
+Ejecutando exploder_loop
+Ejecutando exploder_loop
+Ejecutando exploder_loop
+Finalizando exploder
+Iniciando proceso exploder
+Ejecutando exploder_loop
+Ejecutando exploder_loop
+Finalizando exploder
+Iniciando proceso exploder
+Ejecutando exploder_loop
+...</code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="supervisar-varios-trabajadores">Supervisar varios
+trabajadores</h3>
+<ul>
+<li>La implementación del proceso supervisor puede extenderse para
+gestionar varios trabajadores.</li>
+<li>El supervisor tendría que mantener una tabla que asocie los PIDs de
+los trabajadores con tuplas <code>{mod, fun, args}</code> que permitirán
+reiniciarlos en caso necesario.</li>
+</ul>
+<p><img data-src="22/Sup2.png" class="fragment"
+style="width:40.0%" /></p>
+</section>
+<section id="árboles-de-supervisión" class="slide level2">
+<h2>Árboles de supervisión</h2>
+<ul>
+<li><p>Algunos de los procesos hijos pueden ser, a su vez, supervisores
+de otros trabajadores:</p></li>
+<li><p>En ese caso, tenemos un <strong>árbol de
+supervisión</strong>.</p></li>
+</ul>
+<p><img data-src="22/Sup3.png" class="fragment"
+style="width:40.0%" /></p>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>La estructura de árbol de supervisión permite finalizar un
+sistema de una forma ordenada.</p></li>
+<li><p>Para detener el sistema basta con enviar una señal de cierre al
+proceso situado en lo alto de la jerarquía. Este la transmitirá a sus
+hijos, y aquellos que sean supervisores lo transmitirán a su vez a los
+nietos, etc.</p></li>
+</ul>
+<p><img data-src="22/Sup4.png" style="width:40.0%" /></p>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo">Ejemplo</h3>
+<ul>
+<li>Árbol de supervisión del núcleo de Erlang (<code>kernel</code>)</li>
+</ul>
+<p><img data-src="22/SupKernel.png" style="width:60.0%" /></p>
+</section></section>
+<section>
+<section id="el-comportamiento-supervisor"
+class="title-slide slide level1">
+<h1>El comportamiento <code>Supervisor</code></h1>
+
+</section>
+<section id="el-comportamiento-supervisor-1" class="slide level2">
+<h2>El comportamiento <code>Supervisor</code></h2>
+<ul>
+<li><p>Las librerías OTP incluyen una implementación de árboles de
+supervisión.</p></li>
+<li><p>Esta funcionalidad está implementada como un comportamiento OTP,
+llamado <code>Supervisor</code>.</p></li>
+<li><p>Al igual que el comportamiento <code>GenServer</code>, es
+necesario definir un módulo <em>callback</em> con funciones que son
+implementadas por el programador, pero son llamadas por las librerías
+OTP.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>En el caso del comportamiento <code>Supervisor</code>, tan sólo
+hay que implementar una función: <code>init/1</code>, que debe
+especificar:</p>
+<ul>
+<li>Opciones de funcionamiento del supervisor.</li>
+<li>Lista de procesos supervisados.</li>
+</ul></li>
+</ul>
+</section>
+<section id="la-función-callback-init1" class="slide level2">
+<h2>La función <em>callback</em> <code>init/1</code></h2>
+<ul>
+<li><p>Recibe un parámetro, que especificaremos cuando arranquemos el
+árbol mediante <code>Supervisor.start</code>.</p></li>
+<li><p>Puede devolver uno de los siguientes valores:</p>
+<ul>
+<li><p><code>:ignore</code></p>
+<p>El árbol de supervisión no se iniciará.</p></li>
+<li><p><code>{:ok, info}</code></p>
+<p>El árbol se iniciará. La componente <code>info</code> contiene
+información sobre las opciones del supervisor y sobre la lista de
+procesos supervisados.</p></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>El programador no suele construir la tupla
+<code>{:ok, info}</code> directamente, sino que suele llamar a una
+función <code>Supervisor.init/2</code> que devuelve la tupla
+construida.</p></li>
+<li><p>Por tanto, la función <em>callback</em> <code>init</code> suele
+tener la siguiente forma:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> init<span class="fu">(</span>arg<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  children <span class="op">=</span> <span class="ot">[</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... Especificación de los hijos ...</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Supervisor</span><span class="op">.</span>init<span class="fu">(</span>children, opts<span class="fu">)</span>  <span class="co"># devuelve un par {:ok, info}</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+<p>donde <code>opts</code> es una <em>keyword list</em>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p><span style="font-family:monospace">Supervisor.init(children, <span
+class="hl">opts</span>)</span></p>
+<ul>
+<li><p>El parámetro <code>opts</code> es una <em>keyword list</em> que
+puede tener una o varias de las siguientes claves:</p>
+<ul>
+<li><code>:strategy</code> (obligatoria)</li>
+<li><code>:max_restarts</code> (opcional; por defecto: 3)</li>
+<li><code>:max_seconds</code> (opcional; por defecto: 5)</li>
+<li><code>:auto_shutdown</code> (opcional; por defecto:
+<code>:never</code>)</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="la-opción-strategy">La opción <code>strategy</code></h3>
+<ul>
+<li><p>Determina cómo afecta al resto de los hijos el fallo de uno de
+ellos. Puede ser uno de los siguientes átomos:</p>
+<ul>
+<li><p><code>:one_for_one</code>: Si falla uno de los hijos, se
+reiniciará sólo el hijo que ha fallado.</p>
+<div style="text-align:center">
+<img data-src="22/OneForOne.png" style="width:50.0%" />
+</div></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul style="list-style-type: none;">
+<li>
+<ul>
+<li class="fragment">
+<p><code>:one_for_all</code>: Si falla uno de los hijos, se reiniciarán
+todos. Utilizado cuando los procesos hijos son dependientes entre
+sí.</p>
+<div style="text-align:center">
+<img data-src="22/OneForAll.png" style="width:50.0%" />
+</div>
+</li>
+<li class="fragment">
+<p><code>:rest_for_one</code>: Si falla uno de los hijos, se reiniciarán
+los hijos creados a continuación de él. Se utiliza cuando se tienen
+procesos encadenados, en los que cada uno depende de los anteriores.</p>
+<div style="text-align:center">
+<img data-src="22/RestForOne.png" style="width:50.0%" />
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="las-opciones-max_restart-y-max_seconds">Las opciones
+<code>:max_restart</code> y <code>:max_seconds</code></h3>
+<ul>
+<li><p>Indican la tolerancia del supervisor a los fallos de los
+hijos.</p></li>
+<li><p>Si el supervisor se ve obligado a llevar a cabo una cantidad de
+reinicios superior a <em>max_restart</em> en menos de
+<em>max_seconds</em> segundos, el supervisor aborta, y envía a todos sus
+hijos la señal <code>:shutdown</code>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="la-opción-auto_shutdown">La opción
+<code>:auto_shutdown</code></h3>
+<ul>
+<li><p>Algunos de los hijos de un supervisor pueden marcarse como
+<em>significativos</em>.</p></li>
+<li><p>La opción <code>:auto_shutdown</code> indica cómo se comporta el
+supervisor en caso de que se mueran uno o varios de sus procesos
+significativos.</p>
+<ul>
+<li><code>:never</code>: el supervisor no se detiene.</li>
+<li><code>:any_significant</code>: el supervisor se detiene si se muere
+alguno de los procesos significativos.</li>
+<li><code>:all_significant</code>: el supervisor se detiene si se mueren
+todos sus procesos significativos.</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-1">Ejemplo</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> init<span class="fu">(</span>arg<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  children <span class="op">=</span> <span class="ot">[</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... Especificación de los hijos ...</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Supervisor</span><span class="op">.</span>init<span class="fu">(</span>children, <span class="va">strategy:</span> one_for_all,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                            <span class="va">max_restarts:</span> <span class="dv">1</span>, <span class="va">max_seconds:</span> <span class="dv">3</span><span class="fu">)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<p><span style="font-family:monospace">Supervisor.init(<span
+class="hl">children</span>, opts)</span></p>
+<ul>
+<li><p>El primer parámetro de <code>Supervisor.init</code> es una lista
+con tantos elementos como procesos supervisados.</p></li>
+<li><p>Cada elemento de esa lista es un diccionario que contiene la
+información que utilizará OTP para iniciar el correspondiente proceso y
+controlar las acciones a realizar cuando el proceso aborta.</p>
+<p>A cada uno de estos diccionarios se le llama <strong><em>child
+specification</em></strong>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="sobre-los-procesos-supervisados">Sobre los procesos
+supervisados</h3>
+<ul>
+<li><p>Los procesos supervisados deben implementar las pautas de diseño
+de las librerías OTP. Esto implica:</p>
+<ul>
+<li><p>No se puede utilizar como trabajador un proceso cualquiera creado
+mediante <code>spawn_link</code>.</p></li>
+<li><p>Los trabajadores pueden ser procesos creados mediante
+<code>GenServer.start_link</code>, <code>Supervisor.start_link</code>,
+<code>Task.start_link</code>, <code>Agent.start_link</code>,
+etc.</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="child-specifications" class="slide level2">
+<h2><em>Child specifications</em></h2>
+<ul>
+<li><p>Es un diccionario que contiene las siguientes claves:</p>
+<ul>
+<li><code>:id</code> (obligatorio)</li>
+<li><code>:start</code> (obligatorio)</li>
+<li><code>:restart</code> (opcional; por defecto
+<code>:permanent</code>)</li>
+<li><code>:shutdown</code> (opcional; por defecto 5 segundos o
+<code>:infinity</code>)</li>
+<li><code>:type</code> (opcional; por defecto <code>:worker</code>)</li>
+<li><code>:modules</code> (opcional; por defecto se obtiene a partir de
+<code>:start</code>)</li>
+<li><code>:significant</code> (opcional; por defecto
+<code>false</code>)</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="child-specifications-id"><em>Child specifications</em>
+(<code>:id</code>)</h3>
+<ul>
+<li><p>El atributo <code>:id</code> identifica unívocamente al hijo con
+respecto a sus hermanos.</p></li>
+<li><p>Si se inicializan varios hijos que implementan el mismo módulo,
+hay que asignar un <code>id</code> explícitamente.</p></li>
+<li><p>El identificador puede utilizarse posteriormente para forzar el
+reinicio de un determinado hijo.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="child-specifications-start"><em>Child specifications</em>
+(<code>:start</code>)</h3>
+<ul>
+<li><p>El atributo <code>:start</code> contiene la tupla
+<code>{modulo, fun, args}</code> que indica cómo arrancar y
+reinicializar el hijo.</p></li>
+<li><p>La función definida por la tupla <code>{modulo, fun, args}</code>
+ha de devolver un par <code>{:ok, pid}</code>, donde <code>pid</code>
+será el proceso supervisado.</p>
+<ul>
+<li>Las funciones <code>GenServer.start_link</code>,
+<code>Supervisor.start_link</code>, etc. devuelven precisamente una
+tupla <code>{:ok, pid}</code>.</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="child-specifications-restart"><em>Child specifications</em>
+(<code>:restart</code>)</h3>
+<ul>
+<li><p>Indica cómo reaccionará el supervisor cada vez que el hijo
+termina. Puede tomar uno de los siguientes valores:</p>
+<ul>
+<li><code>:permanent</code>: el hijo siempre será reiniciado.</li>
+<li><code>:temporary</code>: el hijo nunca será reiniciado.</li>
+<li><code>:transient</code>: sólo se reinicia si terminó por causas
+anormales (es decir, la razón de terminación es distinta de
+<code>:normal</code> o <code>:shutdown</code>).</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="child-specifications-shutdown"><em>Child specifications</em>
+(<code>:shutdown</code>)</h3>
+<ul>
+<li><p>Permite establecer un tiempo máximo (en milisegundos) para que el
+hijo termine después de que el servidor le envíe la señal de
+<code>:shutdown</code>. También se permite el valor
+<code>:infinity</code>.</p></li>
+<li><p>Si, transcurrido ese tiempo, el hijo no termina, entonces se
+forzará la parada del hijo mediante
+<code>Process.exit(pid_hijo, :kill)</code>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="child-specifications-type"><em>Child specifications</em>
+(<code>:type</code>)</h3>
+<ul>
+<li><p>Puede ser uno de los siguientes átomos: <code>:worker</code> o
+<code>:supervisor</code>.</p></li>
+<li><p>Especifica el tipo de hijo (trabajador o supervisor).</p></li>
+<li><p>Se utiliza por el sistema para gestionar las actualizaciones de
+código en caliente.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="child-specifications-module"><em>Child specifications</em>
+(<code>:module</code>)</h3>
+<ul>
+<li>Es una lista con un solo elemento, que indica el nombre del módulo
+que contiene las funciones <em>callback</em> del hijo
+correspondiente.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="child-specifications-significant"><em>Child specifications</em>
+(<code>:significant</code>)</h3>
+<ul>
+<li><p>Contiene un valor booleano que indica si el hijo es significativo
+(<code>true</code>) o no (<code>false</code>).</p>
+<ul>
+<li>Si toma el valor <code>true</code> la opción <code>:restart</code>
+tiene que ser <code>:temporary</code> o <code>:transient</code>.</li>
+</ul></li>
+<li><p>Relacionado con la opción <code>:auto_shutdown</code> mostrada
+previamente.</p></li>
+</ul>
+</section>
+<section id="ejemplo-2" class="slide level2">
+<h2>Ejemplo</h2>
+<ul>
+<li><p>Vamos a construir un supervisor que supervise tres procesos
+contadores.</p></li>
+<li><p>Cada contador es un <code>GenServer</code> que almacena un
+número, el cual puede ser incrementado o decrementado.</p></li>
+</ul>
+<p><img data-src="22/Contadores.png" /></p>
+</section>
+<section class="slide level2">
+
+<h3 id="inicialización-del-contador">Inicialización del contador</h3>
+<ul>
+<li>El estado del contador contiene una tripla
+<code>{id, max, n}</code>, donde:
+<ul>
+<li><code>id</code> es el identificador del contador (un átomo).</li>
+<li><code>max</code> es el valor máximo del contador.</li>
+<li><code>n</code> es el valor actual del contador.</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">Contador</span> <span class="kw">do</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="im">use</span> <span class="cn">GenServer</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="ot">@impl</span> <span class="cn">true</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> init<span class="fu">({</span>id, max<span class="fu">})</span> <span class="kw">when</span> max <span class="op">&gt;=</span> <span class="dv">0</span> <span class="kw">do</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cn">Process</span><span class="op">.</span>flag<span class="fu">(</span><span class="va">:trap_exit</span>, <span class="cn">true</span><span class="fu">)</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Iniciando contador &#39;</span><span class="ot">#{</span>id<span class="ot">}</span><span class="st">&#39;&quot;</span><span class="fu">)</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:ok</span>, <span class="fu">{</span>id, max, <span class="dv">0</span><span class="fu">}}</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> init<span class="fu">({</span>_, _<span class="fu">})</span>, <span class="va">do:</span> <span class="fu">{</span><span class="va">:stop</span>, <span class="va">:max_negative</span><span class="fu">}</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...continúa...</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<h3 id="incremento-del-contador">Incremento del contador</h3>
+<ul>
+<li>Cuando se intenta incrementar el contador más allá del máximo, el
+proceso finaliza de manera normal.</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="ot">@impl</span> <span class="cn">true</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> handle_cast<span class="fu">(</span><span class="va">:incrementar</span>, <span class="fu">{</span>id, max, n<span class="fu">})</span> <span class="kw">when</span> n <span class="op">&lt;</span> max <span class="kw">do</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Incrementando el contador &#39;</span><span class="ot">#{</span>id<span class="ot">}</span><span class="st">&#39;: </span><span class="ot">#{</span>n<span class="ot">}</span><span class="st"> =&gt; </span><span class="ot">#{</span>n <span class="op">+</span> <span class="dv">1</span><span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:noreply</span>, <span class="fu">{</span>id, max, n <span class="op">+</span> <span class="dv">1</span><span class="fu">}}</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> handle_cast<span class="fu">(</span><span class="va">:incrementar</span>, <span class="fu">{</span>id, max, n<span class="fu">})</span> <span class="kw">when</span> n <span class="op">==</span> max <span class="kw">do</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;El contador &#39;</span><span class="ot">#{</span>id<span class="ot">}</span><span class="st">&#39; rebasa el máximo.&quot;</span><span class="fu">)</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:stop</span>, <span class="va">:normal</span>, <span class="fu">{</span>id, max, n<span class="fu">}}</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<h3 id="decremento-del-contador">Decremento del contador</h3>
+<ul>
+<li>Funciona de manera similar al incremento, pero cuando el contador se
+hace negativo, el proceso finaliza de manera anormal
+(<code>:valor_negativo</code>).</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> handle_cast<span class="fu">(</span><span class="va">:decrementar</span>, <span class="fu">{</span>id, max, n<span class="fu">})</span> <span class="kw">when</span> n <span class="op">&gt;</span> <span class="dv">0</span> <span class="kw">do</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;Decrementando el contador &#39;</span><span class="ot">#{</span>id<span class="ot">}</span><span class="st">&#39;: </span><span class="ot">#{</span>n<span class="ot">}</span><span class="st"> =&gt; </span><span class="ot">#{</span>n <span class="op">-</span> <span class="dv">1</span><span class="ot">}</span><span class="st">&quot;</span><span class="fu">)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:noreply</span>, <span class="fu">{</span>id, max, n <span class="op">-</span> <span class="dv">1</span><span class="fu">}}</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> handle_cast<span class="fu">(</span><span class="va">:decrementar</span>, <span class="fu">{</span>id, max, n<span class="fu">})</span> <span class="kw">when</span> n <span class="op">==</span> <span class="dv">0</span> <span class="kw">do</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;El contador &#39;</span><span class="ot">#{</span>id<span class="ot">}</span><span class="st">&#39; se hace negativo.&quot;</span><span class="fu">)</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:stop</span>, <span class="va">:valor_negativo</span>, <span class="fu">{</span>id, max, n<span class="fu">}}</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<h3 id="lectura-y-finalización-del-contador">Lectura y finalización del
+contador</h3>
+<ul>
+<li>Añadimos una operación síncrona de lectura e imprimimos un mensaje
+cuando el contador finalice, independientemente de la causa.</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="ot">@impl</span> <span class="cn">true</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> handle_call<span class="fu">(</span><span class="va">:leer</span>, _, <span class="fu">{</span>_, _, n<span class="fu">}</span> <span class="op">=</span> st<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="va">:reply</span>, n, st<span class="fu">}</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">@impl</span> <span class="cn">true</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> terminate<span class="fu">(</span>reason, <span class="fu">{</span>id, _, _<span class="fu">})</span> <span class="kw">do</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cn">IO</span><span class="op">.</span>puts<span class="fu">(</span><span class="st">&quot;El contador &#39;</span><span class="ot">#{</span>id<span class="ot">}</span><span class="st">&#39; termina con el motivo &#39;</span><span class="ot">#{</span>reason<span class="ot">}</span><span class="st">&#39;&quot;</span><span class="fu">)</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<h3 id="funciones-de-interfaz">Funciones de interfaz</h3>
+<ul>
+<li>Por último, añadimos funciones de interfaz con el cliente.</li>
+<li>La función de inicio registra el proceso con el mismo nombre que el
+identificador.</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> iniciar<span class="fu">(</span>id, max<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cn">GenServer</span><span class="op">.</span>start_link<span class="fu">(</span><span class="cn">Contador</span>, <span class="fu">{</span>id, max<span class="fu">}</span>, <span class="hl"><span class="va">name:</span> id</span><span class="fu">)</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> incrementar<span class="fu">(</span>id<span class="fu">)</span>, <span class="va">do:</span> <span class="cn">GenServer</span><span class="op">.</span>cast<span class="fu">(</span>id, <span class="va">:incrementar</span><span class="fu">)</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> decrementar<span class="fu">(</span>id<span class="fu">)</span>, <span class="va">do:</span> <span class="cn">GenServer</span><span class="op">.</span>cast<span class="fu">(</span>id, <span class="va">:decrementar</span><span class="fu">)</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> leer<span class="fu">(</span>id<span class="fu">)</span>, <span class="va">do:</span> <span class="cn">GenServer</span><span class="op">.</span>call<span class="fu">(</span>id, <span class="va">:leer</span><span class="fu">)</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span> <span class="co"># defmodule</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-terminación-normal">Ejemplo: terminación normal</h3>
+<pre class="text"><code>&gt; Contador.iniciar(:a, 3)
+Iniciando contador &#39;a&#39;
+{:ok, #PID&lt;0.164.0&gt;}
+
+&gt; Contador.incrementar(:a)
+Incrementando el contador &#39;a&#39;: 0 =&gt; 1
+
+&gt; Contador.incrementar(:a)
+Incrementando el contador &#39;a&#39;: 1 =&gt; 2
+
+&gt; Contador.incrementar(:a)
+Incrementando el contador &#39;a&#39;: 2 =&gt; 3
+
+&gt; Contador.incrementar(:a)
+El contador &#39;a&#39; rebasa el máximo.
+El contador &#39;a&#39; termina con el motivo &#39;normal&#39;</code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-terminación-anormal">Ejemplo: terminación anormal</h3>
+<pre class="text"><code>iex(14)&gt; Contador.iniciar(:d, 3)
+Iniciando contador &#39;d&#39;
+{:ok, #PID&lt;0.165.0&gt;}
+
+iex(15)&gt; Contador.decrementar(:d)
+El contador &#39;d&#39; se hace negativo.
+El contador &#39;d&#39; termina con el motivo &#39;valor_negativo&#39;
+
+19:57:08.455 [error] GenServer :d terminating
+...
+Interactive Elixir (1.17.1) - press Ctrl+C to exit  <span class="arrow_box_left fragment"> <em>Shell</em> reiniciada </span>
+&gt; </code></pre>
+
+</section>
+<section class="slide level2">
+
+<h3 id="implementación-del-supervisor">Implementación del
+supervisor</h3>
+<ul>
+<li>Declaramos un módulo que defina la función <em>callback</em>
+<code>init/1</code>:</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">SupContadores</span> <span class="kw">do</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="im">use</span> <span class="cn">Supervisor</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="ot">@impl</span> <span class="cn">true</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> init<span class="fu">(</span>_<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    children <span class="op">=</span> <span class="ot">[</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>      %<span class="fu">{</span><span class="va">id:</span> <span class="va">:a</span>, <span class="va">start:</span> <span class="fu">{</span><span class="cn">Contador</span>, <span class="va">:iniciar</span>, <span class="ot">[</span><span class="va">:a</span>, <span class="dv">5</span><span class="ot">]</span><span class="fu">}}</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>      %<span class="fu">{</span><span class="va">id:</span> <span class="va">:b</span>, <span class="va">start:</span> <span class="fu">{</span><span class="cn">Contador</span>, <span class="va">:iniciar</span>, <span class="ot">[</span><span class="va">:b</span>, <span class="dv">2</span><span class="ot">]</span><span class="fu">}}</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>      %<span class="fu">{</span><span class="va">id:</span> <span class="va">:c</span>, <span class="va">start:</span> <span class="fu">{</span><span class="cn">Contador</span>, <span class="va">:iniciar</span>, <span class="ot">[</span><span class="va">:c</span>, <span class="dv">3</span><span class="ot">]</span><span class="fu">}}</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="cn">Supervisor</span><span class="op">.</span>init<span class="fu">(</span>children, <span class="va">strategy:</span> <span class="va">:one_for_one</span><span class="fu">)</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section id="arrancar-un-supervisor-start_link3" class="slide level2">
+<h2>Arrancar un supervisor: <code>start_link/3</code></h2>
+<p><code>Supervisor.start_link(modulo, arg, options \\ [])</code></p>
+<div style="font-size:70%">
+<ul>
+<li class="fragment"><p><code>modulo</code>: es el nombre del módulo en
+el que se encuentra la función <em>callback</em> <code>init</code>.</p>
+<ul>
+<li class="fragment">El resultado devuelto por <code>init</code> es
+utilizado para configurar el supervisor y para iniciar los procesos
+supervisados.</li>
+</ul></li>
+<li class="fragment"><p><code>arg</code>: es el argumento que se pasará
+a <code>init</code>.</p></li>
+<li class="fragment"><p><code>options</code>: <em>keyword list</em> con
+opciones adicionales. En particular, la opción <code>name: N</code>
+permite registrar el supervisor con un nombre <code>N</code>.</p></li>
+<li class="fragment"><p>La función <code>start_link</code> devuelve una
+tupla <code>{:ok, pid}</code>, donde <code>pid</code> es el PID del
+supervisor.</p></li>
+</ul>
+</div>
+</section>
+<section id="detener-un-supervisor-stop2" class="slide level2">
+<h2>Detener un supervisor: <code>stop/2</code></h2>
+<p><code>Supervisor.stop(pid, reason \\ :normal)</code></p>
+<ul>
+<li><p>Finaliza el supervisor con el <code>pid</code> dado.</p></li>
+<li><p>Antes de finalizar, el supervisor finalizará los procesos hijo
+utilizando <code>:shutdown</code> como motivo de la
+terminación.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-de-ejecución">Ejemplo de ejecución</h3>
+<pre class="text"><code>&gt; {:ok, p} = Supervisor.start_link(SupContadores, :ok)
+Iniciando contador &#39;a&#39;
+Iniciando contador &#39;b&#39;
+Iniciando contador &#39;c&#39;
+
+&gt; Contador.decrementar(:b)
+El contador &#39;b&#39; se hace negativo.
+El contador &#39;b&#39; termina con el motivo &#39;valor_negativo&#39;
+
+20:18:07.767 [error] GenServer :b terminating
+...
+Iniciando contador &#39;b&#39;  <span class="arrow_box_left"> Reinicio de :b </span>
+
+&gt; Supervisor.stop(p)
+El contador &#39;c&#39; termina con el motivo &#39;shutdown&#39;
+El contador &#39;b&#39; termina con el motivo &#39;shutdown&#39;
+El contador &#39;a&#39; termina con el motivo &#39;shutdown&#39;</code></pre>
+
+<ul>
+<li>El contador <code>:b</code> muere por causas anormales. Por tanto,
+el supervisor lo reinicia.
+<ul>
+<li>Si hubiese muerto por causas normales, también sería
+reiniciado.</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Modificamos el árbol de supervisión para que el hijo <code>:b</code>
+solamente se reinicie en caso de terminación anormal.</li>
+</ul>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> init<span class="fu">(</span>_<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  children <span class="op">=</span> <span class="ot">[</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    %<span class="fu">{</span><span class="va">id:</span> <span class="va">:a</span>, <span class="va">start:</span> <span class="fu">{</span><span class="cn">Contador</span>, <span class="va">:iniciar</span>, <span class="ot">[</span><span class="va">:a</span>, <span class="dv">5</span><span class="ot">]</span><span class="fu">}}</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    %<span class="fu">{</span><span class="va">id:</span> <span class="va">:b</span>, <span class="va">start:</span> <span class="fu">{</span><span class="cn">Contador</span>, <span class="va">:iniciar</span>, <span class="ot">[</span><span class="va">:b</span>, <span class="dv">3</span><span class="ot">]</span><span class="fu">}</span>, <span class="hl"><span class="va">restart:</span> <span class="va">:transient</span></span><span class="fu">}</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    %<span class="fu">{</span><span class="va">id:</span> <span class="va">:c</span>, <span class="va">start:</span> <span class="fu">{</span><span class="cn">Contador</span>, <span class="va">:iniciar</span>, <span class="ot">[</span><span class="va">:c</span>, <span class="dv">3</span><span class="ot">]</span><span class="fu">}}</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>&gt; {:ok, p} = Supervisor.start_link(SupContadores, :ok)
+Iniciando contador &#39;a&#39;
+Iniciando contador &#39;b&#39;
+Iniciando contador &#39;c&#39;
+
+&gt; Contador.incrementar(:b)
+Incrementando el contador &#39;b&#39;: 0 =&gt; 1
+&gt; Contador.incrementar(:b)
+Incrementando el contador &#39;b&#39;: 1 =&gt; 2
+
+&gt; Contador.incrementar(:b)
+El contador &#39;b&#39; rebasa el máximo.
+El contador &#39;b&#39; termina con el motivo &#39;normal&#39;
+
+&gt; Supervisor.stop(p)
+El contador &#39;c&#39; termina con el motivo &#39;shutdown&#39;
+El contador &#39;a&#39; termina con el motivo &#39;shutdown&#39;</code></pre>
+
+<ul>
+<li>El contador <code>:b</code> no se reinicia.</li>
+<li>En la llamada a <code>stop</code>, solamente se detienen los
+contadores <code>:a</code> y <code>:c</code>.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li>Hasta ahora, solamente se ha reiniciado el proceso que fallaba.</li>
+<li>Modificamos la estrategia de reinicio a
+<code>:one_for_all</code>.</li>
+</ul>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">defmodule</span> <span class="cn">SupContadores</span> <span class="kw">do</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="im">use</span> <span class="cn">Supervisor</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="ot">@impl</span> <span class="cn">true</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> init<span class="fu">(</span>_<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    children <span class="op">=</span> <span class="ot">[</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>      <span class="op">...</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="cn">Supervisor</span><span class="op">.</span>init<span class="fu">(</span>children, <span class="va">strategy:</span> <span class="hl"><span class="va">:one_for_all</span></span><span class="fu">)</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+
+</section>
+<section class="slide level2">
+
+<pre class="text"><code>iex(37)&gt; Supervisor.start_link(SupContadores, :ok, name: :sup)
+Iniciando contador &#39;a&#39;
+Iniciando contador &#39;b&#39;
+Iniciando contador &#39;c&#39;
+
+iex(38)&gt; Contador.decrementar(:a)
+El contador &#39;a&#39; se hace negativo.
+El contador &#39;a&#39; termina con el motivo &#39;valor_negativo&#39;
+
+20:35:49.358 [error] GenServer :a terminating
+...
+El contador &#39;c&#39; termina con el motivo &#39;shutdown&#39;
+El contador &#39;b&#39; termina con el motivo &#39;shutdown&#39;
+Iniciando contador &#39;a&#39;
+Iniciando contador &#39;b&#39;
+Iniciando contador &#39;c&#39;</code></pre>
+
+<ul>
+<li>Al finalizar <code>:a</code>, también se han reiniciado
+<code>:b</code> y <code>:c</code>.</li>
+</ul>
+</section></section>
+<section>
+<section id="definición-alternativa-de-child-specifications"
+class="title-slide slide level1">
+<h1>Definición alternativa de <em>child specifications</em></h1>
+
+</section>
+<section id="child-specifications-en-init" class="slide level2">
+<h2><em>Child specifications</em> en <code>init</code></h2>
+<ul>
+<li><p>Hasta ahora hemos definido las <em>child specifications</em>
+dentro de la función <em>callback</em> <code>init/1</code>.</p></li>
+<li><p>Cada <em>child specification</em> es un diccionario.</p></li>
+</ul>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> init<span class="fu">(</span>_<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    children <span class="op">=</span> <span class="ot">[</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>      <span class="hl">%<span class="fu">{</span><span class="va">id:</span> <span class="va">:a</span>, <span class="va">start:</span> <span class="fu">{</span><span class="cn">Contador</span>, <span class="va">:iniciar</span>, <span class="ot">[</span><span class="va">:a</span>, <span class="dv">5</span><span class="ot">]</span><span class="fu">}}</span>,</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ...</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="cn">Supervisor</span><span class="op">.</span>init<span class="fu">(</span>children, <span class="va">strategy:</span> <span class="va">:one_for_all</span><span class="fu">)</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">end</span></span></code></pre></div>
+
+<ul>
+<li>A veces es conveniente que la <em>child specification</em> se defina
+dentro del módulo que implementa el proceso trabajador
+(<code>Contador</code> en nuestro caso), en lugar de hacerlo en el lado
+del supervisor.</li>
+</ul>
+</section>
+<section id="definición-alternativa-de-child-specifications-1"
+class="slide level2">
+<h2>Definición alternativa de <em>Child specifications</em></h2>
+<ul>
+<li><p>Dentro de la lista <code>children</code> pasada a
+<code>Supervisor.init</code> es posible indicar pares de la forma
+<code>{modulo, arg}</code>.</p></li>
+<li><p>En este caso, la <em>child specification</em> correspondiente a
+ese hijo se obtiene llamando a la función <code>child_spec/1</code> del
+<code>modulo</code> indicado, pasando <code>arg</code> como
+argumento.</p></li>
+<li><p>También es posible indicar solamente un nombre de módulo en la
+lista <code>children</code>. En ese caso se considera que
+<code>arg</code> es un valor cualquiera (p. ej. una lista vacía).</p>
+<ul>
+<li>Se utiliza cuando la función <code>child_spec/1</code> del
+trabajador no hace uso de su parámetro.</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-3">Ejemplo</h3>
+<ul>
+<li><p>En nuestro módulo <code>Contador</code>, añadimos una función
+<code>child_spec/1</code>.</p></li>
+<li><p>Esta función devuelve una <em>child specification</em>, que
+depende del identificador (<code>id</code>) y del valor máximo del
+contador (<code>max</code>) pasados como parámetro.</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> child_spec<span class="fu">({</span>id, max<span class="fu">})</span> <span class="kw">do</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  %<span class="fu">{</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">id:</span> id,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">start:</span> <span class="fu">{</span><span class="cn">Contador</span>, <span class="va">:iniciar</span>, <span class="ot">[</span>id, max<span class="ot">]</span><span class="fu">}</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">restart:</span> <span class="va">:transient</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>Modificamos la función <em>callback</em> <code>init/1</code> del
+supervisor, colocando las tuplas <code>{modulo, arg}</code>
+correspondientes:</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> init<span class="fu">(</span>_<span class="fu">)</span> <span class="kw">do</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  children <span class="op">=</span> <span class="ot">[</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="hl"><span class="cn">Contador</span></span>, <span class="hl"><span class="fu">{</span><span class="va">:a</span>, <span class="dv">5</span><span class="fu">}</span></span><span class="fu">}</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="hl"><span class="cn">Contador</span></span>, <span class="hl"><span class="fu">{</span><span class="va">:b</span>, <span class="dv">2</span><span class="fu">}</span></span><span class="fu">}</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="hl"><span class="cn">Contador</span></span>, <span class="hl"><span class="fu">{</span><span class="va">:c</span>, <span class="dv">3</span><span class="fu">}</span></span><span class="fu">}</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="cn">Supervisor</span><span class="op">.</span>init<span class="fu">(</span>children, <span class="va">strategy:</span> <span class="va">:one_for_all</span><span class="fu">)</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p>A veces queremos delegar en el módulo trabajador la definición
+del <em>child specification</em>, pero queremos que el supervisor varíe
+ligeramente la especificación (por ejemplo, para cambiar el atributo
+<code>:id</code>).</p></li>
+<li><p>La función <code>Supervisor.child_spec/2</code> permite hacer
+esto.</p>
+<p>Por ejemplo:</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode elixir"><code class="sourceCode elixir"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="cn">Supervisor</span><span class="op">.</span>child_spec<span class="fu">({</span><span class="cn">Contador</span>, <span class="fu">{</span><span class="va">:a</span>, <span class="dv">4</span><span class="fu">}}</span>, %<span class="fu">{</span><span class="va">id:</span> <span class="va">:otro</span><span class="fu">})</span></span></code></pre></div>
+
+<p>Más información: <a
+href="https://hexdocs.pm/elixir/Supervisor.html#child_spec/2">[+]</a></p></li>
+</ul>
+</section></section>
+<section>
+<section id="supervisores-dinámicos" class="title-slide slide level1">
+<h1>Supervisores dinámicos</h1>
+
+</section>
+<section id="supervisores-dinámicos-1" class="slide level2">
+<h2>Supervisores dinámicos</h2>
+<ul>
+<li><p>Hasta ahora, los procesos supervisados se indicaban en una
+función <em>callback</em> <code>init/1</code> del supervisor.</p></li>
+<li><p>Esto hace que un supervisor tenga que determinar, en tiempo de
+compilación, cuáles son sus procesos supervisados.</p></li>
+<li><p>Un <strong>supervisor dinámico</strong> comienza sin hijos
+supervisados. Una vez arrancado, es posible incorporar procesos
+supervisados mediante <code>start_child</code>.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><p><code>DynamicSupervisor.start_link(options)</code></p>
+<ul>
+<li><p>Arranca un supervisor dinámico con las opciones indicadas
+(<code>:strategy</code>, <code>:max_restarts</code>, etc.)</p></li>
+<li><p>La única estrategia de reinicialización permitida es
+<code>:one_for_one</code>.</p></li>
+</ul></li>
+<li><p><code>DynamicSupervisor.start_child(pid, child_spec)</code></p>
+<ul>
+<li>Añade un nuevo proceso supervisado al supervisor con el
+<code>pid</code> dado. La información de este proceso se encuentra en
+<code>child_spec</code>.</li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ejemplo-4">Ejemplo</h3>
+<pre class="text"><code>&gt; {:ok, p} = DynamicSupervisor.start_link([])
+{:ok, #PID&lt;0.173.0&gt;}
+
+&gt; DynamicSupervisor.start_child(p, {Contador, {:a, 3}})
+Iniciando contador &#39;a&#39;
+
+&gt; DynamicSupervisor.start_child(p, {Contador, {:b, 5}})
+Iniciando contador &#39;b&#39;
+
+&gt; Contador.decrementar(:b)
+El contador &#39;b&#39; se hace negativo.
+El contador &#39;b&#39; termina con el motivo &#39;valor_negativo&#39;
+...
+Iniciando contador &#39;b&#39;    <span class="arrow_box_left"> El proceso supervisado se reinicia </span></code></pre>
+
+</section>
+<section class="slide level2">
+
+<p>Más información sobre <code>DynamicSupervisor</code>: <a
+href="https://hexdocs.pm/elixir/DynamicSupervisor.html">[+]</a></p>
+</section></section>
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/search/search.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Prints all fragments in their visible states on the same slide 
+        pdfSeparateFragments: false,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom,
+          // RevealHighlight          
+        ]
+      });
+    </script>
+    </body>
+</html>
