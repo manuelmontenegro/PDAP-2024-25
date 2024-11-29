@@ -100,6 +100,11 @@ li.love::before {
   content: "😍 ";
 }
 
+li.warning::before {
+  content: "⚠️ ";
+}
+
+
 .rojo {
   color: #B71234;
 }
