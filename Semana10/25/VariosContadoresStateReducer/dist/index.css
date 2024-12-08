@@ -1,0 +1,7 @@
+.contador {
+    display: inline-block;
+    width: 2em;
+    text-align: center;
+    background-color: #E0E0FF;
+    border-radius: 10px;
+}
