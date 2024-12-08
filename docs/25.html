@@ -1,0 +1,1410 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>State reducers: aplicación a React y Redux</title>
+
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Nunito" />
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/pdap.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/nnfx-light.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+      
+      <section data-background-image="img/RedBackground.jpg">
+        <div style="background-color:white;height:1em"></div>
+        <h1 style="color:white;font-size:240%">State reducers: aplicación a React y Redux</h1>
+        <div style="background-color:white;height:1em"></div>
+
+        <div style="display:flex;justify-content:space-around;align-items:center;text-align:right">
+          <div style="font-size:60%;text-align:center;background-color:rgba(0,0,0,0.9);padding:10px;color:white;margin-top:1em;border-radius:10px">
+          <span>Manuel Montenegro Montes</span><br>
+          <span><a href="montenegro@fdi.ucm.es" style="color:#ff9999">montenegro@fdi.ucm.es</a></span><br>           </div>
+          
+          <div style="font-size:60%;text-align:center;background-color:rgba(0,0,0,0.9);padding:10px;color:white;margin-top:1em;border-radius:10px">
+          <span><b>Programación Declarativa Aplicada</b></span><br>
+          <span>Máster en Ingeniería Informática</span><br>
+          <span>Facultad de Informática</span><br>
+          <span>Universidad Complutense de Madrid</span><br>
+          </div>            
+        </div>
+
+      </section>
+
+        
+      
+      <section data-background-image="img/RedBackground.jpg" data-background-transition="fade">
+          <ol class="contenidos">
+            <li>Introducción a React</li>
+            <li>Componentes React</li>
+            <li>Componentes con estado</li>
+            <li>Propagación explícita del estado</li>
+            <li>Funciones reductoras de estado</li>
+            <li>Propagación implícita con Redux</li>
+            <li>Redux Toolkit</li>
+          </ol>
+      </section>
+
+    <section>
+      <section>
+        <h2>Introducción a React</h2>
+      </section>
+      
+      <section>
+        <h3><em>React</em></h3>
+        <ul>
+          <li>Biblioteca de código abierto para gestionar el <em>front end</em> en una aplicación SPA.</li>
+          <li>Desarrollada y mantenida por Meta (Facebook).</li>
+        </ul>
+        <p><img src="25/ReactLogo.svg" width="10%"><br/><a href="https://reactjs.org/">https://reactjs.org/</a></p>
+      </section>
+
+      <section>
+        <h3>Incorporar <em>React</em> al proyecto</h3>
+        <ul>
+          <li>Utilizamos la versión 18 de <em>React</em>.</li>
+          <li>Para incorporar en un proyecto de <em>Node.js</em>:
+          <pre><code class="no-highlight" data-trim data-noescape>
+            npm install react react-dom
+          </code></pre>
+          </li>
+          <li><em>React</em> está dividido en varios paquetes:
+          <ul>
+            <li><code>react</code>: funcionalidad básica para definir componentes.</li>
+            <li><code>react-dom</code>: renderización de componentes en el DOM de una página web.</li>
+          </ul>
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Ejemplo: contador</h3>
+        <ul>
+          <li>Como ejemplo, implementaremos un sencillo contador con botones para incrementarlo y decrementarlo:
+          <p style="text-align:center"><img src="25/Contador.png"></p>
+          </li>
+          <li>El <strong>modelo</strong> del contador es un número entero, que contiene el valor marcado.
+          <pre><code class="language-javascript" data-trim data-noescape>
+            const valorContador = 3;
+          </code></pre>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Función vista</h3>
+        <ul>
+          <li>En un contexto funcional, la <strong>vista</strong> es una función pura que transforma el modelo en un elemento del DOM que lo representa.</li>
+        </ul>
+        <img src="25/Vista.svg"/>
+      </section>
+      
+      <section>
+        <h3>Vista del contador (sin JSX)</h3>
+        <ul>
+          <li>La función <code>createElement</code> de <em>React</em> permite crear nodos en el DOM virtual de la página:
+          <pre><code class="language-javascript" data-trim data-noescape>
+            import React from 'react'
+            
+            function view(model) {
+                return React.createElement('div', null,
+                    React.createElement('button', null, '+'),
+                    React.createElement('div', { className: 'contador' }, 
+                                         model.toString()),
+                    React.createElement('button', null, '-')
+                );
+            }
+          </code></pre>          
+          <pre><code class="language-javascript" data-trim data-noescape>
+            const valorContador = 3;
+            const contadorDOM = view(valorContador);
+          </code></pre>          
+          <pre><code class="no-highlight" data-trim data-noescape>
+            &lt;div&gt;
+              &lt;button&gt;+&lt;/button&gt;
+              &lt;div class="contador"&gt;...&lt;/div&gt;
+              &lt;button&gt;-&lt;/button&gt;
+            &lt;/div&gt;
+          </code></pre>
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>La función <code>createElement</code></h3>
+        <p><code>createElement(tag, props, contenido)</code></p>
+        <ul class="fragment">
+          <li><code>tag</code>: etiqueta HTML del nodo a crear.</li>
+          <li><code>props</code>: objeto con los atributos HTML de ese nodo, o <code>null</code> si no tiene atributos.
+          <ul>
+            <li>Los atributos tienen el mismo nombre que en HTML: <code>href</code>, <code>src</code>, <code>id</code>, etc.</li>
+            <li>Excepción: <code>className</code> en lugar de <code>class</code>.</li>
+          </ul></li>
+          <li><code>contenido</code>: cadena de texto, o una lista de componentes.</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>La función <code>createElement</code></h3>
+        <div class="fragment">
+        <p>Ejemplo:</p>
+        <pre><code class="language-javascript" data-trim data-noescape>
+          React.createElement('a', { href: 'https://www.google.com' }, 'Enlace')
+        </code></pre>
+        <pre><code class="language-html" data-trim data-noescape>
+          &lt;a href="https://www.google.com"&gt;Enlace&lt;/a&gt;
+        </code></pre>
+        </div>
+        <div class="fragment">
+        <p>Ejemplo:</p>
+        <pre><code class="language-javascript" data-trim data-noescape>
+          React.createElement('div', { className: 'marco', id: 'menu' },
+              'Pulsa aquí:',
+              React.createElement('button', null, 'Hola')
+          );
+        </code></pre>
+        <pre><code class="language-html" data-trim data-noescape>
+          &lt;div class="marco" id="menu"&gt;
+              Pulsa aquí:&lt;button&gt;Hola&lt;/button&gt;
+          &lt;/div&gt;
+        </code></pre>
+        </div>
+      </section>
+      
+      <section>
+        <h3>Renderizar el DOM virtual</h3>
+        <ul>
+          <li>Para colocar un DOM virtual en la página hemos de tener un <strong>elemento raíz</strong> bajo el cual queremos colocarlo:
+          <pre><code class="language-javascript" data-trim data-noescape>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Primeros pasos con React&lt;/title&gt;
+        &lt;link rel="stylesheet" href="index.css"/&gt;
+        &lt;meta charset="utf-8"/&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        <span class="hl">&lt;div id="app"&gt;&lt;/div&gt;</span>  <span class="arrow_box_left">Elemento raíz</span>
+        &lt;script src="main.js"&gt;&lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;            
+          </code></pre>
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Renderizar el DOM virtual</h3>
+        <ul>
+          <li>La biblioteca <code>react-dom</code> exporta la función <code>createRoot</code>, que permite renderizar el DOM virtual que hayamos creado mediante <code>createElement()</code>.</li>
+          <li>La función <code>createRoot</code> recibe como parámetro una referencia al nodo DOM del elemento raíz.</li>
+          
+          <pre class="fragment"><code class="language-javascript" data-trim data-noescape>
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+// ...
+const valorContador = 3;
+const contadorDOM = view(valorContador);
+
+                         <span class="arrow_box_down fragment" style="top:-0.5em">Referencia a &lt;div id=“app”&gt;</span>
+const root = createRoot(<span class="hl">document.getElementById('app')</span>);
+root.render(contadorDOM);
+          </code></pre>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Uso de JSX</h3>
+        <ul>
+          <li>Como alternativa a <code>createElement</code>, se puede utilizar sintaxis HTML para crear el DOM virtual.</li>
+          <li>Esta traducción se realiza mediante una herramienta externa (<em>Babel</em>).
+          <pre><code class="no-highlight" data-trim data-noescape>
+            npm install --save-dev babel babel-loader
+            npm install --save-dev @babel/core @babel/preset-react
+          </code></pre>
+          </li>
+        </ul>
+      </section>
+      
+      
+      <section>
+        <h3>Uso de JSX</h3>
+        <ul style="width:95%">
+          <li>De este modo, en lugar de
+          <pre><code class="language-javascript" data-trim data-noescape>
+            function view(model) {
+                return React.createElement('div', null,
+                    React.createElement('button', null, '+'),
+                    React.createElement('div', { className: 'contador' }, 
+                                         model.toString()),
+                    React.createElement('button', null, '-')
+                );
+            }
+          </code></pre>
+          <div class="fragment">
+          podemos tener
+          <pre><code class="language-javascript" data-trim data-noescape>
+function view(model) {
+    &lt;div&gt;
+        &lt;button&gt;+&lt;/button&gt;
+        &lt;div className="contador"&gt;{model}&lt;/div&gt;
+        &lt;button&gt;-&lt;/button&gt;
+    &lt;/div&gt;            
+}    
+          </code></pre>
+          </div>
+          </li>
+        </ul>
+      </section>
+      
+
+    </section>
+    <section>
+      <section>
+        <h2>Componentes React</h2>
+      </section>
+      
+      <section>
+        <h3>Componentes</h3>
+        <ul>
+          <li>Es posible crear componentes personalizados en <em>React</em>.</li>
+          <li>Un <strong>componente</strong> es una función pura que recibe un objeto con sus <strong>propiedades</strong> y devuelve un DOM virtual.
+          <pre><code class="language-javascript" data-trim data-noescape>
+            function Componente(props) {
+                return ...;
+            }
+          </code></pre></li>
+          <li class="fragment">De este modo, la siguiente etiqueta JSX,
+          <pre><code class="language-html" data-trim data-noescape>
+            &lt;Componente attr1="v1" attr2="v2" .../&gt;
+          </code></pre>
+          <div class="fragment">
+          se traduce a la llamada
+          <pre><code class="language-javascript" data-trim data-noescape>
+            Componente({ attr1: "v1", attr2: "v2", ... })
+          </code></pre>
+          </div>
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Ejemplo: contador</h3>
+        <pre><code class="language-javascript" data-trim data-noescape>
+function Contador(props) {
+    return &lt;div&gt;
+        &lt;button&gt;+&lt;/button&gt;
+        &lt;div className="contador"&gt;{props.valorInicial}&lt;/div&gt;
+        &lt;button&gt;-&lt;/button&gt;
+    &lt;/div&gt;
+}          
+        </code></pre>
+        <div class="fragment">
+        <p>o bien, descomponiendo <code>props</code> en el argumento con un valor por defecto:</p>
+        <pre><code class="language-javascript" data-trim data-noescape>
+function Contador(<span class="hl">{ valorInicial = 0 }</span>) {
+    return &lt;div&gt;
+        &lt;button&gt;+&lt;/button&gt;
+        &lt;div className="contador"&gt;{valorInicial}&lt;/div&gt;
+        &lt;button&gt;-&lt;/button&gt;
+    &lt;/div&gt;}          
+        </code></pre>
+        </div>
+      </section>
+
+      <section>
+        <h3>Módulos con componentes</h3>
+        <ul>
+          <li>Puede extraerse el código del componente en un módulo aparte:
+          <pre><code class="language-javascript" data-trim data-noescape>
+            // Fichero Contador.jsx
+            import React from 'react';
+            
+            export default function Contador({ valorInicial = 0 }) {
+              // ...
+            }
+          </code></pre>
+          <div class="fragment">
+          y utilizarse desde otro módulo
+          <pre><code class="language-javascript" data-trim data-noescape>
+            // Fichero index.jsx
+            import React from 'react';
+            import Contador from './Contador.jsx';
+            import { createRoot } from 'react-dom/client';
+
+            const root = createRoot(document.getElementById('app'))
+            root.render(&lt;Contador valorInicial={3}/&gt;);
+          </code></pre>
+          </div>
+          </li>
+        </ul>
+      </section>
+
+    </section>
+    <section>
+
+      <section>
+        <h2>Componentes con estado</h2>
+      </section>
+      
+      <section>
+        <h3>Componentes con estado</h3>
+        <ul>
+          <li>Hasta ahora, nuestro contador es estático. No altera su valor ante las pulsaciones de los botones <code>+</code> y <code>-</code>.</li>
+          <li class="fragment">Para que el valor del contador se modifique, es necesario introducir el concepto de <strong>estado</strong>.</li>
+          <li class="fragment">En este caso, el estado de un contador se representa mediante un número entero, que es el valor del contador.</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>La función <code>useState()</code></h3>
+        <ul>
+          <li>Recibe un estado inicial y devuelve una lista con dos elementos:          <ol style="margin-top:15px">
+            <li>El valor actual del estado.</li>
+            <li>Una función para cambiar el valor del estado (<em>setter</em>).</li>
+          </ol>
+          </li>
+          <pre class="fragment"><code class="language-javascript" data-trim data-noescape>
+            const [estado, setEstado] = useState(estadoInicial);
+          </code></pre>
+          <li class="fragment">Se invoca siempre dentro de la función que define un componente.</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Ejemplo: contador</h3>
+        <pre><code class="language-javascript" data-trim data-noescape>
+export default function Contador({ valorInicial }) {
+    const [<span class="hl">valor</span>, setValor] = useState(valorInicial);
+
+    return &lt;div&gt;
+        &lt;button&gt;+&lt;/button&gt;
+        &lt;div className="contador"&gt;{<span class="hl">valor</span>}&lt;/div&gt;
+        &lt;button disabled={<span class="hl">valor</span> === 0}&gt;-&lt;/button&gt;
+    &lt;/div&gt;
+}          
+        </code></pre>
+      </section>
+      
+      <section>
+        <h3>Ejemplo: contador</h3>
+        <ul>
+          <li>Los manejadores de eventos de pulsación de los botones <code>+</code> y <code>-</code> modifican el estado:
+<pre class="fragment"><code class="language-javascript" data-trim data-noescape>
+export default function Contador({ valorInicial }) {
+  const [valor, setValor] = useState(valorInicial);
+
+  function incrementar() {
+      setValor(valor + 1);  <span class="arrow_box_left">Modificar estado</span>
+  }
+
+  function decrementar() {
+      setValor(valor - 1);  <span class="arrow_box_left">Modificar estado</span>
+  }
+
+  return &lt;div&gt;
+      &lt;button onClick={<span class="hl">incrementar</span>}&gt;+&lt;/button&gt;
+      &lt;div className="contador"&gt;{valor}&lt;/div&gt;
+      &lt;button disabled={valor === 0} onClick={<span class="hl">decrementar</span>}&gt;-&lt;/button&gt;
+  &lt;/div&gt;
+}
+</code></pre>          
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Modificar el estado</h3>
+        <ul>
+          <li>Siempre debe modificarse el estado a través de la función de modificación (<em>setter</em>).</li>
+          <li class="fragment">Si se modifica el estado directamente mediante una asignación, no se actualizará el componente:
+<pre><code class="language-javascript" data-trim data-noescape>
+export default function Contador({ valorInicial }) {
+    const [valor, setValor] = useState(valorInicial);
+
+    function incrementar() {
+        valor++;    <span class="arrow_box_left fragment">Incorrecto</span>
+    }
+
+    function decrementar() {
+        valor--;    <span class="arrow_box_left fragment">Incorrecto</span>
+    }
+
+    return ...;
+}
+  
+</code></pre>          
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Extendiendo la aplicación</h3>
+        <ul>
+          <li>Podemos replicar nuestro componente <code>Contador</code> varias veces en nuestra aplicación.</li>
+          <li>Cada componente tiene su propio estado y sus propios manejadores de eventos. Por tanto, los contadores no interfieren entre sí.
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Extendiendo la aplicación</h3>
+        <pre><code class="language-javascript" data-trim data-noescape>
+const app = &lt;div&gt;
+    &lt;Contador valorInicial={1}/&gt;
+    &lt;Contador valorInicial={5}/&gt;
+    &lt;Contador valorInicial={9}/&gt;
+    &lt;Contador valorInicial={7}/&gt;
+&lt;/div&gt;
+
+const root = createRoot(document.getElementById('app'))
+root.render(app);          
+        </code></pre>
+        <p class="fragment"><img src="25/Contador2.png"></p>
+      </section>
+      
+      <section>
+        <h3>Extendiendo la aplicación</h3>
+        <ul>
+          <li>¿Y si queremos calcular la suma de los valores de todos los contadores que hay en la página?</li>
+          <li class="fragment"i>El estado de la aplicación está &laquo;repartido&raquo; entre los distintos contadores. Tendríamos que monitorizar los cambios en cada uno de ellos para poder recalcular la suma.</li>
+          <li class="fragment">Una alternativa más sencilla es disponer de un estado <strong>centralizado</strong> en nuestra aplicación que contenga los valores de todos los contadores.</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Extendiendo la aplicación</h3>
+        <ul>
+          <li>Cuando se tiene un estado centralizado, hay distintas maneras de coordinar los distintos componentes de la página:
+          <ul>
+            <li><strong>Propagación explícita de estado</strong>: el estado se propaga de manera explícita por todo el DOM; los eventos, también.</li>
+            <li><strong>Propagación implícita de estado</strong>: cada componente puede acceder a la parte del estado que le corresponde sin tener que propagarlo explícitamente.</li>
+          </ul>
+          </li>
+        </ul>
+      </section>
+
+    </section>
+    <section>
+
+      <section>
+        <h2>Propagación explícita del estado</h2>
+      </section>
+
+      
+      <section>
+        <h3>Modificar componente <code>Contador</code></h3>
+        <ul>
+          <li>El componente <code>Contador</code> ya no tendrá estado propio.</li>
+          <li class="fragment">Por el contrario, tendrá varias propiedades:
+          <ul>
+            <li class="fragment"><code>valor</code>: el valor del contador.</li>
+            <li class="fragment"><code>onIncrementar</code>: función a invocar cada vez que se pulse el botón <code>+</code>.</li>
+            <li class="fragment"><code>onIncrementar</code>: función a invocar cada vez que se pulse el botón <code>-</code>.</li>
+          </ul>          
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Codigo de <code>Contador</code></h3>
+        <pre><code class="language-javascript" data-trim data-noescape>
+import React from 'react';
+
+export default function Contador({ valor, 
+                                   onIncrementar = () => {},
+                                   onDecrementar = () => {} }) {
+    return &lt;div&gt;
+        &lt;button onClick={() =&gt; onIncrementar()}&gt;+&lt;/button&gt;
+        &lt;div className="contador"&gt;{valor}&lt;/div&gt;
+        &lt;button disabled={valor === 0} onClick={() =&gt; onDecrementar()}&gt;
+          -
+        &lt;/button&gt;
+    &lt;/div&gt;
+}          
+        </code></pre>
+        <ul>
+          <li class="fragment">Los valores por defecto de <code>onIncrementar</code> y <code>onDecrementar</code> son <code>() => {}</code>, que representa una función sin parámetros y con un cuerpo vacío (es decir, una función que no realiza nada).</li>
+        </ul>
+      </section>
+      
+      
+      <section>
+        <h3>Componente <code>ListaContadores</code></h3>
+        <ul>
+          <li>Toda nuestra aplicación estará encapsulada en un componente llamado <code>ListaContadores</code>.</li>
+          <li>El estado de este componente será un array de números enteros, que contendrá los valores de los contadores.</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Código de <code>ListaContadores</code></h3>
+<pre style="height:22em"><code class="language-javascript" data-trim data-noescape>
+export default function ListaContadores({ valoresIniciales = [] }) {
+    const [estado, setEstado] = useState(valoresIniciales);
+
+    function incrementarContador(indice) { ... }
+    function decrementarContador(indice) { ... }
+
+    const suma = estado.reduce((x, y) => x + y, 0);
+
+    return &lt;div&gt;
+        { estado.map((valor, i) =&gt; 
+              &lt;Contador key={i} 
+                        valor={valor} 
+                        onIncrementar={() => incrementarContador(i)}
+                        <strong>onDecrementar</strong>={() => decrementarContador(i)}/&gt;)
+        }   
+        &lt;p&gt;La suma total es: {suma}&lt;/p&gt;
+    &lt;/div&gt;
+}    
+</code></pre>        
+      </section>
+      
+      
+      <section>
+        <h3>Código de <code>ListaContadores</code></h3>
+<pre><code class="language-html" data-trim data-noescape>
+&lt;Contador <span class="hl">key={i}</span>
+          valor={valor} 
+          onIncrementar={() => incrementarContador(i)}
+          <strong>onDecrementar</strong>={() => decrementarContador(i)}/&gt;
+</code></pre>
+        
+        <ul>
+          <li>El atributo <code>key</code> tiene un significado especial en <em>React</em>.</li>
+          <li>Permite a <em>React</em> monitorizar los cambios en el DOM de manera más eficiente.</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Código de <code>ListaContadores</code></h3>
+        <ul>
+          <li>Las funciones <code>incrementarContador</code> y <code>decrementarContador</code> se encargan de actualizar el estado:
+          <pre><code class="language-javascript" data-trim data-noescape>
+    function incrementarContador(indice) {
+        setEstado(
+          [...estado.slice(0, indice),
+           estado[indice] + 1,
+           ...estado.slice(indice + 1, estado.length)]
+        );
+    }
+    
+    function decrementarContador(indice) { /* análoga */ }
+          </code></pre>
+          </li>
+          <li>La función <code>incrementarContador</code> construye un nuevo array igual que el original, salvo en la posición <code>indice</code>, donde tiene valor <code>estado[indice] + 1</code>.</li>
+          
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Programa principal</h3>
+        <pre><code class="language-javascript" data-trim data-noescape>
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import ListaContadores from './ListaContadores.jsx';
+
+
+const root = createRoot(document.getElementById('app'))
+root.render(&lt;ListaContadores valoresIniciales={ [1, 5, 9, 7] }/&gt;);
+        </code></pre>
+      </section>
+      
+      <section>
+        <h3>Añadir un nuevo contador</h3>
+        <ul>
+          <li>Incorporamos un formulario para añadir un nuevo contador a la lista: <img src="25/Anyadir.png" style="margin:0px 0px 0px 0px;">
+          </li>
+          
+          <li class="fragment">Encapsulamos este formulario en un componente:</li>
+          <pre class="fragment"><code class="language-javascript" data-trim data-noescape>
+export default function AnyadirContador({ onAnyadir = () => {} }) {
+    const [texto, setTexto] = useState('');
+    
+    const valido = texto.match(/^\d+$/);
+
+    return &lt;div&gt;
+        &lt;input type="text" 
+                  value={texto} 
+                  size="3"
+                  onInput={evt =&gt; setTexto(evt.target.value)} /&gt;
+        &lt;button disabled={!valido}
+                onClick={() =&gt; onAnyadir(parseInt(texto))}&gt;
+          Añadir contador
+        &lt;/button&gt;
+    &lt;/div&gt;
+}            
+          </code></pre>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Añadir un nuevo contador</h3>
+        <ul>
+          <li>Modificamos el componente <code>ListaContadores</code> para incorporar este formulario:
+<pre><code class="language-javascript" data-trim data-noescape>
+export default function ListaContadores({ valoresIniciales = [] }) {
+    ...  
+    function anyadirContador(valorInicial) {
+        setEstado([...estado, valorInicial]);
+    }
+    ...
+    return &lt;div&gt;
+      { estado.map((valor, i) => 
+          &lt;Contador key={i} 
+                    valor={valor} 
+                    onIncrementar={() =&gt; incrementarContador(i)} 
+                    <strong>onDecrementar</strong>={() =&gt; decrementarContador(i)}/&gt;) }
+      &lt;p&gt;La suma total es: {suma}&lt;/p&gt; 
+      <span class="hl">&lt;AnyadirContador onAnyadir={anyadirContador}/&gt;</span>
+    &lt;/div&gt;
+}  
+</code></pre>          
+          </li>
+        </ul>
+      </section>
+    </section>
+
+
+
+    <section>
+      <section>
+        <h2>Funciones reductoras de estado (<em>state reducers</em>)</h2>
+      </section>
+      <section>
+        <h3><em>State reducers</em></h3>
+        <ul>
+          <li>Una <strong>función reductora de estado</strong> (<em>state reducer</em>) es una
+  función pura que, a partir de un estado actual y una
+  acción lógica, devuelve el estado resultante tras aplicar
+  la acción.</li>
+        </ul>
+        <p><img src="25/StateReducer.svg"></p>      
+      </section>
+
+      <section>
+        <h3>Representación de acciones</h3>
+        <ul>
+          <li>En el diagrama anterior, una <em>acción</em> no es una función, sino es una representación del comportamiento de la función, en forma de objeto.
+            <ul>
+              <li>Similar al patrón <em>Command</em> <a href="https://en.wikipedia.org/wiki/Command_pattern">[+]</a></li>
+            </ul>
+          </li>
+          <li>Nosotros representaremos las acciones como objetos con dos atributos:
+            <ul>
+              <li><code>type</code>: tipo de acción a realizar (<em>string</em>)
+
+                <p>Por ejemplo: <code>"incrementar"</code>, <code>"anyadir"</code>, etc.
+
+              </li>
+              <li><code>payload</code>: parámetros de la acción
+
+            <p>Por ejemplo: valor inicial del contador a añadir.</p>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h4>Ejemplos</h4>
+        <p>
+        Acción <em>incrementar el cuarto contador</em>:
+      <pre><code class="language-javascript" data-trim data-noescape>
+        { type: "contador/incrementar", payload: 4 }
+      </code></pre>
+        </p>
+        <p>
+        Acción <em>decrementar el primer contador</em>:
+      <pre><code class="language-javascript" data-trim data-noescape>
+        { type: "contador/decrementar", payload: 1 }
+      </code></pre>
+        </p>
+        <p>
+        Acción <em>añadir un nuevo contador con el valor 3</em>:
+      <pre><code class="language-javascript" data-trim data-noescape>
+        { type: "contador/anyadir", payload: 3 }
+      </code></pre>
+        </p>
+      </section>
+
+      <section>
+        <h3>Función <em>reducer</em></h3>
+<pre style="height:23em"><code class="language-javascript" data-trim data-noescape>
+function reducer(estado, accion) {
+    switch (accion.type) {
+        case 'contador/incrementar': {
+            const ind = action.payload;
+            return [...estado.slice(0, ind), 
+                    estado[ind] + 1, 
+                    ...estado.slice(ind + 1, estado.length)];
+        }
+
+        case 'contador/decrementar': { /* análoga */ }
+
+        case 'contador/anyadir': {
+            const valorInicial = action.payload;
+            return [...estado, valorInicial];
+        }
+
+        default: return estado;        
+    }
+}  
+</code></pre>          
+
+      </section>
+
+      <section>
+        <h3>Ventajas de un <em>state reducer</em></h3>
+        <ul style="list-style:none;padding:0;margin:0">
+          <li class="hands_up">La función <code>reducer()</code> es <strong>pura</strong>; no tiene efectos laterales.
+          </li>
+          <li class="hands_up">Desacopla el cálculo del estado de las operaciones relativas a observables.</li>
+          <li class="hands_up">Al ser una función pura, es más fácil aplicar <em>unit testing</em> sobre ella.</li>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Ejecución de un <em>State reducer</em></h3>
+        <pre><code class="language-javascript" data-trim data-noescape>
+    function ejecutarAccion(accion) {
+        const nuevoEstado = reducer(estado, accion);
+        setEstado(nuevoEstado);
+    }
+        </code></pre>
+
+        <ul>
+          <li>La función <code>ejecutarAccion</code> debe propagarse a todos los componentes que emitan una acción:</li>
+        </ul>
+
+<pre><code class="language-javascript" data-trim data-noescape>
+    return &lt;div&gt;
+        { estado.map((valor, i) => 
+            &lt;Contador key={i} 
+                         valor={valor} 
+                         indice={i} 
+                         <span class="hl">ejecutarAccion={ejecutarAccion}</span>/&gt;) }    
+        &lt;p&gt;La suma total es: {suma}&lt;/p&gt; 
+        &lt;AnyadirContador <span class="hl">ejecutarAccion={ejecutarAccion}</span>/&gt;
+    &lt;/div&gt;
+</code></pre>
+
+      </section>
+
+      <section>
+        <ul>
+          <li>El componente <code>Contador</code> queda del siguiente modo:
+</li>
+        </ul>
+<pre style="font-size:50%"><code class="language-javascript" data-trim data-noescape>
+export default function Contador({ valor, indice, ejecutarAccion = () => {}}) {
+    return &lt;div&gt;
+        &lt;button onClick={() =&gt; 
+            <span class="hl">ejecutarAccion({ type: "contador/incrementar", payload: indice })</span>}&gt;
+            +
+        &lt;/button&gt;
+        &lt;div className="contador"&gt;{valor}&lt;/div&gt;
+        &lt;button disabled={valor === 0} onClick={...}&gt;-&lt;/button&gt;
+    &lt;/div&gt;
+}
+</code></pre>
+
+      </section>
+
+
+
+    </section>
+
+    <section>
+
+
+
+      <section>
+        <h2>Propagación implícita con <em>Redux</em></h2>
+      </section>
+      
+      <section>
+        <h3>Redux</h3>
+        <ul>
+          <li><em>Redux</em> es una implementación del patrón <em>State reducer</em> visto en las semanas anteriores.</li>
+          <li>Las aplicaciones <em>Redux</em> se basan en:
+          <ul>
+            <li class="fragment">Un contenedor que permite almacenar un <strong>estado global</strong>.</li>
+            <li class="fragment">Un mecanismo de emisión <strong>acciones lógicas</strong> que modifican el estado.</li>
+            <li class="fragment">Una <strong>función reductora</strong> que determina el siguiente estado a partir del estado actual y la acción a realizar.</li>
+          </ul>
+          </li>          
+        </ul>
+        <p class="fragment">Documentación de Redux: <em><a href="https://redux.js.org/introduction/getting-started#should-you-use-redux">Should you use Redux?</a></em></p>
+      </section>
+      
+    
+      <section>
+        <h3>Ejemplo: lista de contadores</h3>
+        <ul>
+          <li><strong>Estado:</strong> array con los valores de los contadores.</li>
+          <li><strong>Acciones:</strong>
+          <ul>
+            <li>Incrementar un contador (<code>type</code>: <code>'contador/incrementar'</code>)
+            <ul>
+              <li><code>payload</code>: índice del contador a incrementar</li>
+            </ul>
+            <li>Decrementar un contador (<code>type</code>: <code>'contador/decrementar'</code>)
+            <ul>
+              <li><code>payload</code>: índice del contador a decrementar</li>
+            </ul>
+            <li>Añadir un contador (<code>type</code>: <code>'contador/anyadir'</code>)
+            <ul>
+              <li><code>payload</code>: valor inicial del nuevo contador</li>
+            </ul>
+          </ul>
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Ejemplo: lista de contadores</h3>
+        <ul style="width:95%">
+          <li><strong>Función reductora:</strong>
+          </li>
+<pre style="height:23em"><code class="language-javascript" data-trim data-noescape>
+function reducer(estado, accion) {
+    switch (accion.type) {
+        case 'contador/incrementar': {
+            const ind = action.payload;
+            return [...estado.slice(0, ind), 
+                    estado[ind] + 1, 
+                    ...estado.slice(ind + 1, estado.length)];
+        }
+
+        case 'contador/decrementar': { /* análoga */ }
+
+        case 'contador/anyadir': {
+            const valorInicial = action.payload;
+            return [...estado, valorInicial];
+        }
+
+        default: return estado;        
+    }
+}  
+</code></pre>          
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Requisitos de la función reductora</h3>
+        <ul>
+          <li class="fragment">Ha de ser una función <strong>pura</strong>.
+          <ul>
+            <li>El estado siguiente debe depender solamente del estado actual y de la acción.</li>
+            <li>No debe modificar el estado recibido como parámetro; ha de devolver otro estado nuevo.</li>
+            <li>No debe producir efectos laterales.</li>
+          </ul>
+          </li>
+          <li class="fragment">Ha de ser una función <strong>síncrona</strong>.
+          <ul>
+            <li>Si se quiere utilizar funciones asíncronas, ha de hacerse a través de <a href="https://redux.js.org/understanding/thinking-in-redux/glossary#middleware"><em>Middlewares</em></a>.</li>
+          </ul>
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Creación de un contenedor de estado</h3>
+        <ul>
+          <li>Se utiliza la función <code>configureStore</code>.</li>
+          <li>Esta función recibe un objeto con varios atributos.
+          <ul>
+            <li><code>reducer:</code> función reductora de estado</li>
+            <li><code>preloadedState:</code> estado inicial</li>
+          </ul>
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Creación de un contenedor de estado</h3>
+        Fichero <code>estado.js</code>:
+        <pre><code class="language-javascript" data-trim data-noescape>
+import { configureStore } from '@reduxjs/toolkit'
+
+function reducer(estado, accion) { ... }
+
+const store = configureStore({
+    reducer: reducer,
+    preloadedState: [1, 5, 7, 9]
+})
+
+export default store
+        </code></pre>
+      </section>
+      
+      <section>
+        <h3>Uso en <em>React</em></h3>
+        <ul>
+          <li><code>react-redux</code> proporciona un componente <code>Provider</code>, que recibe un contenedor de estado y lo propaga a todos los elementos del DOM que estén en el interior del <code>Provider</code>.</li>
+          <li class="fragment">El fichero <code>index.js</code> con el programa principal queda del siguiente modo:
+<pre><code class="language-javascript" data-trim data-noescape>
+...
+import { Provider } from 'react-redux'
+import store from './estado.js'
+
+const root = createRoot(document.getElementById('app'))
+root.render(
+    &lt;Provider store={store}&gt;  <span class="arrow_box_left">'store' será accesible desde ListaContadores</span>
+        &lt;ListaContadores/&gt;
+    &lt;/Provider&gt;
+);  
+</code></pre>          
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>El componente <code>ListaContadores</code></h3>
+        <ul>
+          <li>Ya no recibe ningún array con los valores iniciales de los contadores, porque los contadores lo obtendrán del estado.</li>
+          <li class="fragment">Tampoco tiene estado interno, ni recibe la función <code>ejecutarAccion</code>, pues la función de emisión de eventos se propaga implícitamente.</li>
+          <li class="fragment">No propaga los valores a los contadores, pero sí los índices.</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>El componente <code>ListaContadores</code></h3>
+        <pre><code class="language-javascript" data-trim data-noescape>
+export default function ListaContadores() {
+    const suma = ...;
+    const numeroContadores = ...;
+
+    return &lt;div&gt;
+        { Array.from({length: numeroContadores}, (_, i) =&gt; 
+            &lt;Contador key={i} indice={i}/&gt;) }
+        &lt;p&gt;La suma total es: {suma}&lt;/p&gt; 
+        &lt;AnyadirContador/&gt;
+    &lt;/div&gt;
+}          
+        </code></pre>
+        <ul class="fragment">
+          <li>La llamada
+          <pre><code class="language-javascript" data-trim data-noescape>
+            Array.from({length: n}, (_, i) => f(i))
+          </code></pre>
+          genera un array de longitud <code>n</code>, cuya componente <code>i</code>-esima contiene el valor <code>f(i)</code>.
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>El componente <code>ListaContadores</code></h3>
+        <ul>
+          <li>¿Cómo definimos <code>suma</code> y <code>numeroContadores</code>?</li>
+          <li>El componente <code>ListaContadores</code> ha de acceder al estado global.</li>
+          <li>Podemos acceder al estado mediante la función <code>useSelector</code>.</li>
+          <li><code>useSelector</code> recibe una función que determina la información que desea obtenerse a partir del estado.</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>El componente <code>ListaContadores</code></h3>
+        <pre><code class="language-javascript" data-trim data-noescape>
+import { useSelector } from 'react-redux';
+
+export default function ListaContadores() {
+    const suma = useSelector(state => state.reduce((x, y) => x + y, 0));
+    const numeroContadores = useSelector(state => state.length);
+
+    return &lt;div&gt;
+        { Array.from({length: numeroContadores}, (_, i) =&gt; 
+            &lt;Contador key={i} indice={i}/&gt;) }
+        &lt;p&gt;La suma total es: {suma}&lt;/p&gt; 
+        &lt;AnyadirContador/&gt;
+    &lt;/div&gt;
+}          
+        </code></pre>
+      </section>
+      
+      <section>
+        <h3>El componente <code>Contador</code></h3>
+        <ul>
+          <li>Cada contador obtiene su valor a partir del estado y de su índice.</li>
+<pre><code class="language-javascript" data-trim data-noescape>
+export default function Contador({ indice }) {
+    const valor = <span class="hl">useSelector(state => state[indice])</span>;
+
+    return &lt;div&gt;
+        &lt;button onClick={...}&gt;+&lt;/button&gt;
+        &lt;div className="contador"&gt;{valor}&lt;/div&gt;
+        &lt;button disabled={valor === 0} onClick={...}&gt;-&lt;/button&gt;
+    &lt;/div&gt;
+}  
+</code></pre>          
+        <li class="fragment">¿Qué se debe hacer en los eventos <code>onClick</code>?</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>La función <code>dispatch</code></h3>
+        <ul>
+          <li>Recibe una acción como parámetro, y la transmite al contenedor de estado para que la función reductora la procese.
+            <ul>
+              <li>Es similar a la función <code>ejecutarAccion</code> que teníamos previamente.
+            </ul>
+          </li>
+          <li>Podemos obtener esta función llamando a la función <code>useDispatch()</code> dentro de un componente.
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>El componente <code>Contador</code></h3>
+<pre style="height:24em"><code class="language-javascript" data-trim data-noescape>
+import { useDispatch, useSelector } from 'react-redux';
+
+export default function Contador({ indice }) {
+    const valor = useSelector(state => state[indice]);
+    <span class="hl">const dispatch = useDispatch();</span>
+
+    return &lt;div&gt;
+        &lt;button 
+          onClick={() =&gt; <span class="hl">dispatch({type: 'contador/incrementar',</span> 
+                                   <span class="hl">payload: indice})</span>}&gt;
+            +
+        &lt;/button&gt;
+        &lt;div className="contador"&gt;{valor}&lt;/div&gt;
+        &lt;button disabled={valor === 0} 
+          onClick={() =&gt; <span class="hl">dispatch({type: 'contador/decrementar',</span>
+                                   <span class="hl">payload: indice}</span>)}&gt;
+            -
+        &lt;/button&gt;
+    &lt;/div&gt;
+}  
+</code></pre>        
+      </section>
+      
+      <section>
+        <h3>Encapsulación de acciones</h3>
+        <ul>
+          <li>Para facilitar la mantenibilidad, es recomendable no crear objetos acción directamente desde los componentes, sino hacerlo a través de funciones factoría:
+          <pre><code class="language-javascript" data-trim data-noescape>
+// estado.js
+...
+export function incrementar(indice) {
+    return {
+        type: 'contador/incrementar',
+        payload: indice
+    };
+}
+
+export function decrementar(indice) {
+    return {
+        type: 'contador/decrementar',
+        payload: indice
+    };
+}            
+          </code></pre>
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Encapsulación de acciones</h3>
+        <pre><code class="language-javascript" data-trim data-noescape>
+import { incrementar, decrementar } from './estado.js';
+
+export default function Contador({ indice }) {
+    ...
+
+    return &lt;div&gt;
+        &lt;button onClick={() =&gt; dispatch(<span class="hl">incrementar(indice)</span>)}&gt;+&lt;/button&gt;
+        &lt;div className="contador"&gt;{valor}&lt;/div&gt;
+        &lt;button disabled={valor === 0} 
+                onClick={() =&gt; dispatch(<span class="hl">decrementar(indice)</span>)}&gt;
+            -
+        &lt;/button&gt;
+    &lt;/div&gt;
+}
+          
+        </code></pre>
+      </section>
+      
+      <section>
+        <h3>El componente <code>AnyadirContador</code></h3>
+        <ul>
+          <li>Mantenemos el contenido de texto como estado interno del componente, ya que no es relevante en el estado global de la aplicación.</li>
+        </ul>
+<pre><code class="language-javascript" data-trim data-noescape>
+import { anyadir } from './estado';
+
+export default function AnyadirContador() {
+    const [texto, setTexto] = useState('');
+    const dispatch = useDispatch();
+    
+    const valido = texto.match(/^\d+$/);
+
+    return &lt;div&gt;
+        &lt;input type="text" value={texto}
+               onInput={evt =&gt; setTexto(evt.target.value)} size="3"/&gt;
+        &lt;button disabled={!valido}
+                onClick={() =&gt; dispatch(anyadir(parseInt(texto)))} &gt;
+          Añadir contador
+        &lt;/button&gt;
+    &lt;/div&gt;
+}  
+</code></pre>        
+      </section>
+      
+      <section>
+        <h3>El componente <code>AnyadirContador</code></h3>
+        <ul>
+          <li>Implementamos la función factoría <code>anyadir</code> en el fichero <code>estado.js</code>:</li>
+          <pre><code class="language-javascript" data-trim data-noescape>
+// estado.js
+...
+export function anyadir(valorInicial) {
+    return {
+        type: 'contador/anyadir',
+        payload: valorInicial
+    };
+}            
+          </code></pre>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Resultado</h3>
+        <p><img src="25/ResultadoContadores.png" width="30%"></p>
+      </section>
+      
+      <section>
+        <h3>Resumen</h3>
+        <ol>
+          <li class="fragment">Hemos implementado un módulo con la función reductora de estado.
+          <pre><code class="language-javascript" data-trim data-noescape>
+            function reducer(state, action) {
+                switch(action.type) {
+                    case 'contador/incrementar':
+                        return /* siguiente estado */
+                    ...
+                }
+            }
+          </code></pre>
+          </li>
+          <li class="fragment">Hemos definido funciones factoría para la creación de acciones.
+          <pre><code class="language-javascript" data-trim data-noescape>
+            function incrementar(indice) {
+                return { type: 'contador/incrementar',
+                         payload: indice };
+            }
+          </code></pre>
+          </li>
+        </ol>
+      </section>
+      
+      <section>
+        <h3>Resumen</h3>
+        <ol start="3">
+          <li class="fragment">Hemos creado un contenedor de estado, indicando la función reductora y el estado inicial:
+          <pre><code class="language-javascript" data-trim data-noescape>
+const store = configureStore({
+    reducer: reducer,
+    preloadedState: [1, 5, 7, 9]
+});            
+          </code></pre>
+          </li>
+          <li class="fragment">Hemos hecho que el estado esté disponible en nuestra aplicación mediante
+          el componente <code>Provider:</code>
+          <pre><code class="language-javascript" data-trim data-noescape>
+const root = createRoot(document.getElementById('app'))
+root.render(
+    &lt;Provider store={store}&gt;
+        ...
+    &lt;/Provider&gt;
+);            
+          </code></pre>
+          </li>
+        </ol>
+      </section>
+      
+      <section>
+        <h3>Resumen</h3>
+        <ol start="5">
+          <li class="fragment">Cada componente puede acceder al estado mediante <code>useSelector()</code>.
+          <pre><code class="language-javascript" data-trim data-noescape>
+    const valorContador = useSelector(state => state[indice]);            
+          </code></pre>
+          </li>
+          <li class="fragment">Cada componente puede emitir acciones mediante <code>dispatch()</code>.
+          <pre><code class="language-javascript" data-trim data-noescape>
+    const dispatch = useDispatch();
+    
+    return &lt;button onClick={() =&gt; dispatch(...)}&gt;..&lt;/button&gt;
+          </code></pre>
+          </li>
+        </ol>
+      </section>
+
+    </section>
+    <section>
+      
+      <section>
+        <h2>Redux Toolkit</h2>
+      </section>
+      
+      <section>
+        <h3>Redux Toolkit</h3>
+        <ul>
+          <li>Es una biblioteca complementaria a Redux.</li>
+          <li>Proporciona facilidades para la definición de acciones y de la función reductora de estado.</li>
+          <li>Desde la versión 4.2.0 de Redux se recomienda la implementación de funciones reductoras y acciones mediante esta biblioteca, en lugar de hacerlo &laquo;a mano&raquo;.</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Redux Toolkit</h3>
+        <ul>
+          <li>En Redux Toolkit se utiliza la función <code>createSlice</code> para crear acciones y funciones reductoras.</li>
+          <li class="fragment">Esta función recibe un objeto con varios atributos:
+          <ul>
+            <li class="fragment"><code>name</code> (<em>string</em>)<br/>Nombre del contenedor (para  acciones y para depuración)</li>
+            <li class="fragment"><code>initialState</code> (<em>any</em>)<br/>
+            Estado inicial</li>
+            <li class="fragment"><code>reducers</code> (<em>object</em>)<br/>
+            Objeto cuyos atributos son nombres de acciones y cuyos valores son las funciones reductoras asociadas a cada acción</li>
+          </ul>
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Redux Toolkit</h3>
+        <pre style="height:27em"><code class="language-javascript" data-trim data-noescape>
+const slice = createSlice({
+    name: 'contador',
+    initialState: [1, 5, 7, 9],
+    reducers: {
+        incrementar: (estado, accion) => {
+            const ind = accion.payload;
+            return [...estado.slice(0, ind), 
+                    estado[ind] + 1, 
+                    ...estado.slice(ind + 1, estado.length)];
+        },
+        decrementar: (estado, accion) => {
+            const ind = accion.payload;
+            return [...estado.slice(0, ind),
+                    estado[ind] - 1,
+                    ...estado.slice(ind + 1, estado.length)];
+        },
+        anyadir: (estado, accion) => {
+            const valorInicial = accion.payload;
+            return [...estado, valorInicial];
+        }
+    }
+});
+        </code></pre>
+      </section>
+      
+      <section>
+        <h3>Redux Toolkit</h3>
+        <ul>
+          <li>A partir del resultado de <code>createSlice</code> podemos obtener las funciones factoría relativas a las acciones:
+          <pre><code class="language-javascript" data-trim data-noescape>
+const slice = createSlice(...);
+export const { incrementar, decrementar, anyadir } = <span class="hl">slice.actions</span>;
+          </code></pre>
+          </li>
+          <li class="fragment">También podemos obtener la función reductora, que ya realiza la distinción de casos según el tipo de acción:
+          <pre><code class="language-javascript" data-trim data-noescape>
+const slice = createSlice(...);
+...
+const store = configureStore({reducer: <span class="hl">slice.reducer</span>});
+          </code></pre>
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>Herramientas de desarrollador</h3>
+        <p><a href="https://reactjs.org/blog/2015/09/02/new-react-developer-tools.html"><em>React Developer Tools</em></a></p>
+        <p><img src="25/ReactDeveloperTools.png" style="border:1px solid black;width:70%"></p>
+      </section>
+      
+      <section>
+        <h3>Herramientas de desarrollador</h3>
+        <p><a href="https://github.com/reduxjs/redux-devtools/tree/main/extension"><em>Redux DevTools</em></a></p>
+        <p><img src="25/ReduxDevTools.png" style="border:1px solid black;width:70%"></p>
+      </section>
+      
+      <section>
+        <h3>Utiliza Redux si...</h3>
+        <ul style="list-style:none;padding:0;margin:0">
+          <li class="hands_up">La lógica relativa a la actualización del estado es compleja, y es mejor centralizarla en uno o varios módulos.
+          </li>
+          <li class="hands_up">El estado de la aplicación está disperso entre los distintos componentes de la interfaz.</li>
+          <li class="hands_up">Se necesita depurar la evolución del estado a lo largo del tiempo.</li>
+          </li>
+        </ul>
+      </section>
+      
+      <section>
+        <h3>No utilices Redux si...</h3>
+        <ul style="list-style:none;padding:0;margin:0">
+          <li class="hands_down">Solo quieres implementar un componente que sea reutilizable en distintas aplicaciones.</li>
+          <li class="hands_down">La lógica de tu aplicación es simple.</li>          
+          </li>
+        </ul>
+      </section>
+
+    </section>
+        <section>
+            <h2>Bibliografía</h2>
+            <div style="float:left; width:70%">
+                <ul>
+                    <li>A. Banks, E. Porcello
+                        <br>
+                        <a href="https://ucm.on.worldcat.org/oclc/1335022957">Learning React: Modern Patterns for Developing React Apps</a><br>
+                        <span style="font-size:50%">https://ucm.on.worldcat.org/oclc/1335022957</span>
+                    </li>
+                    <li>
+                      Redux documentation<br/>
+                      <a href="https://redux.js.org/tutorials/essentials/part-1-overview-concepts">Redux Essentials</a><br/>
+                        <span style="font-size:50%">https://redux.js.org/tutorials/essentials/part-1-overview-concepts</span>
+                    </li>
+                </ul>                
+            </div>
+            <div style="float:right; width: 30%">
+                <img src="https://pictures.abebooks.com/inventory/30661013134.jpg" style="width:50%; border:1px solid black"><br/>                
+                <img src="https://redux.js.org/img/redux.svg" style="width:50%">
+            </div>
+        </section>         
+      
+    </div>
+    
+
+    
+    
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealHighlight, RevealNotes ]
+			});
+      Reveal.configure({ pdfSeparateFragments: false });
+		</script>
+	</body>
+</html>
